@@ -1,0 +1,391 @@
+{
+  "knowledge_base_name": "快团团食品类目文案合规违禁规则库",
+  "version": "1.2",
+  "update_time": "2026-07-03",
+  "revision_note": "V1.2 新增 check_stage 字段：标记每条规则的校验阶段（pre_banned/post_check），作为 forbidden_words_dev.json 的权威数据源，dev版通过导出脚本自动生成",
+  "applicable_platform": "kuaituantuan",
+  "applicable_category": "普通食品",
+  "applicable_scene": [
+    "title",
+    "detail",
+    "note"
+  ],
+  "modules": {
+    "banned_categories": [
+      {
+        "rule_id": "F-BAN-001",
+        "banned_category": "标注“特供”“专供”“军需”“国宴专用”等字样的食品",
+        "violation_desc": "严禁利用国家机关、军队名义，或假借特供/专供属性进行商品发布与营销",
+        "risk_level": "critical",
+        "check_stage": "pre_banned",
+        "official_source": "拼多多官方《商家规范：禁发商品及信息名录》"
+      },
+      {
+        "rule_id": "F-BAN-002",
+        "banned_category": "未经备案的保健食品、特殊医学用途配方食品",
+        "violation_desc": "普通食品类目禁止上架需专项资质的蓝帽保健食品、特医食品",
+        "risk_level": "critical",
+        "check_stage": "pre_banned",
+        "official_source": "快团团官方《禁发商品及信息管理规范》"
+      }
+    ],
+    "forbidden_words": [
+      {
+        "rule_id": "F-WORD-001",
+        "violation_type": "绝对化极限词",
+        "match_mode": "exact",
+        "exception_pattern": [
+          "我心中",
+          "我觉得",
+          "个人认为",
+          "我心目中"
+        ],
+        "keywords": [
+          "第一",
+          "唯一",
+          "NO.1",
+          "TOP.1",
+          "一流",
+          "独一无二",
+          "全国第一",
+          "全球第一",
+          "最高",
+          "最好",
+          "最先进",
+          "最佳",
+          "最便宜",
+          "顶级",
+          "极致",
+          "史上最低",
+          "天花板",
+          "王者",
+          "秒杀",
+          "吊打",
+          "完胜",
+          "终极",
+          "顶配",
+          "绝佳",
+          "最棒",
+          "最优",
+          "最低价",
+          "全网最低",
+          "史无前例",
+          "万能",
+          "特效"
+        ],
+        "applicable_scene": [
+          "title",
+          "detail",
+          "note"
+        ],
+        "risk_level": "high",
+        "check_stage": "post_check",
+        "rule_desc": "严禁使用无法证实的极限化用语宣传食品的质量、销量或行业地位",
+        "exception": "主观感受类表述（如“我心中最好吃的零食”）风险较低，但不建议使用",
+        "official_source": "《中华人民共和国广告法》第九条",
+        "compliant_suggestion": [
+          "品牌优选",
+          "口碑款",
+          "热销款",
+          "主推款"
+        ]
+      },
+      {
+        "rule_id": "F-WORD-002",
+        "violation_type": "医疗功效宣传",
+        "match_mode": "exact_semantic",
+        "keywords": [
+          "治疗",
+          "治愈",
+          "消炎",
+          "降血压",
+          "降低胆固醇",
+          "防癌",
+          "抗癌",
+          "抗肿瘤",
+          "活血",
+          "祛瘀",
+          "无毒副作用",
+          "安全无依赖",
+          "无效退款",
+          "治病",
+          "停药减压",
+          "根治",
+          "养胃",
+          "健脾",
+          "润肺",
+          "止咳",
+          "补血",
+          "益气",
+          "安神",
+          "健脑",
+          "减肥",
+          "瘦身",
+          "减脂",
+          "降血脂",
+          "降血糖"
+        ],
+        "applicable_scene": [
+          "title",
+          "detail",
+          "note"
+        ],
+        "risk_level": "critical",
+        "check_stage": "pre_banned",
+        "rule_desc": "普通食品严禁宣传或暗示任何预防、治疗疾病的功效，严禁作出医疗级效果承诺",
+        "exception": "无",
+        "official_source": "《中华人民共和国广告法》第十八条、《中华人民共和国食品安全法》第七十三条",
+        "compliant_suggestion": [
+          "仅可描述产品本身的营养成分与口感，不得关联疾病治疗与身体机能改善"
+        ]
+      },
+      {
+        "rule_id": "F-WORD-003",
+        "violation_type": "保健功能宣称",
+        "match_mode": "exact_semantic",
+        "keywords": [
+          "养肝护肝",
+          "润肺祛湿",
+          "降糖降压",
+          "改善睡眠",
+          "促进脂肪代谢",
+          "缓解疲劳",
+          "增强免疫力",
+          "提高抵抗力",
+          "排毒养颜",
+          "调理肠胃",
+          "调理身体",
+          "改善体质",
+          "促进消化",
+          "润肠通便",
+          "美容养颜",
+          "抗衰老",
+          "抗氧化"
+        ],
+        "applicable_scene": [
+          "title",
+          "detail",
+          "note"
+        ],
+        "risk_level": "high",
+        "check_stage": "post_check",
+        "rule_desc": "普通食品严禁明示或暗示具有特定保健功能，仅限保健食品可宣传批准范围内的保健功能",
+        "exception": "无",
+        "official_source": "《中华人民共和国食品安全法实施条例》",
+        "compliant_suggestion": [
+          "营养丰富",
+          "健康美味",
+          "补充日常营养"
+        ]
+      },
+      {
+        "rule_id": "F-WORD-004",
+        "violation_type": "虚假夸大宣传",
+        "match_mode": "exact",
+        "keywords": [
+          "史无前例",
+          "万能",
+          "特效",
+          "无敌",
+          "神丹",
+          "秘制",
+          "祖传",
+          "宫廷秘方",
+          "神奇",
+          "神效",
+          "奇效",
+          "百年秘方",
+          "古法秘制",
+          "独家配方"
+        ],
+        "applicable_scene": [
+          "title",
+          "detail",
+          "note"
+        ],
+        "risk_level": "medium",
+        "check_stage": "post_check",
+        "rule_desc": "严禁使用无法考证、夸大不实的词汇误导消费者，食品类特别禁用“秘制”“祖传”等无依据表述",
+        "exception": "经非遗认证的传统工艺可如实标注",
+        "official_source": "《中华人民共和国广告法》第二十八条",
+        "compliant_suggestion": [
+          "传统工艺",
+          "精心调配",
+          "经典配方"
+        ]
+      },
+      {
+        "rule_id": "F-WORD-005",
+        "violation_type": "含量表述违规",
+        "match_mode": "semantic",
+        "keywords": [
+          "纯天然",
+          "100%纯",
+          "零添加",
+          "无添加",
+          "100%天然",
+          "零防腐剂",
+          "零糖"
+        ],
+        "applicable_scene": [
+          "title",
+          "detail",
+          "note"
+        ],
+        "risk_level": "medium",
+        "check_stage": "post_check",
+        "rule_desc": "无权威检测报告支撑的“纯天然”“零添加”表述属于虚假宣传，易引发投诉",
+        "exception": "具备第三方质检报告，且报告可证实成分含量/无添加的，可如实标注",
+        "official_source": "市场监管总局食品广告合规指引",
+        "compliant_suggestion": [
+          "配料干净",
+          "无人工色素",
+          "无防腐剂"
+        ]
+      },
+      {
+        "rule_id": "F-WORD-006",
+        "violation_type": "权威背书违规",
+        "match_mode": "exact",
+        "keywords": [
+          "专家推荐",
+          "医生推荐",
+          "质量免检",
+          "免抽检",
+          "国家领导人推荐",
+          "国家机关推荐",
+          "驰名商标",
+          "中国名牌",
+          "院士推荐",
+          "央视推荐"
+        ],
+        "applicable_scene": [
+          "title",
+          "detail",
+          "note"
+        ],
+        "risk_level": "high",
+        "check_stage": "post_check",
+        "rule_desc": "严禁利用国家机关、公职人员、专业人士名义进行误导性背书宣传",
+        "exception": "可标注真实的第三方检测认证、行业奖项（需提供证明）",
+        "official_source": "《中华人民共和国广告法》第九条",
+        "compliant_suggestion": [
+          "品质保障",
+          "专业品牌",
+          "通过食品安全检测"
+        ]
+      },
+      {
+        "rule_id": "F-WORD-007",
+        "violation_type": "诱导营销违规",
+        "match_mode": "exact",
+        "exception_pattern": [
+          "标注明确活动时间"
+        ],
+        "keywords": [
+          "点击领奖",
+          "恭喜获奖",
+          "全民免单",
+          "点击有惊喜",
+          "点击获取",
+          "再不抢就没了",
+          "随时涨价",
+          "手慢无",
+          "闭眼入",
+          "必买",
+          "必冲",
+          "抢疯了",
+          "最后机会",
+          "限时秒杀"
+        ],
+        "applicable_scene": [
+          "title",
+          "note"
+        ],
+        "risk_level": "medium",
+        "check_stage": "post_check",
+        "rule_desc": "严禁使用欺诈性中奖话术、模糊时限的饥饿营销诱导消费者点击或支付",
+        "exception": "标注明确起止时间的限时促销（如“6月30日-7月2日特惠”）合规",
+        "official_source": "快团团官方《商品发布合规手册》",
+        "compliant_suggestion": [
+          "限时特惠",
+          "团长专属福利",
+          "活动期享优惠"
+        ]
+      },
+      {
+        "rule_id": "F-WORD-008",
+        "violation_type": "母乳替代违规",
+        "match_mode": "semantic",
+        "keywords": [
+          "替代母乳",
+          "母乳替代品",
+          "可代替母乳",
+          "母乳化配方"
+        ],
+        "applicable_scene": [
+          "title",
+          "detail",
+          "note"
+        ],
+        "risk_level": "high",
+        "check_stage": "post_check",
+        "rule_desc": "乳制品、饮料等食品广告不得明示或暗示可替代母乳，不得使用哺乳妇女和婴儿形象做宣传",
+        "exception": "无",
+        "official_source": "《中华人民共和国广告法》第二十条",
+        "compliant_suggestion": [
+          "营养补充",
+          "适合断奶期饮用",
+          "辅食搭配"
+        ]
+      }
+    ],
+    "content_rules": [
+      {
+        "rule_id": "F-RULE-001",
+        "violation_type": "抄袭搬运违规",
+        "risk_level": "medium",
+        "check_stage": "post_check",
+        "violation_desc": "严禁直接照搬淘宝、京东等平台标准电商详情页文案，快团团要求团品文案需原创、贴合私域场景",
+        "official_source": "快团团官方《团长实战指南·开团文案设计说明》",
+        "compliant_suggestion": "结合实拍、亲自试吃体验，客观描述口感与配料，保持图文原创真实"
+      },
+      {
+        "rule_id": "F-RULE-002",
+        "violation_type": "发货信息模糊",
+        "risk_level": "high",
+        "check_stage": "post_check",
+        "violation_desc": "详情页/笔记中严禁以极小字体、模糊表述隐瞒发货时间，预售商品必须明确标注发货周期",
+        "official_source": "快团团官方《发货与预售管理公告》",
+        "compliant_suggestion": "在标题或主图标注清晰发货时间，如“现货48小时发”“预售7天内发”"
+      },
+      {
+        "rule_id": "F-RULE-003",
+        "violation_type": "站外引流违规",
+        "risk_level": "critical",
+        "check_stage": "pre_banned",
+        "violation_desc": "商品详情、笔记中严禁出现微信号、微信二维码、外部链接、公众号等站外引流信息",
+        "official_source": "快团团官方《禁发商品及信息管理规范》",
+        "compliant_suggestion": "所有交易、咨询均在快团团平台内完成"
+      },
+      {
+        "rule_id": "F-RULE-004",
+        "violation_type": "虚假素材违规",
+        "risk_level": "high",
+        "check_stage": "post_check",
+        "violation_desc": "严禁使用伪造的聊天记录、虚假好评截图、盗图等不实素材进行宣传",
+        "official_source": "快团团官方《内容生态治理公告》",
+        "compliant_suggestion": "使用实拍图、真实用户反馈，素材需具备可追溯性"
+      },
+      {
+        "rule_id": "F-RULE-005",
+        "violation_type": "无边界赔付承诺",
+        "risk_level": "medium",
+        "check_stage": "post_check",
+        "violation_desc": "生鲜食品严禁使用“百分百坏单包赔”“坏一赔十”等无边界赔付话术",
+        "official_source": "快团团生鲜类目运营规则",
+        "compliant_suggestion": "明确赔付规则，如“坏果按比例赔付，签收24小时内凭照片申请”"
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: content-production-api
+    env: node
+    rootDir: app/server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: PORT
+        value: 10000
