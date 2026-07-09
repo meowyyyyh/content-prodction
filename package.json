@@ -1,0 +1,7 @@
+{
+  "name": "content-production",
+  "private": true,
+  "scripts": {
+    "build": "cd app && npm install && npm run build"
+  }
+}
