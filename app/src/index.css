@@ -35,9 +35,40 @@
   }
 }
 
+.dark {
+    --background: 240 10% 5%;
+    --foreground: 0 0% 90%;
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 90%;
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 90%;
+    --primary: 160 60% 40%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 5% 15%;
+    --secondary-foreground: 0 0% 85%;
+    --muted: 240 5% 15%;
+    --muted-foreground: 240 5% 55%;
+    --accent: 240 5% 18%;
+    --accent-foreground: 0 0% 85%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5% 20%;
+    --input: 240 5% 20%;
+    --ring: 160 60% 40%;
+    --sidebar: 240 10% 6%;
+    --sidebar-foreground: 0 0% 85%;
+    --sidebar-primary: 160 60% 40%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 5% 15%;
+    --sidebar-accent-foreground: 0 0% 85%;
+    --sidebar-border: 240 5% 18%;
+    --sidebar-ring: 160 60% 40%;
+  }
+
 @layer base {
   * { @apply border-border; }
   body { @apply text-foreground; background-color: #F1F2F5; }
+  .dark body { background-color: #0f0f17; }
   ::placeholder, textarea::placeholder { color: hsl(var(--muted-foreground) / 0.4); opacity: 1; }
   * { scrollbar-width: thin; scrollbar-color: transparent transparent; }
   .is-scrolling * { scrollbar-color: hsl(var(--muted-foreground) / 0.25) transparent; }
