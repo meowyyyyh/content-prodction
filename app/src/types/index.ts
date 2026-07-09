@@ -1,6 +1,6 @@
 export type ProductCategory = 'dairy' | 'snack' | 'fresh_fruit' | 'grain_oil' | 'other'
 export type SubCategory = 'dairy' | 'snack' | 'fresh_fruit' | 'grain_oil' | 'other'
-export type ContentStyle = 'xiaohongshu' | 'minimalist' | 'fun' | 'premium' | 'girlfriend'
+export type ContentStyle = 'xiaohongshu' | 'minimalist' | 'fun' | 'premium' | 'girlfriend' | 'senior'
 export type ModuleKey = 'hook' | 'price' | 'taste' | 'trust' | 'aftercare' | 'tips' | 'cta' | 'ingredient' | 'origin' | 'brand' | 'scene' | 'feedback' | 'comparison' | 'faq'
 export type ShippingTimeliness = '24h' | '48h' | '72h' | '7d' | 'custom'
 export type ShelfLifeUnit = 'day' | 'month' | 'year'

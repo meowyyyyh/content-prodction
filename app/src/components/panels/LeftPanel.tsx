@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from '@/components/ui/select'
 import type { ProductInput, ContentStyle, SubCategory, ShippingTimeliness, ShelfLifeUnit } from '@/types'
-import { MODULE_CONFIG, STYLE_CONFIG, SUB_CATEGORY_CONFIG, SHIPPING_OPTIONS } from '@/config/modules'
+import { MODULE_CONFIG, STYLE_CONFIG, SUB_CATEGORY_CONFIG, SHIPPING_OPTIONS, VERSION_STYLE_OPTIONS } from '@/config/modules'
 
 interface LeftPanelProps { input: ProductInput; onChange: (input: ProductInput) => void; disabled: boolean; isGenerating: boolean; onGenerate: () => void; hasRequiredFields: boolean }
 interface FormErrors { productName?: string; subCategory?: string; netWeight?: string; suggestedPrice?: string; afterSalesRules?: string }
@@ -73,7 +73,8 @@ export function LeftPanel({ input, onChange, disabled, isGenerating, onGenerate 
     </CollapsibleContent></Collapsible>
 
     {/* 类目选择 */}
-    <Collapsible open={categoryOpen} onOpenChange={setCategoryOpen}><CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium hover:bg-muted/50 transition-colors">类目选择<svg width="14" height="14" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className={'shrink-0 text-muted-foreground transition-transform duration-200 ' + (categoryOpen ? 'rotate-90' : '')}><path d="M5.5 2.5l5 5-5 5" /></svg></CollapsibleTrigger><CollapsibleContent className="pt-2"><Card><CardContent className="p-4"><div className={fieldCls}><Select value="food" disabled><SelectTrigger><span>食品类目</span></SelectTrigger><SelectContent><SelectGroup><SelectItem value="food">食品类目</SelectItem></SelectGroup></SelectContent></Select></div></CardContent></Card></CollapsibleContent></Collapsible>
+	    {/* 类目选择 */}
+	    <Collapsible open={categoryOpen} onOpenChange={setCategoryOpen}><CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium hover:bg-muted/50 transition-colors">类目选择<svg width="14" height="14" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className={'shrink-0 text-muted-foreground transition-transform duration-200 ' + (categoryOpen ? 'rotate-90' : '')}><path d="M5.5 2.5l5 5-5 5" /></svg></CollapsibleTrigger><CollapsibleContent className="pt-2"><Card><CardContent className="p-4"><div className="flex flex-col gap-3"><div className={fieldCls}><Label className="text-xs text-muted-foreground">一级类目</Label><Select value="food_health" disabled><SelectTrigger className="h-8 text-sm"><span>食品保健</span></SelectTrigger><SelectContent><SelectGroup><SelectItem value="food_health">食品保健</SelectItem></SelectGroup></SelectContent></Select></div><div className={fieldCls}><Label className="text-xs text-muted-foreground">二级类目</Label><Select value="coffee_cereal_drink" disabled><SelectTrigger className="h-8 text-sm"><span>咖啡/麦片/冲饮</span></SelectTrigger><SelectContent><SelectGroup><SelectItem value="coffee_cereal_drink">咖啡/麦片/冲饮</SelectItem></SelectGroup></SelectContent></Select></div><div className={fieldCls}><Label className="text-xs text-muted-foreground">三级类目</Label><Select value="ambient_dairy" disabled><SelectTrigger className="h-8 text-sm"><span>常温乳制品</span></SelectTrigger><SelectContent><SelectGroup><SelectItem value="ambient_dairy">常温乳制品</SelectItem></SelectGroup></SelectContent></Select></div><div className={fieldCls}><Label className="text-xs text-muted-foreground">四级类目</Label><Select value="flavored_milk" disabled><SelectTrigger className="h-8 text-sm"><span>调制乳/风味牛奶</span></SelectTrigger><SelectContent><SelectGroup><SelectItem value="flavored_milk">调制乳/风味牛奶</SelectItem></SelectGroup></SelectContent></Select></div></div></CardContent></Card></CollapsibleContent></Collapsible>
 
     {/* 商品信息 */}
     <Collapsible open={productOpen} onOpenChange={setProductOpen}><CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium hover:bg-muted/50 transition-colors">商品信息<svg width="14" height="14" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className={'shrink-0 text-muted-foreground transition-transform duration-200 ' + (productOpen ? 'rotate-90' : '')}><path d="M5.5 2.5l5 5-5 5" /></svg></CollapsibleTrigger><CollapsibleContent className="pt-2">
@@ -109,6 +110,7 @@ export function LeftPanel({ input, onChange, disabled, isGenerating, onGenerate 
     {/* 生成设置 */}
     <div className="rounded-lg px-3 py-2 text-sm font-medium">生成设置</div>
     <div className="flex flex-col gap-4">
+
       {/* 笔记结构 */}
       <Card><CardHeader className="pb-3"><div className="flex items-center justify-between"><CardTitle className="text-sm">笔记结构</CardTitle><Button variant="ghost" size="sm" className="text-xs h-6 text-primary" onClick={() => { const def = MODULE_CONFIG.map(m => m.key); const sel = input.selectedModules.filter(k => def.includes(k)); sel.sort((a, b) => def.indexOf(a) - def.indexOf(b)); onChange({ ...input, moduleOrder: def, selectedModules: sel }) }}>默认排序</Button></div></CardHeader><CardContent><div className="flex flex-col gap-1.5">
         {moduleOrder.map((key, index) => { const m = MODULE_CONFIG.find(mod => mod.key === key); if (!m) return null; const isMandatory = m.category === 'mandatory'; const isSelected = input.selectedModules.includes(key)
@@ -138,13 +140,32 @@ export function LeftPanel({ input, onChange, disabled, isGenerating, onGenerate 
             <div className="flex flex-col min-w-0 flex-1"><div className="flex items-center justify-between"><span className="text-sm font-medium text-foreground">{m.label}</span>{key === 'comparison' && (<button onClick={e => { e.stopPropagation(); setPriceDialogOpen(true) }} className="text-[11px] text-muted-foreground hover:text-[#07C160] transition-colors flex items-center gap-0.5 ml-auto">配置比价清单<svg width="10" height="10" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5.5 2.5l5 5-5 5" /></svg></button>)}</div><span className="text-xs text-muted-foreground">{m.description}</span></div>
           </div>)})}
       </div></CardContent></Card>
+
+	      {/* 版本风格选择 */}
+	      <Card><CardHeader className="pb-3"><CardTitle className="text-sm">版本风格</CardTitle></CardHeader><CardContent><div className="flex flex-col gap-3">
+	        <div className="flex items-center gap-2">
+	          <span className="text-sm text-muted-foreground w-12 shrink-0">版本一</span>
+	          <Select value={input.versionStyles?.[0] || input.style || 'xiaohongshu'} onValueChange={v => onChange({ ...input, style: v as ContentStyle, versionStyles: [v as ContentStyle, input.versionStyles?.[1] || 'senior'] })} disabled={disabled}>
+	            <SelectTrigger className="flex-1 h-8 text-sm">{VERSION_STYLE_OPTIONS.find(s => s.key === (input.versionStyles?.[0] || input.style))?.label || '小红书种草风'}</SelectTrigger>
+	            <SelectContent>{VERSION_STYLE_OPTIONS.map(s => (<SelectItem key={s.key} value={s.key}>{s.label}</SelectItem>))}</SelectContent>
+	          </Select>
+	        </div>
+	        <div className="flex items-center gap-2">
+	          <span className="text-sm text-muted-foreground w-12 shrink-0">版本二</span>
+	          <Select value={input.versionStyles?.[1] || 'senior'} onValueChange={v => onChange({ ...input, versionStyles: [input.versionStyles?.[0] || input.style || 'xiaohongshu', v as ContentStyle] })} disabled={disabled}>
+	            <SelectTrigger className="flex-1 h-8 text-sm">{VERSION_STYLE_OPTIONS.find(s => s.key === (input.versionStyles?.[1] || 'senior'))?.label || '资深团长风'}</SelectTrigger>
+	            <SelectContent>{VERSION_STYLE_OPTIONS.map(s => (<SelectItem key={s.key} value={s.key}>{s.label}</SelectItem>))}</SelectContent>
+	          </Select>
+	        </div>
+	      </div></CardContent></Card>
+
     </div>
   </div>
 
   {/* 底部按钮 */}
   <div className="flex-shrink-0 flex flex-col gap-2 px-4 py-3 border-t border-border bg-sidebar">
     <button className="generate-btn w-full rounded-full flex items-center justify-center gap-2" onClick={handleGenerate} disabled={isGenerating}>
-      {isGenerating ? (<><span className="inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />生成中...</>) : (<><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="gen-icon shrink-0"><path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5z" /><path d="M18 16l.8 2.5L21 19l-2.2.5L18 22l-.8-2.5L15 19l2.2-.5z" /><path d="M6 5l.5 1.5L8 7l-1.5.5L6 9l-.5-1.5L4 7l1.5-.5z" /></svg>一次生成2版</>)}
+      {isGenerating ? (<><span className="inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />生成中...</>) : (<><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="gen-icon shrink-0"><path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5z" /><path d="M18 16l.8 2.5L21 19l-2.2.5L18 22l-.8-2.5L15 19l2.2-.5z" /><path d="M6 5l.5 1.5L8 7l-1.5.5L6 9l-.5-1.5L4 7l1.5-.5z" /></svg>立即生成</>)}
     </button>
     <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground" onClick={() => { onChange({ ...input, productName: '', subCategory: '', netWeight: '', origin: '', productionDate: '', shelfLifeValue: '', shelfLifeUnit: 'day', suggestedPrice: '', sellingPoints: '', coreIngredients: '', shippingOrigin: '', shippingTimeliness: '48h', customShippingDays: '', courier: '', extraShippingFeeEnabled: false, extraShippingFeeAreas: '', noShippingAreasEnabled: false, noShippingAreas: '', afterSalesRules: '', brandBackground: '', targetAudience: '', usageScene: '', additionalNotes: '', textLength: 'long' as const, moduleOrder: MODULE_CONFIG.map(m => m.key) }); setErrors({}) }} disabled={isGenerating}>清空配置项</Button>
   </div>

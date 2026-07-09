@@ -49,11 +49,13 @@ function autoStructure(html: string): string {
 }
 
 /** 打字机效果：逐字显示文案，约3秒完成，完成后自动结构化排版 */
-function typewrite(finalContents: Record<string, string>, onEdit: (key: string, content: string) => void, onDone: () => void) {
+function typewrite(finalContents: Record<string, string>, onEdit: (key: string, content: string) => void, onDone: () => void, stopRef: { current: (() => void) | null }) {
   const keys = Object.keys(finalContents)
   if (keys.length === 0) { onDone(); return }
-  const totalChars = keys.reduce((sum, k) => sum + finalContents[k].length, 0); const DURATION = Math.min(6000, Math.max(800, totalChars * 15)); const start = Date.now()
+  const totalChars = keys.reduce((sum, k) => sum + finalContents[k].length, 0); const DURATION = Math.min(6000, Math.max(800, totalChars * 15)); const start = Date.now(); let stopped = false
+  stopRef.current = () => { stopped = true }
   const tick = () => {
+    if (stopped) return
     const progress = Math.min(1, (Date.now() - start) / DURATION)
     let allDone = true
     for (const k of keys) {
@@ -61,10 +63,10 @@ function typewrite(finalContents: Record<string, string>, onEdit: (key: string, 
       if (n < full.length) allDone = false
       onEdit(k, full.slice(0, n))
     }
-    if (allDone) { keys.forEach(k => onEdit(k, autoStructure(finalContents[k]))); onDone() }
-    else setTimeout(tick, 33)
+    if (allDone) { keys.forEach(k => onEdit(k, autoStructure(finalContents[k]))); stopRef.current = null; onDone() }
+    else { const id = window.setTimeout(tick, 33); if (stopRef.current) { const orig = stopRef.current; stopRef.current = () => { stopped = true; clearTimeout(id); orig?.() } } }
   }
-  setTimeout(tick, 33)
+  const id = window.setTimeout(tick, 33); stopRef.current = () => { stopped = true; clearTimeout(id); stopRef.current = null }
 }
 
 type HistoryEntry = { type: 'content'; key: string; content: string } | { type: 'order'; order: string[] }
@@ -85,6 +87,8 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
   const chatRef = useRef<HTMLTextAreaElement>(null); const [chatFocused, setChatFocused] = useState(false)
   const [chatHistory, setChatHistory] = useState<{ role: string; content: string }[]>([])
   const [optimizingKeys, setOptimizingKeys] = useState<Set<string>>(new Set())
+  const abortRef = useRef<AbortController | null>(null); const snapshotRef = useRef<Record<string, string>>({}); const typewriteTimerRef = useRef<number | null>(null); const activeInstructionRef = useRef<string>('')
+  const savedRangeRef = useRef<Range | null>(null) // 保存光标位置，用于图片插入定位
 
   useEffect(() => { chatLoadingRef.current = chatLoading }, [chatLoading])
   useEffect(() => { if (triggerExpandHint && triggerExpandHint > 0 && !localStorage.getItem('expand_hint_shown')) { showToast('💡 生成的文字过少了？请尝试点击「📝 扩充文案」试试', 'info'); localStorage.setItem('expand_hint_shown', '1') } }, [triggerExpandHint])
@@ -95,13 +99,137 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
   const pushContentHistory = useCallback((key: string, oldContent: string) => { if (undoStack.length > 0) { const last = undoStack[undoStack.length - 1]; if (last.type === 'content' && last.key === key && last.content === oldContent) return } undoStack.push({ type: 'content', key, content: oldContent }); redoStack = []; if (undoStack.length > MAX_HISTORY) undoStack.shift() }, [])
   const handleEditorInput = useCallback((key: string) => { if (composingRef.current) return; const el = editorRefs.current[key]; if (!el) return; const newContent = el.innerHTML; const mod = getModule(key); const oldContent = mod?.content || ''; if (newContent !== oldContent) { pushContentHistory(key, oldContent); lastSavedRef.current[key] = newContent; onEdit(key, newContent) } }, [getModule, onEdit, pushContentHistory])
   const handleCompositionEnd = useCallback((key: string) => { composingRef.current = false; const el = editorRefs.current[key]; if (!el) return; const newContent = el.innerHTML; const mod = getModule(key); const oldContent = mod?.content || ''; if (newContent !== oldContent) { pushContentHistory(key, oldContent); lastSavedRef.current[key] = newContent; onEdit(key, newContent) } }, [getModule, onEdit, pushContentHistory])
-  const handleInsertImage = useCallback(() => { fileInputRef.current?.click() }, [])
-  const handleImagePicked = useCallback((e: React.ChangeEvent<HTMLInputElement>) => { const files = e.target.files; if (!files || files.length === 0) return; const key = pendingActionKeyRef.current || focusedKeyRef.current; if (!key) { showToast('请先点击一个编辑模块再插入图片', 'info'); e.target.value = ''; return }; const el = editorRefs.current[key]; if (!el) { e.target.value = ''; return }; el.focus(); const mod = getModule(key); if (mod) pushContentHistory(key, mod.content); let loaded = 0; Array.from(files).forEach(file => { const reader = new FileReader(); reader.onload = () => { loaded++; const img = `<img src="${reader.result}" alt="${file.name}" style="max-width:100%;border-radius:8px;margin:8px 0" />`; document.execCommand('insertHTML', false, img); if (loaded === files.length) onEdit(key, el.innerHTML) }; reader.readAsDataURL(file) }); e.target.value = '' }, [getModule, onEdit, pushContentHistory, showToast])
+  // 保存当前光标位置
+  const saveSelection = useCallback(() => {
+    const sel = window.getSelection()
+    if (sel && sel.rangeCount > 0 && sel.anchorNode) {
+      // 检查光标是否在某个编辑器内
+      for (const key of mandatoryKeys) {
+        const el = editorRefs.current[key]
+        if (el && el.contains(sel.anchorNode)) {
+          savedRangeRef.current = sel.getRangeAt(0).cloneRange()
+          return
+        }
+      }
+    }
+    savedRangeRef.current = null
+  }, [mandatoryKeys])
+
+  // 恢复光标位置到指定编辑器
+  const restoreSelection = useCallback((key: string): boolean => {
+    const el = editorRefs.current[key]
+    if (!el) return false
+    el.focus()
+    const range = savedRangeRef.current
+    if (range && el.contains(range.commonAncestorContainer)) {
+      const sel = window.getSelection()
+      sel?.removeAllRanges()
+      sel?.addRange(range)
+      return true
+    }
+    // fallback：光标放到编辑器末尾
+    const sel = window.getSelection()
+    sel?.selectAllChildren(el)
+    sel?.collapseToEnd()
+    return false
+  }, [])
+
+  // 在指定模块的光标位置插入图片
+  const insertImageAtCursor = useCallback((key: string, file: File, dataUrl: string) => {
+    const el = editorRefs.current[key]
+    if (!el) return
+    const mod = getModule(key)
+    if (mod) pushContentHistory(key, mod.content)
+    restoreSelection(key)
+    const img = `<img src="${dataUrl}" alt="${file.name}" style="max-width:100%;border-radius:8px;margin:8px 0" />`
+    document.execCommand('insertHTML', false, img)
+    // 插入后在图片后面加一个换行，方便继续编辑
+    document.execCommand('insertHTML', false, '<br>')
+    onEdit(key, el.innerHTML)
+    el.focus()
+  }, [getModule, onEdit, pushContentHistory, restoreSelection])
+
+  const handleInsertImage = useCallback(() => {
+    saveSelection() // 保存当前光标位置
+    fileInputRef.current?.click()
+  }, [saveSelection])
+
+  const handleImagePicked = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) { e.target.value = ''; return }
+    const key = pendingActionKeyRef.current || focusedKeyRef.current
+    if (!key) { showToast('请先点击一个编辑模块再插入图片', 'info'); e.target.value = ''; return }
+    const el = editorRefs.current[key]
+    if (!el) { e.target.value = ''; return }
+    // 如果之前没有保存光标位置，聚焦编辑器并定位到末尾
+    if (!savedRangeRef.current) {
+      el.focus()
+      const sel = window.getSelection()
+      sel?.selectAllChildren(el)
+      sel?.collapseToEnd()
+    }
+    let loaded = 0
+    Array.from(files).forEach(file => {
+      const reader = new FileReader()
+      reader.onload = () => {
+        loaded++
+        insertImageAtCursor(key, file, reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    })
+    e.target.value = ''
+  }, [focusedKeyRef, showToast, insertImageAtCursor])
+
+  // 拖拽图片到编辑器
+  const handleEditorDrop = useCallback((e: React.DragEvent, key: string) => {
+    const files = e.dataTransfer.files
+    if (!files || files.length === 0) return
+    const imageFiles = Array.from(files).filter(f => f.type.startsWith('image/'))
+    if (imageFiles.length === 0) return
+    e.preventDefault()
+    // 用 drop 的位置作为光标位置
+    const el = editorRefs.current[key]
+    if (!el) return
+    el.focus()
+    // 尝试从 drop 坐标获取光标位置
+    if (document.caretPositionFromPoint) {
+      const pos = document.caretPositionFromPoint(e.clientX, e.clientY)
+      if (pos && el.contains(pos.offsetNode)) {
+        const range = document.createRange()
+        range.setStart(pos.offsetNode, pos.offset)
+        range.collapse(true)
+        const sel = window.getSelection()
+        sel?.removeAllRanges()
+        sel?.addRange(range)
+        savedRangeRef.current = range.cloneRange()
+      }
+    } else if (document.caretRangeFromPoint) {
+      const range = document.caretRangeFromPoint(e.clientX, e.clientY)
+      if (range && el.contains(range.startContainer)) {
+        const sel = window.getSelection()
+        sel?.removeAllRanges()
+        sel?.addRange(range)
+        savedRangeRef.current = range.cloneRange()
+      }
+    }
+    imageFiles.forEach(file => {
+      const reader = new FileReader()
+      reader.onload = () => insertImageAtCursor(key, file, reader.result as string)
+      reader.readAsDataURL(file)
+    })
+  }, [insertImageAtCursor])
   const handleExportWord = useCallback(() => { const content = mandatoryKeys.map(key => getModule(key)?.content || '').filter(Boolean).join('<br>'); const body = content.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); const html = `<html><head><meta charset="utf-8"><style>body{font-family:'PingFang SC',sans-serif;line-height:1.8;padding:40px;white-space:pre-wrap}</style></head><body>${body}</body></html>`; const blob = new Blob([html], { type: 'application/msword' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = '笔记定稿.doc'; a.click(); URL.revokeObjectURL(a.href) }, [mandatoryKeys, getModule])
 
   const handleChatSubmit = useCallback(async (instructionOverride?: string) => { const instruction = (instructionOverride || chatInput).trim(); if (!instruction || chatLoading || mandatoryKeys.length === 0) return;
   // 去除emoji：本地处理，不调 AI
   if (instruction === '__STRIP_EMOJI__') { setChatLoading(true); showToast('正在去除emoji...', 'info'); const targetModule = focusedKeyRef.current; const keys = targetModule ? [targetModule] : mandatoryKeys.filter(k => getModule(k)?.content); let changed = 0; keys.forEach(k => { const mod = getModule(k); if (!mod?.content) return; const stripped = mod.content.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}‍️]/gu, '').replace(/\s{2,}/g, ' ').trim(); if (stripped !== mod.content.replace(/<[^>]+>/g, '').trim()) { pushContentHistory(k, mod.content); delete lastSavedRef.current[k]; onEdit(k, stripped); changed++ } }); setChatLoading(false); showToast(changed > 0 ? `已去除 ${changed} 个模块的emoji` : '没有找到emoji', changed > 0 ? 'success' : 'info'); chatRef.current?.focus(); return }
+  // 保存快照（用于中止时恢复）
+  const snapshot: Record<string, string> = {}
+  mandatoryKeys.forEach(k => { const mod = getModule(k); if (mod) snapshot[k] = mod.content || '' })
+  snapshotRef.current = snapshot
+  // 创建 AbortController
+  const controller = new AbortController(); abortRef.current = controller
+  activeInstructionRef.current = instruction
   setChatInput(''); setChatLoading(true); showToast('AI 正在优化文案...', 'info'); const allModules = mandatoryKeys.map(key => { const mod = getModule(key); return { key, label: getLabel(key), content: mod?.content || '' } })
     // 模块定位：聚焦的模块优先，否则扫描指令中的关键词匹配模块 label
     const targetModule = focusedKeyRef.current || (() => { let best: { key: string; len: number } | null = null; for (const { key, label } of allModules) { if (instruction.includes(label) && label.length > (best?.len || 0)) { best = { key, len: label.length } } } return best?.key || null })()
@@ -110,7 +238,7 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
     const keysToOptimize = targetModule ? [targetModule] : mandatoryKeys.filter(k => getModule(k)?.content)
     setOptimizingKeys(new Set(keysToOptimize))
     console.log('[CenterPanel] targetModule:', targetModule, '| 发送模块:', moduleList.map(m => m.key).join(', '), '| 内容长度:', moduleList.map(m => m.key + ':' + (m.content?.replace(/<[^>]+>/g,'').length || 0)).join(', '))
-    try { const response = await fetch('/api/chat/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instruction, modules: moduleList, history: chatHistory, targetModule }) }); if (!response.ok) throw new Error('API error'); const reader = response.body!.getReader(); const decoder = new TextDecoder(); let buf = ''; const contents: Record<string, string> = {}; let curMod = ''
+    try { const response = await fetch('/api/chat/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instruction, modules: moduleList, history: chatHistory, targetModule }), signal: controller.signal }); if (!response.ok) throw new Error('API error'); const reader = response.body!.getReader(); const decoder = new TextDecoder(); let buf = ''; const contents: Record<string, string> = {}; let curMod = ''
       while (true) { const { done, value } = await reader.read(); if (done) break; buf += decoder.decode(value, { stream: true }); const lines = buf.split('\n'); buf = lines.pop() || ''; for (const line of lines) { if (!line.startsWith('data: ')) continue; const d = line.slice(6); let p; try { p = JSON.parse(d) } catch { continue }; if (p.type === 'done') continue; if (p.type === 'text' && p.content) { contents[curMod] = (contents[curMod] || '') + p.content; const m = /===(\w+)===/.exec(contents[curMod] || ''); if (m) { const matchedKey = m[1]; const sentKeys = moduleList.map(m => m.key); if (matchedKey === 'SKIP' || sentKeys.includes(matchedKey) || (!targetModule && mandatoryKeys.includes(matchedKey))) { const idx = (contents[curMod] || '').indexOf(m[0]); const before = (contents[curMod] || '').slice(0, idx); const after = (contents[curMod] || '').slice(idx + m[0].length); const prevMod = curMod; if (before.trim()) contents[prevMod] = before; else delete contents[prevMod]; curMod = matchedKey; contents[curMod] = (contents[curMod] || '') + after } }
         if (contents['SKIP']) { showToast('抱歉，我仅支持帮您优化文案哦～'); setChatLoading(false); setOptimizingKeys(new Set()); chatRef.current?.focus(); return } } } }
       if (contents['SKIP']) { showToast('抱歉，我仅支持帮您优化文案哦～'); setChatLoading(false); setOptimizingKeys(new Set()); chatRef.current?.focus(); return }
@@ -121,10 +249,28 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
       processKeys.forEach(k => { if (contents[k] && (!targetModule || k === targetModule)) { const mod = getModule(k); const oldContent = mod?.content || ''; const oldPlain = oldContent.replace(/<[^>]+>/g, '').trim(); const newPlain = contents[k].replace(/===\w+===/g, '').replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').trim(); console.log(`[CenterPanel] 模块 ${k}: 原文${oldPlain.length}字 → 新文${newPlain.length}字${oldPlain === newPlain ? ' (未变化!)' : ''}`); console.log(`  原文预览: ${oldPlain.slice(0, 80)}`); console.log(`  新文预览: ${newPlain.slice(0, 80)}`); if (oldPlain !== newPlain) hasChange = true; if (oldContent) pushContentHistory(k, oldContent); delete lastSavedRef.current[k]; finalContents[k] = (() => { let t = contents[k].replace(/===\w+===/g, ''); t = t.replace(/(?:^|\n)\s*(?:["‘]?\s*(?:【[^】]*】|\[[^\]]*\]|---[^-]*---|\[文案\]|文案)\s*["’]?|===\w*===)\s*(?:<br\s*\/?>|\n)*/gi, '\n'); t = t.replace(/\[\]/g, ''); t = t.replace(/===\w*===/g, ''); t = t.replace(/^\[|\]$/gm, ''); t = t.replace(/^\]|\[$/gm, ''); t = t.replace(/<br\s*\/?>/gi, '\n').replace(/<\/tr>/gi, '\n').replace(/<\/t[dh]>\s*<t[dh][^>]*>/gi, ' / ').replace(/<[^>]+>/g, '').replace(/\[BR\]/g, '<br>').replace(/\n/g, '<br>'); t = t.replace(/^(<br\s*\/?>)+/i, '').trim(); return t })() } })
       // 去掉骨架屏，启动打字机效果
       setOptimizingKeys(new Set()); const successMsg = hasChange ? '优化成功' : '😭 我溜号了，再让我执行一次吧～'
-      typewrite(finalContents, onEdit, () => { setChatLoading(false); showToast(successMsg, hasChange ? 'success' : 'info'); setChatHistory(prev => [...prev.slice(-4), { role: 'user', content: instruction }, { role: 'assistant', content: '已完成文案优化' }]); if (targetModule) { setFocusedKey(targetModule); focusedKeyRef.current = targetModule; setTimeout(() => editorRefs.current[targetModule]?.focus(), 50) } })
-    } catch (e) { console.error('Chat error:', e); showToast('优化失败，请重试', 'error'); setOptimizingKeys(new Set()); setChatLoading(false) };
+      typewrite(finalContents, onEdit, () => { snapshotRef.current = {}; abortRef.current = null; setChatLoading(false); showToast(successMsg, hasChange ? 'success' : 'info'); setChatHistory(prev => [...prev.slice(-4), { role: 'user', content: instruction }, { role: 'assistant', content: '已完成文案优化' }]); if (targetModule) { setFocusedKey(targetModule); focusedKeyRef.current = targetModule; setTimeout(() => editorRefs.current[targetModule]?.focus(), 50) } }, typewriteTimerRef)
+    } catch (e: any) { if (e?.name === 'AbortError') { /* handleStop 已处理 */ return } console.error('Chat error:', e); snapshotRef.current = {}; abortRef.current = null; showToast('优化失败，请重试', 'error'); setOptimizingKeys(new Set()); setChatLoading(false) };
     setOptimizingKeys(new Set()); if (!targetModule) chatRef.current?.focus() }, [chatInput, chatLoading, mandatoryKeys, getModule, onEdit, pushContentHistory, showToast])
   const handleChatKeyDown = useCallback((e: React.KeyboardEvent) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatSubmit() } }, [handleChatSubmit])
+
+  const handleStop = useCallback(() => {
+    // 1. 中断 fetch
+    if (abortRef.current) { abortRef.current.abort(); abortRef.current = null }
+    // 2. 中断打字机动画
+    if (typewriteTimerRef.current) { typewriteTimerRef.current(); typewriteTimerRef.current = null }
+    // 3. 恢复文稿快照
+    const snap = snapshotRef.current
+    if (snap && Object.keys(snap).length > 0) {
+      Object.entries(snap).forEach(([key, content]) => {
+        delete lastSavedRef.current[key]
+        onEdit(key, content)
+      })
+    }
+    // 4. 清理状态
+    setChatLoading(false); setOptimizingKeys(new Set()); snapshotRef.current = {}
+    showToast('已中止操作，文稿已恢复', 'info')
+  }, [onEdit, showToast])
 
   const handleDragStart = useCallback((e: React.DragEvent, index: number) => { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(index)); const img = new Image(); img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; e.dataTransfer.setDragImage(img, 0, 0) }, [])
   const handleDrop = useCallback((e: React.DragEvent, targetIndex: number) => { e.preventDefault(); setDragOverIndex(null); const sourceIndex = Number(e.dataTransfer.getData('text/plain')); if (isNaN(sourceIndex) || sourceIndex === targetIndex) return; undoStack.push({ type: 'order', order: [...mandatoryKeys] }); redoStack = []; const newOrder = [...mandatoryKeys]; const [item] = newOrder.splice(sourceIndex, 1); newOrder.splice(targetIndex, 0, item); onReorder(newOrder) }, [mandatoryKeys, onReorder])
@@ -146,14 +292,25 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
           return (<div key={key} onDragOver={e => { e.preventDefault(); setDragOverIndex(index) }} onDragLeave={() => setDragOverIndex(null)} onDrop={e => handleDrop(e, index)} className={`relative group ${index > 0 ? 'mt-8' : ''} transition-all duration-200 rounded-lg ${focusedKey === key ? 'ring-2 ring-primary/20 bg-primary/5 px-2 py-2 -mx-2 -my-2' : ''} ${dragOverIndex === index ? 'border-t-2 border-primary bg-primary/5 -mt-[2px]' : 'border-t-2 border-transparent'}`}>
             <div className="flex items-center justify-between mb-1"><div draggable onDragStart={e => handleDragStart(e, index)} onDragEnd={() => setDragOverIndex(null)} className={`inline-flex items-center gap-1 cursor-grab active:cursor-grabbing transition-colors rounded ${focusedKey === key ? 'text-primary' : 'text-muted-foreground/25 hover:text-muted-foreground/50'}`}><span className="text-xs select-none leading-none">⋮⋮</span><span className={`text-[11px] font-medium select-none leading-tight whitespace-nowrap ${focusedKey === key ? 'text-primary' : 'text-muted-foreground/30'}`}>{getLabel(key)}</span></div>
             <button onClick={() => { const m = getModule(key); if (m && m.content && m.content !== '<br>' && !confirm('确定删除？')) return; onDeleteBlock(key) }} className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity text-muted-foreground/30 hover:text-destructive"><svg width="14" height="14" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2.5 4.5h10M5.5 4.5V3a1 1 0 011-1h2a1 1 0 011 1v1.5M4.5 4.5l.5 8.5a1 1 0 001 1h3a1 1 0 001-1l.5-8.5" /></svg></button></div>
-            <div>{optimizingKeys.has(key) ? (<div key="skel" className="flex flex-col gap-2 py-0.5">{Array.from({ length: estimateLines(mod?.content || '') }, (_, i) => (<Skeleton key={i} className={`h-4 rounded ${SKEL_WIDTHS[i % SKEL_WIDTHS.length]}`} />))}</div>) : (<div key="editor" data-block-key={key} ref={el => { editorRefs.current[key] = el; if (el && mod && mod.content && mod.content !== '<br>' && el.innerHTML !== mod.content && !el.textContent?.trim()) el.innerHTML = mod.content }} contentEditable suppressContentEditableWarning data-placeholder="从右栏版本候选区点击「采纳」后，文案将出现在此处供编辑定稿" onFocus={() => { focusedKeyRef.current = key; setFocusedKey(key); savePointRef.current[key] = editorRefs.current[key]?.innerHTML || '' }} onCompositionStart={() => { composingRef.current = true }} onCompositionEnd={() => handleCompositionEnd(key)} onInput={() => handleEditorInput(key)} onBlur={() => { setTimeout(() => { if (chatLoadingRef.current) return; const ae = document.activeElement; if (ae !== chatRef.current && focusedKeyRef.current === key) { setFocusedKey(null); focusedKeyRef.current = null } }, 120) }} className="text-base leading-relaxed outline-none text-justify empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40 empty:before:italic" style={{ lineHeight: '1.7' }} />)}</div>
+            <div>{optimizingKeys.has(key) ? (<div key="skel" className="flex flex-col gap-2 py-0.5">{Array.from({ length: estimateLines(mod?.content || '') }, (_, i) => (<Skeleton key={i} className={`h-4 rounded ${SKEL_WIDTHS[i % SKEL_WIDTHS.length]}`} />))}</div>) : (<div key="editor" data-block-key={key} ref={el => { editorRefs.current[key] = el; if (el && mod && mod.content && mod.content !== '<br>' && el.innerHTML !== mod.content && !el.textContent?.trim()) el.innerHTML = mod.content }} contentEditable suppressContentEditableWarning onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy' }} onDrop={e => handleEditorDrop(e, key)} data-placeholder="从右栏版本候选区点击「采纳」后，文案将出现在此处供编辑定稿" onFocus={() => { focusedKeyRef.current = key; setFocusedKey(key); savePointRef.current[key] = editorRefs.current[key]?.innerHTML || '' }} onCompositionStart={() => { composingRef.current = true }} onCompositionEnd={() => handleCompositionEnd(key)} onInput={() => handleEditorInput(key)} onBlur={() => { saveSelection(); setTimeout(() => { if (chatLoadingRef.current) return; const ae = document.activeElement; if (ae !== chatRef.current && focusedKeyRef.current === key) { setFocusedKey(null); focusedKeyRef.current = null } }, 120) }} className="text-base leading-relaxed outline-none text-justify empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40 empty:before:italic" style={{ lineHeight: '1.7' }} />)}</div>
           </div>)})}</div>)}
       </div>
     </div>
     <div className="flex-shrink-0 h-10 pointer-events-none" style={{ background: 'linear-gradient(to top, hsl(var(--background)), transparent)', marginTop: '-2.5rem', position: 'relative', zIndex: 1 }} />
     <div className="flex-shrink-0 bg-background px-4 py-3" style={{ boxShadow: '0 -6px 16px rgba(0,0,0,0.04), 0 -2px 4px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.04)' }}>
-      <div className="flex items-center gap-1.5 mb-2 overflow-x-auto"><span className="text-[11px] text-muted-foreground/60 shrink-0 mr-0.5">帮我改：</span>{[{ label: '👭 闺蜜风', instruction: '改写为日常闺蜜风（按系统指令中的闺蜜风各模块写作规则执行）', cls: 'bg-pink-50 text-pink-700 border border-pink-200 hover:bg-pink-100', tip: '像跟闺蜜聊天一样轻松推荐' },{ label: '📋 简约风', instruction: '改写为简约功能风（按系统指令中的简约风各模块写作规则执行）', cls: 'bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100', tip: '零emoji纯文字，极简参数风格' },{ label: '🤪 趣味风', instruction: '改写为趣味风（按系统指令中的趣味风各模块写作规则执行）', cls: 'bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100', tip: '脱口秀段子手，夸张幽默反差' },{ label: '✨ 高端风', instruction: '改写为高端大气风（按系统指令中的高端风各模块写作规则执行）', cls: 'bg-stone-50 text-stone-700 border border-stone-200 hover:bg-stone-100', tip: '一句一段，留白美学，不提价格' },{ label: '📝 扩充文案', instruction: '文字扩充（篇幅翻倍）', cls: 'bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100', tip: '篇幅翻倍，丰富细节和场景描写' },{ label: '✨ 增加emoji', instruction: '增加emoji（只加emoji不改文字不改排版，仅插入emoji）', cls: 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 hover:text-amber-800', tip: '只加emoji不改文字，大胆穿插叠加' },{ label: '🚫 去除emoji', instruction: '__STRIP_EMOJI__', cls: 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100', tip: '一键过滤所有emoji，保留纯文字' },{ label: '结构化排版', instruction: '结构化排版（只调整换行和分段，不改任何文字和emoji）', cls: 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground', tip: '智能分段换行，不改任何文字内容' },{ label: '强化卖点', instruction: '强化卖点', cls: 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground', tip: '放大价格优势和差异化亮点' },{ label: '口语化改写', instruction: '口语化改写', cls: 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground', tip: '书面语转口语，像在跟朋友聊天' }].map(item => (<Tooltip key={item.label} text={item.tip}><button disabled={chatLoading} onClick={() => handleChatSubmit(item.instruction)} className={`shrink-0 rounded-full px-3 py-1 text-[11px] active:scale-95 transition-all duration-150 ${chatLoading ? 'opacity-40 cursor-not-allowed' : item.cls}`}>{item.label}</button></Tooltip>))}</div>
-      <Textarea ref={chatRef} value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={handleChatKeyDown} onFocus={() => setChatFocused(true)} onBlur={() => { setChatFocused(false); if (!chatInput.trim()) setChatInput('') }} placeholder={focusedKey ? `当前聚焦在「${getLabel(focusedKey)}」，可以和我讲讲您想如何优化此部分呢？按Enter键发送` : '有什么想让我帮您优化的请和我讲哦～按Enter键发送'} disabled={chatLoading} rows={chatFocused ? 4 : 2} className="min-h-[36px] resize-none rounded-lg bg-muted/50 text-sm transition-all duration-200 placeholder:text-muted-foreground/40 focus-visible:ring-1 focus-visible:ring-border/60" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 2px 6px rgba(0,0,0,0.03)', maxHeight: '220px' }} />
+      <div className="flex items-center gap-1.5 mb-2 overflow-x-auto"><span className="text-[11px] text-muted-foreground/60 shrink-0 mr-0.5">帮我改：</span>{[{ label: '🍠 小红书风', instruction: '改写为小红书种草风（按系统指令中的小红书风各模块写作规则执行）', cls: 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100', tip: '强钩子+高密度emoji+价格轰炸+紧迫感' },{ label: '👭 闺蜜风', instruction: '改写为日常闺蜜风（按系统指令中的闺蜜风各模块写作规则执行）', cls: 'bg-pink-50 text-pink-700 border border-pink-200 hover:bg-pink-100', tip: '像跟闺蜜聊天一样轻松推荐' },{ label: '📋 简约风', instruction: '改写为简约功能风（按系统指令中的简约风各模块写作规则执行）', cls: 'bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100', tip: '零emoji纯文字，极简参数风格' },{ label: '🤪 趣味风', instruction: '改写为趣味风（按系统指令中的趣味风各模块写作规则执行）', cls: 'bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100', tip: '脱口秀段子手，夸张幽默反差' },{ label: '✨ 高端风', instruction: '改写为高端大气风（按系统指令中的高端风各模块写作规则执行）', cls: 'bg-stone-50 text-stone-700 border border-stone-200 hover:bg-stone-100', tip: '一句一段，留白美学，不提价格' },{ label: '💼 团长风', instruction: '改写为资深团长风（按系统指令中的资深团长风各模块写作规则执行）', cls: 'bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100', tip: '老团长视角，直接报价不装不催单' },{ label: '📝 扩充文案', instruction: '文字扩充（篇幅翻倍）', cls: 'bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100', tip: '篇幅翻倍，丰富细节和场景描写' },{ label: '✨ 增加emoji', instruction: '增加emoji（只加emoji不改文字不改排版，仅插入emoji）', cls: 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 hover:text-amber-800', tip: '只加emoji不改文字，大胆穿插叠加' },{ label: '🚫 去除emoji', instruction: '__STRIP_EMOJI__', cls: 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100', tip: '一键过滤所有emoji，保留纯文字' },{ label: '结构化排版', instruction: '结构化排版（只调整换行和分段，不改任何文字和emoji）', cls: 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground', tip: '智能分段换行，不改任何文字内容' },{ label: '强化卖点', instruction: '强化卖点', cls: 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground', tip: '放大价格优势和差异化亮点' },{ label: '口语化改写', instruction: '口语化改写', cls: 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground', tip: '书面语转口语，像在跟朋友聊天' }].map(item => (<Tooltip key={item.label} text={item.tip}><button disabled={chatLoading} onClick={() => handleChatSubmit(item.instruction)} className={`shrink-0 rounded-full px-3 py-1 text-[11px] active:scale-95 transition-all duration-150 ${chatLoading ? 'opacity-40 cursor-not-allowed' : item.cls}`}>{item.label}</button></Tooltip>))}</div>
+      {chatLoading ? (
+        <div className="flex items-center gap-3 rounded-lg bg-muted/30 px-4 py-3 text-sm">
+          <span className="inline-block size-4 animate-spin rounded-full border-2 border-primary border-t-transparent shrink-0" />
+          <span className="text-muted-foreground flex-1 truncate">AI 正在优化文案...</span>
+          <button onClick={handleStop} className="inline-flex items-center gap-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 text-xs font-medium px-3 py-1.5 transition-colors shrink-0 active:scale-95">
+            <svg width="12" height="12" viewBox="0 0 15 15" fill="currentColor"><rect x="2" y="2" width="11" height="11" rx="1.5" /></svg>
+            停止
+          </button>
+        </div>
+      ) : (
+        <Textarea ref={chatRef} value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={handleChatKeyDown} onFocus={() => setChatFocused(true)} onBlur={() => { setChatFocused(false); if (!chatInput.trim()) setChatInput('') }} placeholder={focusedKey ? `当前聚焦在「${getLabel(focusedKey)}」，可以和我讲讲您想如何优化此部分呢？按Enter键发送` : '有什么想让我帮您优化的请和我讲哦～按Enter键发送'} disabled={chatLoading} rows={chatFocused ? 4 : 2} className="min-h-[36px] resize-none rounded-lg bg-muted/50 text-sm transition-all duration-200 placeholder:text-muted-foreground/40 focus-visible:ring-1 focus-visible:ring-border/60" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 2px 6px rgba(0,0,0,0.03)', maxHeight: '220px' }} />
+      )}
     </div>
   </div>)
 }

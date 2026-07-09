@@ -40,5 +40,13 @@ export const SHIPPING_OPTIONS: ShippingOption[] = [
   { key: '24h', label: '24 小时内发货' }, { key: '48h', label: '48 小时内发货' }, { key: '72h', label: '72 小时内发货' }, { key: '7d', label: '7 天内发货' }, { key: 'custom', label: '自定义天数' },
 ]
 
+// 全部风格（含内部风格 senior），用于版本标签和选择器
+export const STYLE_LABEL_MAP: Record<string, string> = {
+  xiaohongshu: '小红书种草风', minimalist: '简约功能风', fun: '趣味风', premium: '高端大气风', girlfriend: '日常闺蜜风', senior: '资深团长风',
+}
+export const VERSION_STYLE_OPTIONS: { key: string; label: string }[] = [
+  { key: 'xiaohongshu', label: '小红书种草风' }, { key: 'girlfriend', label: '日常闺蜜风' }, { key: 'minimalist', label: '简约功能风' }, { key: 'fun', label: '趣味风' }, { key: 'premium', label: '高端大气风' }, { key: 'senior', label: '资深团长风' },
+]
+
 export const getMandatoryModules = (): ModuleConfig[] => MODULE_CONFIG.filter(m => m.category === 'mandatory')
 export const getOptionalModules = (): ModuleConfig[] => MODULE_CONFIG.filter(m => m.category === 'optional')

@@ -4,7 +4,7 @@ import { Separator } from '@/components/ui/separator'
 import { LeftPanel } from '@/components/panels/LeftPanel'
 import { CenterPanel } from '@/components/panels/CenterPanel'
 import { RightPanel } from '@/components/panels/RightPanel'
-import { MODULE_CONFIG, STYLE_CONFIG, SHORT_TEMPLATE } from '@/config/modules'
+import { MODULE_CONFIG, STYLE_CONFIG, SHORT_TEMPLATE, STYLE_LABEL_MAP } from '@/config/modules'
 import type { ProductInput, ModuleResult, GenerateStatus, ModuleKey, ContentStyle, ShippingTimeliness, GenerateCount } from '@/types'
 
 const DEFAULT_INPUT: ProductInput = {
@@ -23,6 +23,7 @@ const DEFAULT_INPUT: ProductInput = {
   moduleOrder: MODULE_CONFIG.map(m => m.key), // 14模块完整排序 generateCount: 2 as GenerateCount,
   textLength: 'long' as const,
   enableRAG: true, enableCompliance: true,
+  versionStyles: ['xiaohongshu', 'senior'] as ContentStyle[],
 }
 
 export default function App() {
@@ -49,12 +50,14 @@ export default function App() {
     const makeModules = () => orderedKeys.map(key => { const config = MODULE_CONFIG.find(m => m.key === key); return { moduleKey: key, moduleLabel: config?.label || key, content: '', status: 'loading' as const, adopted: false } })
     const v1 = makeModules(); const v2 = makeModules()
     setRightModulesV1(v1); setRightModulesV2(v2)
-    setVersionLabelV1('')
-    setVersionLabelV2('')
+    const v1Style = input.versionStyles?.[0] || input.style || 'xiaohongshu'
+    const v2Style = input.versionStyles?.[1] || 'senior'
+    setVersionLabelV1(STYLE_LABEL_MAP[v1Style] || v1Style)
+    setVersionLabelV2(STYLE_LABEL_MAP[v2Style] || v2Style)
     setStatus('generating')
     let doneCount = 0; const onStreamDone = () => { doneCount++; if (doneCount >= 2) setStatus('completed') }
-    streamGenerate(input, orderedKeys, 'taste', v1, setRightModulesV1, onStreamDone)
-    streamGenerate(input, orderedKeys, 'value', v2, setRightModulesV2, onStreamDone)
+    streamGenerate({ ...input, style: v1Style }, orderedKeys, 'taste', v1, setRightModulesV1, onStreamDone)
+    streamGenerate({ ...input, style: v2Style }, orderedKeys, 'taste', v2, setRightModulesV2, onStreamDone)
     setTimeout(() => { if (doneCount < 2) { doneCount = 2; setStatus('completed') } }, 90000)
   }, [hasRequiredFields, input])
 
