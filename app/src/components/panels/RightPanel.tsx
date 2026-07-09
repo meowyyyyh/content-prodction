@@ -16,7 +16,7 @@ function VersionCard({ version, label, modules, isGenerating, onAdopt, onAdoptAl
   const allCompleted = modules.every(m => m.status === 'completed')
   return (<div className="flex-1 min-w-0"><div className="flex items-center justify-between mb-3"><h3 className="text-sm font-semibold text-foreground">版本{version}：{label}</h3>{allCompleted && modules.length > 0 && (<button onClick={() => onAdoptAll(modules)} className="inline-flex items-center rounded-md bg-[#07C160] px-3 py-1 text-xs font-medium text-white transition-all duration-150 hover:bg-[#06AD56] active:scale-95">采纳</button>)}</div>
     <div className="flex flex-col gap-2.5">{modules.map(mod => { const isLoading = isGenerating && mod.status === 'loading'; const isCompleted = mod.status === 'completed'
-      return (<div key={mod.moduleKey} className="rounded-lg border border-border bg-white overflow-hidden"><div className="flex items-center justify-between px-3 py-2 bg-muted/40 border-b border-border/40"><span className="text-xs font-semibold text-foreground/70">{MODULE_LABELS[mod.moduleKey] || mod.moduleLabel}</span>{isLoading && <Badge variant="secondary" className="text-[10px]">生成中</Badge>}{isCompleted && (<button onClick={() => onAdopt(mod.moduleKey, mod.content)} className="inline-flex items-center rounded-md border border-[#07C160] bg-transparent px-3 py-1 text-xs font-medium text-[#07C160] transition-all duration-150 hover:bg-[#07C160]/10 active:scale-95">采纳</button>)}</div>
+      return (<div key={mod.moduleKey} className="rounded-lg border border-border bg-card overflow-hidden"><div className="flex items-center justify-between px-3 py-2 bg-muted/40 border-b border-border/40"><span className="text-xs font-semibold text-foreground/70">{MODULE_LABELS[mod.moduleKey] || mod.moduleLabel}</span>{isLoading && <Badge variant="secondary" className="text-[10px]">生成中</Badge>}{isCompleted && (<button onClick={() => onAdopt(mod.moduleKey, mod.content)} className="inline-flex items-center rounded-md border border-[#07C160] bg-transparent px-3 py-1 text-xs font-medium text-[#07C160] transition-all duration-150 hover:bg-[#07C160]/10 active:scale-95">采纳</button>)}</div>
       <div className="p-3">{isLoading && (<div className="flex flex-col gap-2"><Skeleton className="h-4 w-3/4" /><Skeleton className="h-4 w-full" /><Skeleton className="h-4 w-2/3" /></div>)}{isCompleted && (<div className="text-base text-foreground whitespace-pre-wrap" style={{ lineHeight: '1.7' }}>{mod.content}{mod.complianceHits && mod.complianceHits.length > 0 ? (<div className='mt-2 flex flex-wrap gap-1'>{mod.complianceHits.map((h,i) => (<span key={i} className='inline-flex items-center rounded-sm bg-amber-50 border border-amber-200 px-1.5 py-0.5 text-[10px] text-amber-700' title={h.violationType + ': ' + h.flaggedText}>⚠ {h.flaggedText}</span>))}</div>) : null}</div>)}</div></div>)})}</div></div>)
 }
 
@@ -39,7 +39,7 @@ export function RightPanel({ status, modulesV1, modulesV2, versionLabelV1, versi
       const isCompleted2 = mod2?.status === 'completed'
       return (
         <div key={mod.moduleKey} className="flex gap-6">
-          <div className="flex-1 min-w-0 rounded-lg border border-border bg-white overflow-hidden">
+          <div className="flex-1 min-w-0 rounded-lg border border-border bg-card overflow-hidden">
             <div className="flex items-center justify-between px-3 py-2 bg-muted/40 border-b border-border/40">
               <span className="text-xs font-semibold text-foreground/70">{MODULE_LABELS[mod.moduleKey] || mod.moduleLabel}</span>
               {isGenerating && mod.status === 'loading' && <Badge variant="secondary" className="text-[10px]">生成中</Badge>}
@@ -50,7 +50,7 @@ export function RightPanel({ status, modulesV1, modulesV2, versionLabelV1, versi
               {isCompleted && (<div className="text-base text-foreground whitespace-pre-wrap" style={{ lineHeight: '1.7' }}>{mod.content}</div>)}
             </div>
           </div>
-          <div className="flex-1 min-w-0 rounded-lg border border-border bg-white overflow-hidden">
+          <div className="flex-1 min-w-0 rounded-lg border border-border bg-card overflow-hidden">
             <div className="flex items-center justify-between px-3 py-2 bg-muted/40 border-b border-border/40">
               <span className="text-xs font-semibold text-foreground/70">{mod2 ? (MODULE_LABELS[mod2.moduleKey] || mod2.moduleLabel) : ''}</span>
               {isGenerating && mod2?.status === 'loading' && <Badge variant="secondary" className="text-[10px]">生成中</Badge>}
