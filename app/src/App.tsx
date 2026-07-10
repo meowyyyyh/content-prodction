@@ -75,15 +75,29 @@ export default function App() {
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden">
       {/* 全局顶部导航 */}
-      <header className="flex-shrink-0 flex items-center justify-between h-12 px-6 bg-background border-b border-border">
-        <div className="flex items-center gap-2.5">
-          <div className="flex items-center justify-center size-7 rounded-lg bg-[#07C160] text-white text-sm font-bold">C</div>
-          <span className="text-sm font-semibold text-foreground">快稿种草小助手</span>
+      <header className="flex-shrink-0 flex items-center justify-between h-14 px-6 bg-background border-b border-border">
+        <div className="flex items-center gap-3">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+            <defs>
+              <linearGradient id="logoBg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#2DD46B"/>
+                <stop offset="1" stopColor="#07C160"/>
+              </linearGradient>
+            </defs>
+            <rect width="36" height="36" rx="9" fill="url(#logoBg)"/>
+            {/* 闪电 + 嫩芽结合的造型 */}
+            <path d="M20 27V18l3-7" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M20 18h-6l3-8" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M14 10l4 1.5" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+            <circle cx="25.5" cy="10" r="1.5" fill="#fff" opacity="0.5"/>
+          </svg>
+          <div className="flex flex-col leading-tight">
+            <span className="text-[15px] font-bold tracking-wide text-foreground" style={{ letterSpacing: '0.05em' }}>快稿种草</span>
+            <span className="text-[10px] font-medium text-muted-foreground tracking-wider" style={{ letterSpacing: '0.15em' }}>AI 小助手</span>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <button onClick={() => setDarkMode(!darkMode)} className="inline-flex items-center justify-center size-8 rounded-md hover:bg-muted transition-colors text-muted-foreground" title={darkMode ? '切换白天模式' : '切换暗黑模式'}>{darkMode ? (<svg width="16" height="16" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="7.5" cy="7.5" r="2.5"/><path d="M7.5 1.5v2M7.5 11.5v2M1.5 7.5h2M11.5 7.5h2M3.3 3.3l1.4 1.4M10.3 10.3l1.4 1.4M3.3 11.7l1.4-1.4M10.3 4.7l1.4-1.4"/></svg>) : (<svg width="16" height="16" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 1.5c-3.3 0-6 2.7-6 6s2.7 6 6 6c1.5 0 2.9-.6 3.9-1.5-2.5-1-4.4-3.4-4.4-4.5s1.9-3.5 4.4-4.5c-1-1-2.4-1.5-3.9-1.5z"/></svg>)}</button><Button variant="ghost" size="sm" className="text-xs text-muted-foreground">帮助文档</Button>
-          <Button variant="ghost" size="sm" className="text-xs text-muted-foreground">快捷键</Button>
-          <button className="inline-flex items-center rounded-full bg-orange-50 border border-orange-200 px-3 py-1 text-xs font-medium text-orange-600 hover:bg-orange-100 transition-colors">开通会员</button>
           <button className="inline-flex items-center justify-center size-7 rounded-full bg-muted hover:bg-muted/80 transition-colors">
             <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-muted-foreground"><circle cx="7.5" cy="5" r="2.5"/><path d="M1.5 13c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
           </button>
