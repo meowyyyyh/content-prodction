@@ -85,15 +85,84 @@
   .center-scroll-area::-webkit-scrollbar-corner { background: transparent !important; }
 }
 
-@keyframes ai-glow-pulse { 0%,100%{box-shadow:0 0 14px rgba(7,193,96,0.3),0 0 30px rgba(7,193,96,0.15),0 0 50px rgba(7,193,96,0.06)} 25%{box-shadow:0 0 20px rgba(0,191,165,0.4),0 0 38px rgba(0,191,165,0.2),0 0 58px rgba(0,191,165,0.08),0 0 72px rgba(7,193,96,0.04)} 50%{box-shadow:0 0 20px rgba(5,217,110,0.4),0 0 38px rgba(5,217,110,0.2),0 0 58px rgba(5,217,110,0.08),0 0 72px rgba(52,211,153,0.04)} 75%{box-shadow:0 0 20px rgba(52,211,153,0.4),0 0 38px rgba(52,211,153,0.2),0 0 58px rgba(52,211,153,0.08),0 0 72px rgba(0,191,165,0.04)}}
-@keyframes ai-float-up { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
-@keyframes ai-border-shift { 0%{background-position:0% 50%} 100%{background-position:300% 50%} }
-.ai-glow-btn { position:relative;z-index:1;border:none;color:#fff;font-weight:600;background:linear-gradient(135deg,#059669 0%,#07C160 20%,#00BFA5 45%,#5EEFBF 60%,#34D399 80%,#07C160 100%);box-shadow:0 0 0 1px rgba(7,193,96,0.3),0 0 14px rgba(7,193,96,0.15),0 2px 8px rgba(0,0,0,0.06);transition:all 0.3s ease; }
-.ai-glow-btn::after { content:'';position:absolute;inset:-1px;border-radius:9999px;background:linear-gradient(270deg,#07C160,#00BFA5,#34D399,#059669,#07C160);background-size:300% 100%;z-index:-1;opacity:0;transition:opacity 0.3s ease; }
-.ai-glow-btn:hover { animation:ai-glow-pulse 3s ease-in-out infinite,ai-float-up 3s ease-in-out infinite;box-shadow:0 0 0 1px rgba(7,193,96,0.5),0 0 20px rgba(7,193,96,0.3),0 4px 16px rgba(0,0,0,0.1); }
-.ai-glow-btn:hover::after { opacity:1;animation:ai-border-shift 4s linear infinite; }
-.ai-glow-btn:active { transform:scale(0.97);box-shadow:0 0 0 1px rgba(7,193,96,0.4),0 0 8px rgba(7,193,96,0.15);transition:all 0.1s ease; }
-.ai-glow-btn:hover .ai-glow-icon { filter:drop-shadow(0 0 4px rgba(255,255,255,0.5)); }
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes border-spin { to { --angle: 360deg; } }
+
+.ai-glow-btn {
+  position: relative;
+  z-index: 0;
+  border: none;
+  font-weight: 500;
+  background-color: #fff;
+  background-image: linear-gradient(90deg, #ff4757, #ff6b81, #ffa502, #ffd93d, #2ed573, #1e90ff, #5352ed);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  transition: all 0.3s ease;
+}
+.ai-glow-btn::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 9999px;
+  padding: 2px;
+  background: conic-gradient(from var(--angle), #ff4757, #ff6b81, #ffa502, #ffd93d, #2ed573, #1e90ff, #5352ed, #ff4757);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.ai-glow-btn::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  padding: 4px;
+  background: conic-gradient(from var(--angle), #ff4757, #ff6b81, #ffa502, #ffd93d, #2ed573, #1e90ff, #5352ed, #ff4757);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -2;
+  opacity: 0;
+  filter: blur(3px);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.ai-glow-btn:hover {
+  background-color: #fff !important;
+  background-image: none !important;
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  color: #111;
+  -webkit-text-fill-color: #111;
+  box-shadow: 0 0 12px rgba(255,71,87,0.12), 0 0 24px rgba(83,82,237,0.06), 0 1px 3px rgba(0,0,0,0.06);
+}
+.dark .ai-glow-btn:hover {
+  background-color: #000 !important;
+  background-image: none !important;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+}
+.ai-glow-btn:hover::before {
+  opacity: 1;
+  animation: border-spin 3s linear infinite;
+}
+.ai-glow-btn:hover::after {
+  opacity: 0.45;
+  animation: border-spin 3s linear infinite;
+}
+.ai-glow-btn:active {
+  transform: scale(0.97);
+  transition: all 0.1s ease;
+}
 
 @keyframes gen-glow { 0%,100%{box-shadow:0 0 14px rgba(7,193,96,0.3),0 0 30px rgba(7,193,96,0.15),0 0 50px rgba(59,130,246,0.08)} 25%{box-shadow:0 0 20px rgba(0,191,165,0.4),0 0 38px rgba(34,211,238,0.22),0 0 58px rgba(59,130,246,0.1)} 50%{box-shadow:0 0 20px rgba(34,211,238,0.4),0 0 38px rgba(59,130,246,0.22),0 0 58px rgba(7,193,96,0.1)} 75%{box-shadow:0 0 20px rgba(59,130,246,0.4),0 0 38px rgba(0,191,165,0.22),0 0 58px rgba(34,211,238,0.1)} }
 @keyframes gen-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-1px)} }
