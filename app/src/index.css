@@ -93,6 +93,32 @@
 
 @keyframes border-spin { to { --angle: 360deg; } }
 
+.ai-input-glow {
+  position: relative;
+  border-radius: 0.5rem;
+}
+.ai-input-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 0.5rem;
+  padding: 2px;
+  background: conic-gradient(from var(--angle), #ff4757, #ff6b81, #ffa502, #ffd93d, #2ed573, #1e90ff, #5352ed, #ff4757);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.ai-input-glow:hover::before,
+.ai-input-glow:focus-within::before {
+  opacity: 1;
+  animation: border-spin 3s linear infinite;
+}
+
+
 .ai-glow-btn {
   position: relative;
   z-index: 0;

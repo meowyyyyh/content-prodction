@@ -309,7 +309,7 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
           </button>
         </div>
       ) : (
-        <Textarea ref={chatRef} value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={handleChatKeyDown} onFocus={() => setChatFocused(true)} onBlur={() => { setChatFocused(false); if (!chatInput.trim()) setChatInput('') }} placeholder={focusedKey ? `当前聚焦在「${getLabel(focusedKey)}」，可以和我讲讲您想如何优化此部分呢？按Enter键发送` : '有什么想让我帮您优化的请和我讲哦～按Enter键发送'} disabled={chatLoading} rows={chatFocused ? 4 : 2} className="min-h-[36px] resize-none rounded-lg bg-muted/50 text-sm transition-all duration-200 placeholder:text-muted-foreground/40 focus-visible:ring-1 focus-visible:ring-border/60" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 2px 6px rgba(0,0,0,0.03)', maxHeight: '220px' }} />
+        <div className="ai-input-glow"><Textarea ref={chatRef} value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={handleChatKeyDown} onFocus={() => setChatFocused(true)} onBlur={() => { setChatFocused(false); if (!chatInput.trim()) setChatInput('') }} placeholder={focusedKey ? `当前聚焦在「${getLabel(focusedKey)}」，可以和我讲讲您想如何优化此部分呢？按Enter键发送` : '有什么想让我帮您优化的请和我讲哦～按Enter键发送'} disabled={chatLoading} rows={chatFocused ? 4 : 2} className="min-h-[36px] resize-none rounded-lg bg-muted/50 text-sm transition-all duration-200 placeholder:text-muted-foreground/40 focus-visible:ring-1 focus-visible:ring-border/60" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 2px 6px rgba(0,0,0,0.03)', maxHeight: '220px' }} /></div>
       )}
     </div>
   </div>)
