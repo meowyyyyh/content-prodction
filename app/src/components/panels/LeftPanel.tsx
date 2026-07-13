@@ -12,13 +12,13 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from '@
 import type { ProductInput, ContentStyle, SubCategory, ShippingTimeliness, ShelfLifeUnit } from '@/types'
 import { MODULE_CONFIG, STYLE_CONFIG, SUB_CATEGORY_CONFIG, SHIPPING_OPTIONS, VERSION_STYLE_OPTIONS } from '@/config/modules'
 
-interface LeftPanelProps { input: ProductInput; onChange: (input: ProductInput) => void; disabled: boolean; isGenerating: boolean; onGenerate: () => void; hasRequiredFields: boolean }
+interface LeftPanelProps { input: ProductInput; onChange: (input: ProductInput) => void; disabled: boolean; isGenerating: boolean; onGenerate: () => void; hasRequiredFields: boolean; priceDialogOpen: boolean; setPriceDialogOpen: (v: boolean) => void; platforms: { name: string; price: string; spec: string; enabled: boolean }[]; setPlatforms: (v: { name: string; price: string; spec: string; enabled: boolean }[]) => void; priceNotes: string; setPriceNotes: (v: string) => void }
 interface FormErrors { productName?: string; subCategory?: string; netWeight?: string; suggestedPrice?: string; afterSalesRules?: string }
 
 const SHELF_LIFE_UNITS: { key: ShelfLifeUnit; label: string }[] = [{ key: 'day', label: '天' }, { key: 'month', label: '月' }, { key: 'year', label: '年' }]
 const FIELD_LABELS: Record<string, string> = { productName: '商品名称', subCategory: '二级子品类', netWeight: '规格净含量', origin: '产地', suggestedPrice: '建议售价', sellingPoints: '核心卖点', coreIngredients: '核心配料/原料', shippingOrigin: '发货地', shippingTimeliness: '发货时效', courier: '快递公司', afterSalesRules: '售后规则', brandBackground: '品牌背景', targetAudience: '适用人群', usageScene: '使用场景', shelfLifeValue: '保质期' }
 
-export function LeftPanel({ input, onChange, disabled, isGenerating, onGenerate }: LeftPanelProps) {
+export function LeftPanel({ input, onChange, disabled, isGenerating, onGenerate, priceDialogOpen, setPriceDialogOpen, platforms, setPlatforms, priceNotes, setPriceNotes }: LeftPanelProps) {
   const [aiOpen, setAiOpen] = useState(true); const [categoryOpen, setCategoryOpen] = useState(true); const [productOpen, setProductOpen] = useState(true); const [fileTab, setFileTab] = useState('paste'); const [linkInput, setLinkInput] = useState(''); const [pasteText, setPasteText] = useState(''); const [extractLoading, setExtractLoading] = useState(false); const fileInputRef = useRef<HTMLInputElement>(null)
   const [errors, setErrors] = useState<FormErrors>({}); const [dragIndex, setDragIndex] = useState<number | null>(null)
   // 文件上传解析
@@ -40,14 +40,8 @@ export function LeftPanel({ input, onChange, disabled, isGenerating, onGenerate 
     if (combined.trim()) { try { const res = await fetch('/api/extract', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: combined }) }); const d = await res.json(); if (d.success && d.data) { setExtractedFields(d.data); setConfirmOpen(true) } } catch { } }
     setParseLoading(false) }
   const [polishLoading, setPolishLoading] = useState(false); const [polished, setPolished] = useState(false); const prePolishRef = useRef('')
-  const [priceDialogOpen, setPriceDialogOpen] = useState(false)
-  const [platforms, setPlatforms] = useState<{ name: string; price: string; spec: string; enabled: boolean }[]>([
-    { name: '天猫旗舰店', price: '', spec: '', enabled: false }, { name: '京东自营', price: '', spec: '', enabled: false },
-    { name: '抖音商城', price: '', spec: '', enabled: false }, { name: '拼多多', price: '', spec: '', enabled: false },
-    { name: '线下商超', price: '', spec: '', enabled: false },
-  ])
   const hasConfiguredPlatforms = platforms.some(p => p.enabled && p.price.trim())
-  const [priceNotes, setPriceNotes] = useState(''); const [localOrigins, setLocalOrigins] = useState<string[]>(() => { return (input.origin || '').split('\n').filter(Boolean) })
+  const [localOrigins, setLocalOrigins] = useState<string[]>(() => { return (input.origin || '').split('\n').filter(Boolean) })
   const moduleOrder = input.moduleOrder
 
   const updateField = <K extends keyof ProductInput>(key: K, value: ProductInput[K]) => { if (['productName','subCategory','netWeight','suggestedPrice','afterSalesRules'].includes(key as string)) setErrors(prev => ({ ...prev, [key]: undefined })); onChange({ ...input, [key]: value }) }
@@ -170,97 +164,6 @@ export function LeftPanel({ input, onChange, disabled, isGenerating, onGenerate 
     <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground" onClick={() => { onChange({ ...input, productName: '', subCategory: '', netWeight: '', origin: '', productionDate: '', shelfLifeValue: '', shelfLifeUnit: 'day', suggestedPrice: '', sellingPoints: '', coreIngredients: '', shippingOrigin: '', shippingTimeliness: '48h', customShippingDays: '', courier: '', extraShippingFeeEnabled: false, extraShippingFeeAreas: '', noShippingAreasEnabled: false, noShippingAreas: '', afterSalesRules: '', brandBackground: '', targetAudience: '', usageScene: '', additionalNotes: '', textLength: 'long' as const, moduleOrder: MODULE_CONFIG.map(m => m.key) }); setErrors({}) }} disabled={isGenerating}>清空配置项</Button>
   </div>
 
-  {/* 配置比价清单 Dialog */}
-  {priceDialogOpen && (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setPriceDialogOpen(false)}>
-      <div className="bg-card rounded-xl shadow-xl max-w-md w-full p-6 border border-border" onClick={e => e.stopPropagation()}>
-        <h3 className="text-lg font-semibold mb-2">配置比价清单</h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          录入各平台价格，AI 将在生成时突出价格优势
-        </p>
-
-        <div className="mb-4 p-3 rounded-lg bg-muted/50">
-          <span className="text-xs text-muted-foreground">团购价</span>
-          <span className="text-lg font-semibold text-[#07C160] ml-2">
-            {input.suggestedPrice ? `¥${input.suggestedPrice} / ${input.netWeight}` : '未设置'}
-          </span>
-        </div>
-
-        <div className="flex flex-col gap-2 mb-4">
-          {platforms.map((p, i) => (
-            <div key={p.name} className="flex items-center gap-2">
-              <Checkbox checked={p.enabled} onCheckedChange={() => {
-                const np = [...platforms]; np[i] = { ...p, enabled: !p.enabled }; setPlatforms(np)
-              }} />
-              <Input
-                placeholder="平台名"
-                value={p.name}
-                onChange={e => { const np = [...platforms]; np[i] = { ...p, name: e.target.value }; setPlatforms(np) }}
-                className="w-24 h-8 text-sm"
-              />
-              <Input
-                placeholder="价格"
-                value={p.price}
-                onChange={e => {
-                  const v = e.target.value.replace(/[^\d.]/g, '')
-                  const np = [...platforms]; np[i] = { ...p, price: v, enabled: true }; setPlatforms(np)
-                }}
-                onFocus={() => {
-                  if (!p.enabled) { const np = [...platforms]; np[i] = { ...p, enabled: true }; setPlatforms(np) }
-                }}
-                className="w-20 h-8 text-sm"
-              />
-              <span className="text-xs text-muted-foreground">元</span>
-              <Input
-                placeholder="规格"
-                value={p.spec}
-                onChange={e => { const np = [...platforms]; np[i] = { ...p, spec: e.target.value, enabled: true }; setPlatforms(np) }}
-                onFocus={() => {
-                  if (!p.enabled) { const np = [...platforms]; np[i] = { ...p, enabled: true }; setPlatforms(np) }
-                }}
-                className="w-24 h-8 text-sm"
-              />
-              <button onClick={() => setPlatforms(platforms.filter((_, j) => j !== i))}
-                className="text-muted-foreground/30 hover:text-destructive transition-colors shrink-0">
-                <svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 3.5l8 8M11.5 3.5l-8 8" /></svg>
-              </button>
-            </div>
-          ))}
-          {platforms.length < 12 && (
-            <button onClick={() => setPlatforms([...platforms, { name: '', price: '', spec: '', enabled: true }])}
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-[#07C160] transition-colors py-1">
-              <svg width="12" height="12" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 2v11M2 7.5h11" /></svg>
-              添加平台
-            </button>
-          )}
-        </div>
-
-        <div className="mb-4">
-          <Label className="text-sm mb-1 block">备注（选填）</Label>
-          <Textarea rows={2} placeholder="如：天猫正在做618活动" value={priceNotes} onChange={e => setPriceNotes(e.target.value)} />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <Button variant="outline" size="sm" disabled className="text-xs">
-            <svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className="mr-1"><path d="M7.5 1.5L9.5 5l4 .5-3 3 1 4.5-3.5-2-3.5 2 1-4.5-3-3 4-.5 2-3.5z" /></svg>
-            AI 帮我搜价
-          </Button>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setPriceDialogOpen(false)}>取消</Button>
-            <Button size="sm" className="bg-[#07C160] hover:bg-[#06AD56]" onClick={() => {
-              const hasPrice = platforms.some(p => p.enabled && p.price.trim())
-              if (hasPrice) {
-                if (!input.selectedModules.includes('comparison')) {
-                  updateField('selectedModules', [...input.selectedModules, 'comparison'])
-                }
-                setPriceDialogOpen(false)
-              }
-            }}>保存</Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )}
   {/* 文件解析结果确认 Dialog */}
   {confirmOpen && extractedFields && (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setConfirmOpen(false)}>

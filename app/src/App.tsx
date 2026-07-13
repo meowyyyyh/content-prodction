@@ -1,6 +1,9 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 import { LeftPanel } from '@/components/panels/LeftPanel'
 import { CenterPanel } from '@/components/panels/CenterPanel'
 import { RightPanel } from '@/components/panels/RightPanel'
@@ -40,6 +43,13 @@ export default function App() {
   useEffect(() => { document.documentElement.classList.toggle('dark', darkMode); localStorage.setItem('darkMode', String(darkMode)) }, [darkMode])
   const [toast, setToast] = useState<{ msg: string; type: 'info' | 'success' | 'error' } | null>(null)
   const showToast = useCallback((msg: string, type: 'info' | 'success' | 'error' = 'info') => { setToast({ msg, type }); setTimeout(() => setToast(null), type === 'success' ? 3000 : 6000) }, [])
+  const [priceDialogOpen, setPriceDialogOpen] = useState(false)
+  const [platforms, setPlatforms] = useState<{ name: string; price: string; spec: string; enabled: boolean }[]>([
+    { name: '天猫旗舰店', price: '', spec: '', enabled: false }, { name: '京东自营', price: '', spec: '', enabled: false },
+    { name: '抖音商城', price: '', spec: '', enabled: false }, { name: '拼多多', price: '', spec: '', enabled: false },
+    { name: '线下商超', price: '', spec: '', enabled: false },
+  ])
+  const [priceNotes, setPriceNotes] = useState('')
 
   const hasRequiredFields = useMemo(() => input.productName.trim().length > 0 && input.subCategory !== '' && input.netWeight.trim().length > 0 && input.suggestedPrice.trim().length > 0 && input.afterSalesRules.trim().length > 0, [input.productName, input.subCategory, input.netWeight, input.suggestedPrice, input.afterSalesRules])
   const isGenerating = status === 'generating' || status === 'checking'
@@ -73,9 +83,9 @@ export default function App() {
   const handleDeleteBlock = useCallback((moduleKey: string) => { setDisplayOrder(prev => prev.filter(k => k !== moduleKey)); setCenterModules(prev => prev.filter(m => m.moduleKey !== moduleKey)) }, [])
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-gradient-to-br from-indigo-50/80 via-white to-purple-50/80 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       {/* 全局顶部导航 */}
-      <header className="flex-shrink-0 flex items-center justify-between h-14 px-6 bg-background border-b border-border">
+      <header className="flex-shrink-0 flex items-center justify-between h-14 px-6 bg-transparent z-10">
         <div className="flex items-center gap-3">
           <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
             <defs>
@@ -105,14 +115,59 @@ export default function App() {
       </header>
 
       {/* 三栏主体 */}
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 min-h-0 gap-4 px-4 pb-4">
         {toast && (<div className={`fixed top-16 left-1/2 -translate-x-1/2 z-[999] flex items-center gap-2.5 rounded-lg border px-4 py-2.5 text-sm shadow-lg ${toast.type === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : toast.type === 'error' ? 'border-red-200 bg-red-50 text-red-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0"><circle cx="7.5" cy="7.5" r="6" /><path d={toast.type === 'success' ? "M4.5 7.5l2 2 4-4" : "M7.5 4.5v3M7.5 10v.5"} /></svg><span>{toast.msg}</span></div>)}
-        <div className="w-[320px] flex-shrink-0 bg-sidebar"><LeftPanel input={input} onChange={setInput} disabled={isGenerating} isGenerating={isGenerating} onGenerate={handleGenerate} hasRequiredFields={hasRequiredFields} /></div>
-        <Separator orientation="vertical" />
-        <div className="flex-1 min-w-0 bg-muted/20 p-4"><div className="h-full rounded-xl overflow-hidden bg-background ring-1 ring-border/50"><CenterPanel status={status} modules={centerModules} mandatoryKeys={displayOrder} onEdit={handleCenterEdit} onReorder={setDisplayOrder} onAddBlock={handleAddBlock} onDeleteBlock={handleDeleteBlock} showToast={showToast} triggerExpandHint={expandHintCount} /></div></div>
-        <Separator orientation="vertical" />
-        <div className="w-[640px] flex-shrink-0 bg-sidebar"><RightPanel status={status} modulesV1={rightModulesV1} modulesV2={rightModulesV2} versionLabelV1={versionLabelV1} versionLabelV2={versionLabelV2} onAdopt={handleAdopt} onAdoptAll={handleAdoptAll} /></div>
+        <div className="w-[320px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><LeftPanel input={input} onChange={setInput} disabled={isGenerating} isGenerating={isGenerating} onGenerate={handleGenerate} hasRequiredFields={hasRequiredFields} priceDialogOpen={priceDialogOpen} setPriceDialogOpen={setPriceDialogOpen} platforms={platforms} setPlatforms={setPlatforms} priceNotes={priceNotes} setPriceNotes={setPriceNotes} /></div>
+        <div className="flex-1 min-w-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><CenterPanel status={status} modules={centerModules} mandatoryKeys={displayOrder} onEdit={handleCenterEdit} onReorder={setDisplayOrder} onAddBlock={handleAddBlock} onDeleteBlock={handleDeleteBlock} showToast={showToast} triggerExpandHint={expandHintCount} /></div>
+        <div className="w-[640px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><RightPanel status={status} modulesV1={rightModulesV1} modulesV2={rightModulesV2} versionLabelV1={versionLabelV1} versionLabelV2={versionLabelV2} onAdopt={handleAdopt} onAdoptAll={handleAdoptAll} /></div>
       </div>
+
+      {/* 全局：配置比价清单弹窗 */}
+      {priceDialogOpen && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setPriceDialogOpen(false)}>
+          <div className="bg-card rounded-2xl shadow-2xl max-w-md w-full p-6 border border-border animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-semibold mb-1">配置比价清单</h3>
+            <p className="text-sm text-muted-foreground mb-4">录入各平台价格，AI 将在生成时突出价格优势</p>
+
+            <div className="mb-4 p-3 rounded-xl bg-muted/50">
+              <span className="text-xs text-muted-foreground">团购价</span>
+              <span className="text-lg font-semibold text-[#07C160] ml-2">
+                {input.suggestedPrice ? `¥${input.suggestedPrice} / ${input.netWeight}` : '未设置'}
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-2 mb-4">
+              {platforms.map((p, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <Checkbox checked={p.enabled} onCheckedChange={() => { const np = [...platforms]; np[i] = { ...p, enabled: !p.enabled }; setPlatforms(np) }} />
+                  <Input placeholder="平台名" value={p.name} onChange={e => { const np = [...platforms]; np[i] = { ...p, name: e.target.value }; setPlatforms(np) }} className="w-24 h-8 text-sm" />
+                  <Input placeholder="价格" value={p.price} onChange={e => { const v = e.target.value.replace(/[^\d.]/g, ''); const np = [...platforms]; np[i] = { ...p, price: v, enabled: true }; setPlatforms(np) }} onFocus={() => { if (!p.enabled) { const np = [...platforms]; np[i] = { ...p, enabled: true }; setPlatforms(np) } }} className="w-20 h-8 text-sm" />
+                  <span className="text-xs text-muted-foreground">元</span>
+                  <Input placeholder="规格" value={p.spec} onChange={e => { const np = [...platforms]; np[i] = { ...p, spec: e.target.value, enabled: true }; setPlatforms(np) }} onFocus={() => { if (!p.enabled) { const np = [...platforms]; np[i] = { ...p, enabled: true }; setPlatforms(np) } }} className="w-24 h-8 text-sm" />
+                  <button onClick={() => setPlatforms(platforms.filter((_, j) => j !== i))} className="text-muted-foreground/30 hover:text-destructive transition-colors shrink-0"><svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 3.5l8 8M11.5 3.5l-8 8" /></svg></button>
+                </div>
+              ))}
+              {platforms.length < 12 && (
+                <button onClick={() => setPlatforms([...platforms, { name: '', price: '', spec: '', enabled: true }])} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-[#07C160] transition-colors py-1"><svg width="12" height="12" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 2v11M2 7.5h11" /></svg>添加平台</button>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <Label className="text-sm mb-1 block">备注（选填）</Label>
+              <Textarea rows={2} placeholder="如：天猫正在做618活动" value={priceNotes} onChange={e => setPriceNotes(e.target.value)} />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Button variant="outline" size="sm" disabled className="text-xs"><svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className="mr-1"><path d="M7.5 1.5L9.5 5l4 .5-3 3 1 4.5-3.5-2-3.5 2 1-4.5-3-3 4-.5 2-3.5z" /></svg>AI 帮我搜价</Button>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => setPriceDialogOpen(false)}>取消</Button>
+                <Button size="sm" className="bg-[#07C160] hover:bg-[#06AD56]" onClick={() => { if (platforms.some(p => p.enabled && p.price.trim())) { if (!input.selectedModules.includes('comparison')) { setInput({ ...input, selectedModules: [...input.selectedModules, 'comparison'] }) } setPriceDialogOpen(false) } }}>保存</Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }
