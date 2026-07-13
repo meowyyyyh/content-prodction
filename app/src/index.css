@@ -102,11 +102,6 @@
   position: absolute;
   inset: -2px;
   border-radius: 0.5rem;
-  padding: 2px;
-  background: conic-gradient(from var(--angle), #ff4757, #ff6b81, #ffa502, #ffd93d, #2ed573, #1e90ff, #5352ed, #ff4757);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
   z-index: -1;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -115,7 +110,44 @@
 .ai-input-glow:hover::before,
 .ai-input-glow:focus-within::before {
   opacity: 1;
-  animation: border-spin 3s linear infinite;
+  animation: snake-move 3s linear infinite;
+}
+@keyframes snake-move {
+  0%, 10% {
+    border-top: 2px solid #ff4757;
+    border-right: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+    border-left: 2px solid transparent;
+    box-shadow: 2px -2px 8px rgba(255,255,255,0.4), 0 -2px 8px rgba(255,71,87,0.2);
+  }
+  15%, 35% {
+    border-top: 2px solid transparent;
+    border-right: 2px solid #ffa502;
+    border-bottom: 2px solid transparent;
+    border-left: 2px solid transparent;
+    box-shadow: 2px 2px 8px rgba(255,255,255,0.4), 2px 0 8px rgba(255,165,2,0.2);
+  }
+  40%, 60% {
+    border-top: 2px solid transparent;
+    border-right: 2px solid transparent;
+    border-bottom: 2px solid #2ed573;
+    border-left: 2px solid transparent;
+    box-shadow: -2px 2px 8px rgba(255,255,255,0.4), 0 2px 8px rgba(46,213,115,0.2);
+  }
+  65%, 85% {
+    border-top: 2px solid transparent;
+    border-right: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+    border-left: 2px solid #5352ed;
+    box-shadow: -2px -2px 8px rgba(255,255,255,0.4), -2px 0 8px rgba(83,82,237,0.2);
+  }
+  90%, 100% {
+    border-top: 2px solid #ff4757;
+    border-right: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+    border-left: 2px solid transparent;
+    box-shadow: 2px -2px 8px rgba(255,255,255,0.4), 0 -2px 8px rgba(255,71,87,0.2);
+  }
 }
 
 
