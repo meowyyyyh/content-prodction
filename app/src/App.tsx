@@ -26,7 +26,7 @@ const DEFAULT_INPUT: ProductInput = {
   moduleOrder: MODULE_CONFIG.map(m => m.key), // 14模块完整排序 generateCount: 2 as GenerateCount,
   textLength: 'long' as const,
   enableRAG: true, enableCompliance: true,
-  versionStyles: ['xiaohongshu', 'senior'] as ContentStyle[],
+  versionStyles: ['xiaohongshu', 'girlfriend', 'fun'] as ContentStyle[],
 }
 
 export default function App() {
@@ -34,9 +34,11 @@ export default function App() {
   const [status, setStatus] = useState<GenerateStatus>('idle')
   const [rightModulesV1, setRightModulesV1] = useState<ModuleResult[]>([])
   const [rightModulesV2, setRightModulesV2] = useState<ModuleResult[]>([])
+  const [rightModulesV3, setRightModulesV3] = useState<ModuleResult[]>([])
   const [centerModules, setCenterModules] = useState<ModuleResult[]>([])
   const [versionLabelV1, setVersionLabelV1] = useState('')
   const [versionLabelV2, setVersionLabelV2] = useState('')
+  const [versionLabelV3, setVersionLabelV3] = useState('')
   const [displayOrder, setDisplayOrder] = useState<string[]>([]); const [expandHintCount, setExpandHintCount] = useState(0)
   const customBlockCounter = useRef(0)
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true')
@@ -51,24 +53,27 @@ export default function App() {
   ])
   const [priceNotes, setPriceNotes] = useState('')
 
-  const hasRequiredFields = useMemo(() => input.productName.trim().length > 0 && input.subCategory !== '' && input.netWeight.trim().length > 0 && input.suggestedPrice.trim().length > 0 && input.afterSalesRules.trim().length > 0, [input.productName, input.subCategory, input.netWeight, input.suggestedPrice, input.afterSalesRules])
+  const hasRequiredFields = useMemo(() => input.productName.trim().length > 0 && input.netWeight.trim().length > 0 && input.suggestedPrice.trim().length > 0 && input.afterSalesRules.trim().length > 0, [input.productName, input.subCategory, input.netWeight, input.suggestedPrice, input.afterSalesRules])
   const isGenerating = status === 'generating' || status === 'checking'
 
   const handleGenerate = useCallback(async () => {
     if (!hasRequiredFields) return
     const orderedKeys = input.moduleOrder.filter(k => input.selectedModules.includes(k as ModuleKey))
     const makeModules = () => orderedKeys.map(key => { const config = MODULE_CONFIG.find(m => m.key === key); return { moduleKey: key, moduleLabel: config?.label || key, content: '', status: 'loading' as const, adopted: false } })
-    const v1 = makeModules(); const v2 = makeModules()
-    setRightModulesV1(v1); setRightModulesV2(v2)
+    const v1 = makeModules(); const v2 = makeModules(); const v3 = makeModules()
+    setRightModulesV1(v1); setRightModulesV2(v2); setRightModulesV3(v3)
     const v1Style = input.versionStyles?.[0] || input.style || 'xiaohongshu'
-    const v2Style = input.versionStyles?.[1] || 'senior'
+    const v2Style = input.versionStyles?.[1] || 'girlfriend'
+    const v3Style = input.versionStyles?.[2] || 'fun'
     setVersionLabelV1(STYLE_LABEL_MAP[v1Style] || v1Style)
     setVersionLabelV2(STYLE_LABEL_MAP[v2Style] || v2Style)
+    setVersionLabelV3(STYLE_LABEL_MAP[v3Style] || v3Style)
     setStatus('generating')
-    let doneCount = 0; const onStreamDone = () => { doneCount++; if (doneCount >= 2) setStatus('completed') }
+    let doneCount = 0; const onStreamDone = () => { doneCount++; if (doneCount >= 3) setStatus('completed') }
     streamGenerate({ ...input, style: v1Style }, orderedKeys, 'taste', v1, setRightModulesV1, onStreamDone)
     streamGenerate({ ...input, style: v2Style }, orderedKeys, 'taste', v2, setRightModulesV2, onStreamDone)
-    setTimeout(() => { if (doneCount < 2) { doneCount = 2; setStatus('completed') } }, 90000)
+    streamGenerate({ ...input, style: v3Style }, orderedKeys, 'taste', v3, setRightModulesV3, onStreamDone)
+    setTimeout(() => { if (doneCount < 3) { doneCount = 3; setStatus('completed') } }, 90000)
   }, [hasRequiredFields, input])
 
   const handleAdoptAll = useCallback((versionModules: ModuleResult[]) => {
@@ -118,8 +123,8 @@ export default function App() {
       <div className="flex flex-1 min-h-0 gap-4 px-4 pb-4">
         {toast && (<div className={`fixed top-16 left-1/2 -translate-x-1/2 z-[999] flex items-center gap-2.5 rounded-lg border px-4 py-2.5 text-sm shadow-lg ${toast.type === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : toast.type === 'error' ? 'border-red-200 bg-red-50 text-red-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0"><circle cx="7.5" cy="7.5" r="6" /><path d={toast.type === 'success' ? "M4.5 7.5l2 2 4-4" : "M7.5 4.5v3M7.5 10v.5"} /></svg><span>{toast.msg}</span></div>)}
         <div className="w-[320px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><LeftPanel input={input} onChange={setInput} disabled={isGenerating} isGenerating={isGenerating} onGenerate={handleGenerate} hasRequiredFields={hasRequiredFields} priceDialogOpen={priceDialogOpen} setPriceDialogOpen={setPriceDialogOpen} platforms={platforms} setPlatforms={setPlatforms} priceNotes={priceNotes} setPriceNotes={setPriceNotes} /></div>
-        <div className="flex-1 min-w-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><CenterPanel status={status} modules={centerModules} mandatoryKeys={displayOrder} onEdit={handleCenterEdit} onReorder={setDisplayOrder} onAddBlock={handleAddBlock} onDeleteBlock={handleDeleteBlock} showToast={showToast} triggerExpandHint={expandHintCount} /></div>
-        <div className="w-[640px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><RightPanel status={status} modulesV1={rightModulesV1} modulesV2={rightModulesV2} versionLabelV1={versionLabelV1} versionLabelV2={versionLabelV2} onAdopt={handleAdopt} onAdoptAll={handleAdoptAll} /></div>
+        <div className="w-[450px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><CenterPanel status={status} modules={centerModules} mandatoryKeys={displayOrder} onEdit={handleCenterEdit} onReorder={setDisplayOrder} onAddBlock={handleAddBlock} onDeleteBlock={handleDeleteBlock} showToast={showToast} triggerExpandHint={expandHintCount} /></div>
+        <div className="flex-1 min-w-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><RightPanel status={status} modulesV1={rightModulesV1} modulesV2={rightModulesV2} modulesV3={rightModulesV3} versionLabelV1={versionLabelV1} versionLabelV2={versionLabelV2} versionLabelV3={versionLabelV3} onAdopt={handleAdopt} onAdoptAll={handleAdoptAll} /></div>
       </div>
 
       {/* 全局：配置比价清单弹窗 */}

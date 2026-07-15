@@ -4,7 +4,7 @@ export type ContentStyle = 'xiaohongshu' | 'minimalist' | 'fun' | 'premium' | 'g
 export type ModuleKey = 'hook' | 'price' | 'taste' | 'trust' | 'aftercare' | 'tips' | 'cta' | 'ingredient' | 'origin' | 'brand' | 'scene' | 'feedback' | 'comparison' | 'faq'
 export type ShippingTimeliness = '24h' | '48h' | '72h' | '7d' | 'custom'
 export type ShelfLifeUnit = 'day' | 'month' | 'year'
-export type GenerateCount = 1 | 2
+export type GenerateCount = 1 | 2 | 3
 
 export interface ModuleConfig { key: ModuleKey; label: string; category: 'mandatory' | 'optional'; description: string }
 export interface StyleConfig { key: ContentStyle; label: string; description: string; example: string }
