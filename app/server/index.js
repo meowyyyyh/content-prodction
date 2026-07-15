@@ -32,10 +32,10 @@ if (fs.existsSync(distPath)) {
 app.post('/api/generate', async (req, res) => {
   const { product, modules: requestedModules, focus } = req.body
 
-  if (!product || !product.productName || !product.subCategory) {
+  if (!product || !product.productName) {
     return res.status(400).json({
       success: false,
-      error: '缺少必填参数：product.productName 和 product.subCategory',
+      error: '缺少必填参数：product.productName',
     })
   }
 
@@ -118,7 +118,7 @@ app.post('/api/generate', async (req, res) => {
 // 流式生成 — SSE 逐字输出
 // ============================================================
 app.post('/api/generate/stream', async (req, res) => {
-  const { product, modules: requestedModules, focus } = req.body
+  const { product, modules: requestedModules, focus, images } = req.body
 
   if (!product || !product.productName) {
     return res.status(400).json({ success: false, error: '缺少必填参数' })
@@ -139,7 +139,7 @@ app.post('/api/generate/stream', async (req, res) => {
   res.setHeader('Connection', 'keep-alive')
   res.flushHeaders()
 
-  const { systemPrompt, userPrompt } = buildPrompt({ product, modules: moduleKeys, focus: focus || 'taste' })
+  const { systemPrompt, userPrompt } = buildPrompt({ product, modules: moduleKeys, focus: focus || 'taste', images: images || [] })
   const { endpoint, apiKey, model, maxTokens, temperature } = CONFIG.llm
 
   try {
@@ -396,6 +396,86 @@ app.post('/api/generate/module', async (req, res) => {
 // ============================================================
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
+})
+
+// ============================================================
+// POST /api/images/classify
+// 图片分类 + 描述（doubao-seed-2.0-lite）
+// ============================================================
+app.post('/api/images/classify', async (req, res) => {
+  try {
+    const { images } = req.body
+    if (!images || !Array.isArray(images) || images.length === 0) {
+      return res.status(400).json({ success: false, error: '请提供图片数组' })
+    }
+
+    const { classifyImages } = await import('./services/vision.js')
+    const results = await classifyImages(images)
+
+    // 统计分类结果
+    const summary = {}
+    results.forEach(r => {
+      summary[r.type] = (summary[r.type] || 0) + 1
+    })
+
+    res.json({ success: true, data: { results, summary, total: results.length } })
+  } catch (e) {
+    console.error('[api/images/classify] Error:', e.message)
+    res.status(500).json({ success: false, error: e.message })
+  }
+})
+
+// ============================================================
+// GET /api/corpus/image-map
+// 从语料库 JSON 统计图片类型 → 模块映射（L3 飞轮驱动）
+// ============================================================
+app.get('/api/corpus/image-map', (_req, res) => {
+  try {
+    const corpusDir = path.resolve(__dirname, '../../data/corpus')
+    if (!fs.existsSync(corpusDir)) return res.json({ success: true, data: {} })
+
+    // 递归找所有 .json 语料文件
+    const map = {}
+    function scan(dir) {
+      const entries = fs.readdirSync(dir, { withFileTypes: true })
+      for (const e of entries) {
+        if (e.isDirectory() && !e.name.startsWith('.')) scan(path.resolve(dir, e.name))
+        else if (e.name.endsWith('.json')) {
+          try {
+            const data = JSON.parse(fs.readFileSync(path.resolve(dir, e.name), 'utf-8'))
+            if (data.images) {
+              for (const img of data.images) {
+                const type = img.primaryType || img.type?.[0]
+                const module = img.module
+                if (!type || !module) continue
+                if (!map[type]) map[type] = {}
+                map[type][module] = (map[type][module] || 0) + 1
+              }
+            }
+          } catch { /* skip invalid JSON */ }
+        }
+      }
+    }
+    scan(corpusDir)
+
+    // 中文模块名 → 英文 key
+    const moduleKeyMap = {
+      '首屏钩子':'hook','价格福利':'price','口感体验':'taste','基础信任':'trust',
+      '物流售后':'aftercare','储存贴士':'tips','行动召唤':'cta','成分科普':'ingredient',
+      '原料溯源':'origin','品牌背书':'brand','场景共情':'scene','用户反馈':'feedback',
+      '全网比价':'comparison','常见问题':'faq',
+    }
+    // 按频次排序，转为英文 key
+    const sorted = {}
+    for (const [type, modules] of Object.entries(map)) {
+      sorted[type] = Object.entries(modules)
+        .sort((a, b) => b[1] - a[1])
+        .map(([m]) => moduleKeyMap[m] || m)
+    }
+    res.json({ success: true, data: sorted })
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message })
+  }
 })
 
 // ============================================================

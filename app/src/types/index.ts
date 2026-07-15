@@ -31,3 +31,15 @@ export interface ComplianceHit { ruleId: string; violationType: string; riskLeve
 export interface GenerateResult { productName: string; style: ContentStyle; modules: ModuleResult[]; fullText: string }
 export interface GenerateResponse { success: boolean; data?: GenerateResult; error?: string; preBannedHit?: ComplianceHit }
 export type GenerateStatus = 'idle' | 'checking' | 'generating' | 'completed' | 'error' | 'blocked'
+
+export interface ClassifiedImage { id: string; type: string; desc: string; preview?: string; suggestedModule?: string }
+// 图片类型 → 建议模块映射
+export const IMAGE_MODULE_MAP: Record<string, ModuleKey[]> = {
+  '产品图': ['taste', 'hook'],
+  '封面图': ['hook'],
+  '配料表': ['trust', 'ingredient'],
+  '场景图': ['scene'],
+  '品牌图': ['brand'],
+  '包装图': ['hook'],
+  '其他': [],
+}

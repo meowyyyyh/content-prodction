@@ -3,10 +3,35 @@
 // 负责组装 Prompt、调用 LLM、解析返回结果
 // ============================================================
 
+import { readFileSync, existsSync } from 'fs'
+import { resolve, dirname } from 'path'
+import { fileURLToPath } from 'url'
 import { CONFIG } from '../config/index.js'
 import { GLOBAL_SYSTEM_PROMPT } from '../prompts/global.js'
 import { STYLE_PROMPTS } from '../prompts/styles.js'
 import { MODULE_CONTENT_REQS } from '../prompts/modules.js'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+// 加载语料索引
+let corpusIndex = null
+function loadCorpus() {
+  if (corpusIndex) return corpusIndex
+  const indexPath = resolve(__dirname, '../../../data/rag/corpus_index.json')
+  if (!existsSync(indexPath)) return null
+  corpusIndex = JSON.parse(readFileSync(indexPath, 'utf-8'))
+  return corpusIndex
+}
+
+// 检索语料：按品类 + 模块匹配，返回 top 3
+function retrieveCorpus(subCategory, moduleKey) {
+  const index = loadCorpus()
+  if (!index || !index.corpus_list) return []
+  const candidates = index.corpus_list
+    .filter(e => e.category === subCategory && e.module_id === moduleKey)
+    .slice(0, 3)
+  return candidates
+}
 
 /**
  * 构建完整 Prompt
@@ -19,7 +44,7 @@ import { MODULE_CONTENT_REQS } from '../prompts/modules.js'
  * @param {string[]} params.modules - 需要生成的模块列表
  * @returns {object} { systemPrompt, userPrompt }
  */
-export function buildPrompt({ product, modules, focus }) {
+export function buildPrompt({ product, modules, focus, images }) {
   // 全局系统指令
   const systemParts = [GLOBAL_SYSTEM_PROMPT]
 
@@ -35,9 +60,51 @@ export function buildPrompt({ product, modules, focus }) {
 本版本重点突出感官体验，放大口感与风味描述模块，做足味觉、嗅觉、质地的细节描写。`)
   }
 
-  // POC 语料覆盖度声明
-  systemParts.push(`## 语料库覆盖度声明
-当前语料库仅覆盖乳制品和冷冻甜品品类。其他品类参考通用食品写作原则生成。语料中的合规警告已被标注，生成时请勿模仿其中的违规表述。`)
+  // 图片信息注入（语料库驱动：图片类型 → 建议模块，优先级从左到右）
+  const imageModuleMap = {
+    '封面图': ['hook'], '产品图': ['taste'],
+    '配料表': ['ingredient', 'trust', 'origin'], '配料图': ['ingredient', 'trust', 'origin'],
+    '场景图': ['scene'], '品牌图': ['brand'], '包装图': ['hook'],
+  }
+  if (images && images.length > 0) {
+    // 按模块聚合图片描述
+    const moduleImages = {}
+    for (const img of images) {
+      const targets = imageModuleMap[img.type] || ['tips'] // 兜底放到 tips
+      for (const mod of targets) {
+        if (modules.includes(mod)) {
+          if (!moduleImages[mod]) moduleImages[mod] = []
+          moduleImages[mod].push(img)
+        }
+      }
+    }
+    // 注入到 system prompt
+    if (Object.keys(moduleImages).length > 0) {
+      const imageParts = ['## 图片排版指令']
+      imageParts.push('运营已上传商品图片。每个模块的图片数量如下，请严格按 图1→文→图2→文→... 的节奏写对应文案。每张图后跟 1-2 句话，描述图里的细节，不要泛泛而谈。')
+      for (const [mod, imgs] of Object.entries(moduleImages)) {
+        imageParts.push(`\n### ${mod} 模块（${imgs.length} 张图）`)
+        imgs.forEach((img, i) => {
+          imageParts.push(`图${i + 1}：${img.desc || '商品图片'}`)
+        })
+      }
+      imageParts.push('\n请确保每段文字紧跟在对应图片之后，文案自然引用图片中的视觉细节。')
+      systemParts.push(imageParts.join('\n'))
+    }
+  }
+
+  // 语料库 RAG 注入
+  const subCategory = product.subCategory || '调制乳/风味牛奶'
+  const corpusRefs = []
+  for (const modKey of modules) {
+    const refs = retrieveCorpus(subCategory, modKey)
+    if (refs.length > 0) {
+      corpusRefs.push(`### ${modKey}\n${refs.map(r => `> ${r.content.slice(0, 200)}`).join('\n\n')}`)
+    }
+  }
+  if (corpusRefs.length > 0) {
+    systemParts.push(`## 参考语料（同类目高分笔记，仅参考写作风格和表达方式，具体产品信息以输入为准）\n\n${corpusRefs.join('\n\n')}`)
+  }
 
   const systemPrompt = systemParts.join('\n\n---\n\n')
 

@@ -151,6 +151,64 @@
 }
 
 
+
+.ai-analyze-btn {
+  position: relative;
+  z-index: 0;
+  border: none;
+  font-weight: 500;
+  background: linear-gradient(135deg, #07C160 0%, #06AD56 100%);
+  color: #fff;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(7,193,96,0.15);
+}
+.ai-analyze-btn::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 9999px;
+  padding: 2px;
+  background: conic-gradient(from var(--angle, 0deg), #07C160, #00E676, #1DE9B6, #00B0FF, #07C160);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.ai-analyze-btn::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  padding: 4px;
+  background: conic-gradient(from var(--angle, 0deg), #07C160, #00E676, #1DE9B6, #00B0FF, #07C160);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -2;
+  opacity: 0;
+  filter: blur(3px);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.ai-analyze-btn:hover {
+  background: linear-gradient(135deg, #06AD56 0%, #059A4D 100%) !important;
+  box-shadow: 0 4px 16px rgba(7,193,96,0.3), 0 0 20px rgba(7,193,96,0.12);
+}
+.ai-analyze-btn:hover::before {
+  opacity: 1;
+  animation: border-spin 3s linear infinite;
+}
+.ai-analyze-btn:hover::after {
+  opacity: 0.5;
+  animation: border-spin 3s linear infinite;
+}
+.ai-analyze-btn:active {
+  transform: scale(0.97);
+  transition: all 0.1s ease;
+}
+
 .ai-glow-btn {
   position: relative;
   z-index: 0;
@@ -222,6 +280,39 @@
   transition: all 0.1s ease;
 }
 
+.ai-glow-btn.ai-glow-btn--active {
+  background-color: #fff !important;
+  background-image: none !important;
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  color: #111;
+  -webkit-text-fill-color: #111;
+  box-shadow: 0 0 12px rgba(255,71,87,0.12), 0 0 24px rgba(83,82,237,0.06), 0 1px 3px rgba(0,0,0,0.06);
+}
+.dark .ai-glow-btn.ai-glow-btn--active {
+  background-color: #000 !important;
+  background-image: none !important;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+}
+.ai-glow-btn.ai-glow-btn--active::before {
+  opacity: 1;
+  animation: border-spin 3s linear infinite;
+}
+.ai-glow-btn.ai-glow-btn--active::after {
+  opacity: 0.45;
+  animation: border-spin 3s linear infinite;
+}
+
+.ai-glow-btn.ai-glow-btn--active:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(255,71,87,0.22), 0 0 36px rgba(83,82,237,0.12), 0 0 60px rgba(255,165,2,0.08), 0 2px 6px rgba(0,0,0,0.08) !important;
+  transition: all 0.25s ease;
+}
+.ai-glow-btn.ai-glow-btn--active:active {
+  transform: scale(0.98);
+}
+
 @keyframes gen-glow { 0%,100%{box-shadow:0 0 14px rgba(7,193,96,0.3),0 0 30px rgba(7,193,96,0.15),0 0 50px rgba(59,130,246,0.08)} 25%{box-shadow:0 0 20px rgba(0,191,165,0.4),0 0 38px rgba(34,211,238,0.22),0 0 58px rgba(59,130,246,0.1)} 50%{box-shadow:0 0 20px rgba(34,211,238,0.4),0 0 38px rgba(59,130,246,0.22),0 0 58px rgba(7,193,96,0.1)} 75%{box-shadow:0 0 20px rgba(59,130,246,0.4),0 0 38px rgba(0,191,165,0.22),0 0 58px rgba(34,211,238,0.1)} }
 @keyframes gen-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-1px)} }
 @keyframes gen-border-shift { 0%{background-position:0% 50%} 100%{background-position:300% 50%} }
@@ -231,3 +322,16 @@
 .generate-btn:hover::after { opacity:1;animation:gen-border-shift 4s linear infinite; }
 .generate-btn:active { transform:scale(0.98);box-shadow:0 0 0 1px rgba(7,193,96,0.35),0 0 8px rgba(7,193,96,0.15);transition:all 0.1s ease; }
 .generate-btn:hover .gen-icon { filter:drop-shadow(0 0 5px rgba(255,255,255,0.6)); }
+
+/* 彩色流动渐变动画 */
+@keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 100% 0%; }
+    50% { background-position: 100% 50%; }
+    75% { background-position: 0% 100%; }
+    100% { background-position: 0% 50%; }
+}
+.ai-analyze-btn {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    font-weight: 500;
+}

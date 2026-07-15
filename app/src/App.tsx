@@ -8,7 +8,7 @@ import { LeftPanel } from '@/components/panels/LeftPanel'
 import { CenterPanel } from '@/components/panels/CenterPanel'
 import { RightPanel } from '@/components/panels/RightPanel'
 import { MODULE_CONFIG, STYLE_CONFIG, SHORT_TEMPLATE, STYLE_LABEL_MAP } from '@/config/modules'
-import type { ProductInput, ModuleResult, GenerateStatus, ModuleKey, ContentStyle, ShippingTimeliness, GenerateCount } from '@/types'
+import type { ProductInput, ModuleResult, GenerateStatus, ModuleKey, ContentStyle, ShippingTimeliness, GenerateCount, ClassifiedImage } from '@/types'
 
 const DEFAULT_INPUT: ProductInput = {
   productName: '认养一头牛 每日吨吨木姜子香茅酸奶', subCategory: 'dairy', netWeight: '200g×12瓶',
@@ -52,6 +52,7 @@ export default function App() {
     { name: '线下商超', price: '', spec: '', enabled: false },
   ])
   const [priceNotes, setPriceNotes] = useState('')
+  const [classifiedImages, setClassifiedImages] = useState<ClassifiedImage[]>([])
 
   const hasRequiredFields = useMemo(() => input.productName.trim().length > 0 && input.netWeight.trim().length > 0 && input.suggestedPrice.trim().length > 0 && input.afterSalesRules.trim().length > 0, [input.productName, input.subCategory, input.netWeight, input.suggestedPrice, input.afterSalesRules])
   const isGenerating = status === 'generating' || status === 'checking'
@@ -65,27 +66,31 @@ export default function App() {
     const v1Style = input.versionStyles?.[0] || input.style || 'xiaohongshu'
     const v2Style = input.versionStyles?.[1] || 'girlfriend'
     const v3Style = input.versionStyles?.[2] || 'fun'
-    setVersionLabelV1(STYLE_LABEL_MAP[v1Style] || v1Style)
+    setVersionLabelV1('默认风格')
     setVersionLabelV2(STYLE_LABEL_MAP[v2Style] || v2Style)
     setVersionLabelV3(STYLE_LABEL_MAP[v3Style] || v3Style)
     setStatus('generating')
     let doneCount = 0; const onStreamDone = () => { doneCount++; if (doneCount >= 3) setStatus('completed') }
-    streamGenerate({ ...input, style: v1Style }, orderedKeys, 'taste', v1, setRightModulesV1, onStreamDone)
-    streamGenerate({ ...input, style: v2Style }, orderedKeys, 'taste', v2, setRightModulesV2, onStreamDone)
-    streamGenerate({ ...input, style: v3Style }, orderedKeys, 'taste', v3, setRightModulesV3, onStreamDone)
+    streamGenerate({ ...input, style: v1Style }, orderedKeys, 'taste', v1, setRightModulesV1, onStreamDone, classifiedImages)
+    streamGenerate({ ...input, style: v2Style }, orderedKeys, 'taste', v2, setRightModulesV2, onStreamDone, classifiedImages)
+    streamGenerate({ ...input, style: v3Style }, orderedKeys, 'taste', v3, setRightModulesV3, onStreamDone, classifiedImages)
     setTimeout(() => { if (doneCount < 3) { doneCount = 3; setStatus('completed') } }, 90000)
   }, [hasRequiredFields, input])
 
-  const handleAdoptAll = useCallback((versionModules: ModuleResult[]) => {
-    console.log('[handleAdoptAll] 收到', versionModules.length, '个模块:', versionModules.map(m => m.moduleKey + ':' + m.status).join(', '))
+  const handleAdoptAll = useCallback((versionModules: ModuleResult[], versionImages?: Map<string, ClassifiedImage[]>) => {
     const completed = versionModules.filter(m => m.status === 'completed'); if (completed.length === 0) return
     setCenterModules(prev => { const updated = prev.map(m => { const src = completed.find(s => s.moduleKey === m.moduleKey); return src ? { ...m, content: src.content } : m }); const newOnes = completed.filter(s => !prev.find(m => m.moduleKey === s.moduleKey)).map(s => ({ ...s, adopted: true })); return [...updated, ...newOnes] })
+    if (versionImages && versionImages.size > 0) setModuleImages(prev => { const next = { ...prev }; versionImages.forEach((imgs, key) => { next[key] = imgs }); return next })
     setDisplayOrder(prev => { const newKeys = completed.map(m => m.moduleKey).filter(k => !prev.includes(k)); return newKeys.length > 0 ? [...prev, ...newKeys] : prev }); setExpandHintCount(c => c + 1)
   }, [showToast])
-  const handleAdopt = useCallback((moduleKey: string, content: string) => { if (!content) return; setCenterModules(prev => { const exists = prev.find(m => m.moduleKey === moduleKey); if (exists) return prev.map(m => m.moduleKey === moduleKey ? { ...m, content } : m); const newMod: ModuleResult = { moduleKey: moduleKey as ModuleKey, moduleLabel: MODULE_CONFIG.find(c => c.key === moduleKey)?.label || '', content, status: 'completed', adopted: true }; return [...prev, newMod] }); setDisplayOrder(prev => prev.includes(moduleKey) ? prev : [...prev, moduleKey]) }, [])
+  const [moduleImages, setModuleImages] = useState<Record<string, ClassifiedImage[]>>({})
+  const handleAdopt = useCallback((moduleKey: string, content: string, images?: ClassifiedImage[]) => { if (!content) return; setCenterModules(prev => { const exists = prev.find(m => m.moduleKey === moduleKey); if (exists) return prev.map(m => m.moduleKey === moduleKey ? { ...m, content } : m); const newMod: ModuleResult = { moduleKey: moduleKey as ModuleKey, moduleLabel: MODULE_CONFIG.find(c => c.key === moduleKey)?.label || '', content, status: 'completed', adopted: true }; return [...prev, newMod] }); if (images && images.length > 0) { setModuleImages(prev => ({ ...prev, [moduleKey]: images })); }; setDisplayOrder(prev => prev.includes(moduleKey) ? prev : [...prev, moduleKey]) }, [])
+  const handleDislikeVersion = useCallback((version: number, label: string) => { showToast(`已记录：版本${version}（${label}）点踩反馈`, 'info') }, [showToast])
+  const handleDislikeModule = useCallback((moduleKey: string, moduleLabel: string) => { showToast(`已记录：${moduleLabel}模块 点踩反馈`, 'info') }, [showToast])
   const handleCenterEdit = useCallback((moduleKey: string, content: string) => { setCenterModules(prev => prev.map(m => m.moduleKey === moduleKey ? { ...m, content } : m)) }, [])
   const handleAddBlock = useCallback(() => { customBlockCounter.current += 1; const newKey = `__custom_${customBlockCounter.current}`; setDisplayOrder(prev => [...prev, newKey]); setCenterModules(prev => [...prev, { moduleKey: newKey as ModuleKey, moduleLabel: '自定义文本', content: '<br>', status: 'completed' as const, adopted: true }]); setTimeout(() => { const el = document.querySelector(`[data-block-key="${newKey}"]`) as HTMLDivElement; if (el) { el.focus(); document.getSelection()?.collapse(el, 0) } }, 50) }, [])
   const handleDeleteBlock = useCallback((moduleKey: string) => { setDisplayOrder(prev => prev.filter(k => k !== moduleKey)); setCenterModules(prev => prev.filter(m => m.moduleKey !== moduleKey)) }, [])
+  const handleClearAll = useCallback(() => { setCenterModules([]); setDisplayOrder([]); setModuleImages({}) }, [])
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-gradient-to-br from-indigo-50/80 via-white to-purple-50/80 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -122,9 +127,9 @@ export default function App() {
       {/* 三栏主体 */}
       <div className="flex flex-1 min-h-0 gap-4 px-4 pb-4">
         {toast && (<div className={`fixed top-16 left-1/2 -translate-x-1/2 z-[999] flex items-center gap-2.5 rounded-lg border px-4 py-2.5 text-sm shadow-lg ${toast.type === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : toast.type === 'error' ? 'border-red-200 bg-red-50 text-red-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0"><circle cx="7.5" cy="7.5" r="6" /><path d={toast.type === 'success' ? "M4.5 7.5l2 2 4-4" : "M7.5 4.5v3M7.5 10v.5"} /></svg><span>{toast.msg}</span></div>)}
-        <div className="w-[320px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><LeftPanel input={input} onChange={setInput} disabled={isGenerating} isGenerating={isGenerating} onGenerate={handleGenerate} hasRequiredFields={hasRequiredFields} priceDialogOpen={priceDialogOpen} setPriceDialogOpen={setPriceDialogOpen} platforms={platforms} setPlatforms={setPlatforms} priceNotes={priceNotes} setPriceNotes={setPriceNotes} /></div>
-        <div className="w-[450px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><CenterPanel status={status} modules={centerModules} mandatoryKeys={displayOrder} onEdit={handleCenterEdit} onReorder={setDisplayOrder} onAddBlock={handleAddBlock} onDeleteBlock={handleDeleteBlock} showToast={showToast} triggerExpandHint={expandHintCount} /></div>
-        <div className="flex-1 min-w-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><RightPanel status={status} modulesV1={rightModulesV1} modulesV2={rightModulesV2} modulesV3={rightModulesV3} versionLabelV1={versionLabelV1} versionLabelV2={versionLabelV2} versionLabelV3={versionLabelV3} onAdopt={handleAdopt} onAdoptAll={handleAdoptAll} /></div>
+        <div className="w-[320px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><LeftPanel input={input} onChange={setInput} disabled={isGenerating} isGenerating={isGenerating} onGenerate={handleGenerate} hasRequiredFields={hasRequiredFields} priceDialogOpen={priceDialogOpen} setPriceDialogOpen={setPriceDialogOpen} platforms={platforms} setPlatforms={setPlatforms} priceNotes={priceNotes} setPriceNotes={setPriceNotes} classifiedImages={classifiedImages} onImagesClassified={(imgs) => setClassifiedImages(prev => { const map = new Map(prev.map(c => [c.id, c])); imgs.forEach(c => map.set(c.id, c)); return [...map.values()] })} /></div>
+        <div className="w-[450px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><CenterPanel status={status} modules={centerModules} mandatoryKeys={displayOrder} onEdit={handleCenterEdit} onReorder={setDisplayOrder} onAddBlock={handleAddBlock} onDeleteBlock={handleDeleteBlock} showToast={showToast} triggerExpandHint={expandHintCount} moduleImages={moduleImages} onClearAll={handleClearAll} /></div>
+        <div className="flex-1 min-w-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><RightPanel status={status} modulesV1={rightModulesV1} modulesV2={rightModulesV2} modulesV3={rightModulesV3} versionLabelV1={versionLabelV1} versionLabelV2={versionLabelV2} versionLabelV3={versionLabelV3} onAdopt={handleAdopt} onAdoptAll={handleAdoptAll} onDislikeVersion={handleDislikeVersion} onDislikeModule={handleDislikeModule} classifiedImages={classifiedImages} /></div>
       </div>
 
       {/* 全局：配置比价清单弹窗 */}
@@ -180,8 +185,8 @@ export default function App() {
 function plainToHTML(text: string): string { return text.replace(/<br\s*\/?>/gi, '\n').replace(/<\/tr>/gi, '\n').replace(/<\/t[dh]>\s*<t[dh][^>]*>/gi, ' / ').replace(/<[^>]+>/g, '').replace(/\n/g, '<br>') }
 function stripEmoji(text: string): string { return text.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}‍️]/gu, '').replace(/\s+/g, ' ').trim() }
 
-async function streamGenerate(product: ProductInput, moduleKeys: string[], focus: 'taste' | 'value', _mods: ModuleResult[], setModules: (v: React.SetStateAction<ModuleResult[]>) => void, onDone: () => void) {
-  try { const response = await fetch('/api/generate/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product, modules: moduleKeys, focus }) }); if (!response.ok) throw new Error('Stream failed'); const reader = response.body!.getReader(); const decoder = new TextDecoder(); let buf = ''; const contents: Record<string, string> = {}; let curMod = ''; let lastUpdate = Date.now()
+async function streamGenerate(product: ProductInput, moduleKeys: string[], focus: 'taste' | 'value', _mods: ModuleResult[], setModules: (v: React.SetStateAction<ModuleResult[]>) => void, onDone: () => void, images?: ClassifiedImage[]) {
+  try { const response = await fetch('/api/generate/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product, modules: moduleKeys, focus, images: images || [] }) }); if (!response.ok) throw new Error('Stream failed'); const reader = response.body!.getReader(); const decoder = new TextDecoder(); let buf = ''; const contents: Record<string, string> = {}; let curMod = ''; let lastUpdate = Date.now()
     const clean = (t: string) => plainToHTML(t.replace(/===\w+===/g, '').trim()); const flush = () => { const now = Date.now(); if (now - lastUpdate < 40) return; lastUpdate = now; setModules(prev => prev.map(m => ({ ...m, status: 'completed' as const, content: clean(contents[m.moduleKey] || '') }))) }
     while (true) { const { done, value } = await reader.read(); if (done) break; buf += decoder.decode(value, { stream: true }); const lines = buf.split('\n'); buf = lines.pop() || ''; for (const line of lines) { if (!line.startsWith('data: ')) continue; const d = line.slice(6); let p; try { p = JSON.parse(d) } catch { continue }; if (p.type === 'done') continue; if (p.type === 'text' && p.content) { contents[curMod] = (contents[curMod] || '') + p.content; const m = /===(hook|price|taste|trust|aftercare|tips|cta|ingredient|origin|brand|scene|feedback|comparison|faq)===/.exec(contents[curMod] || ''); if (m) { const idx = (contents[curMod] || '').indexOf(m[0]); const before = (contents[curMod] || '').slice(0, idx); if (before.trim()) contents[curMod] = before; else delete contents[curMod]; curMod = m[1]; contents[curMod] = (contents[curMod] || '').slice(idx + m[0].length) } flush() } } }
     setModules(prev => prev.map(m => ({ ...m, status: 'completed' as const, content: clean(contents[m.moduleKey] || '') }))); onDone()

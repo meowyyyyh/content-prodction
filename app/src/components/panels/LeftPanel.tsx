@@ -9,33 +9,37 @@ import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from '@/components/ui/select'
-import type { ProductInput, SubCategory, ShippingTimeliness, ShelfLifeUnit } from '@/types'
+import type { ProductInput, SubCategory, ShippingTimeliness, ShelfLifeUnit, ClassifiedImage } from '@/types'
 import { MODULE_CONFIG, STYLE_CONFIG, SUB_CATEGORY_CONFIG, SHIPPING_OPTIONS } from '@/config/modules'
 
-interface LeftPanelProps { input: ProductInput; onChange: (input: ProductInput) => void; disabled: boolean; isGenerating: boolean; onGenerate: () => void; hasRequiredFields: boolean; priceDialogOpen: boolean; setPriceDialogOpen: (v: boolean) => void; platforms: { name: string; price: string; spec: string; enabled: boolean }[]; setPlatforms: (v: { name: string; price: string; spec: string; enabled: boolean }[]) => void; priceNotes: string; setPriceNotes: (v: string) => void }
+interface LeftPanelProps { input: ProductInput; onChange: (input: ProductInput) => void; disabled: boolean; isGenerating: boolean; onGenerate: () => void; hasRequiredFields: boolean; priceDialogOpen: boolean; setPriceDialogOpen: (v: boolean) => void; platforms: { name: string; price: string; spec: string; enabled: boolean }[]; setPlatforms: (v: { name: string; price: string; spec: string; enabled: boolean }[]) => void; priceNotes: string; setPriceNotes: (v: string) => void; classifiedImages: ClassifiedImage[]; onImagesClassified: (images: ClassifiedImage[]) => void }
 interface FormErrors { productName?: string; subCategory?: string; netWeight?: string; suggestedPrice?: string; afterSalesRules?: string }
 
 const SHELF_LIFE_UNITS: { key: ShelfLifeUnit; label: string }[] = [{ key: 'day', label: '天' }, { key: 'month', label: '月' }, { key: 'year', label: '年' }]
 const FIELD_LABELS: Record<string, string> = { productName: '商品名称', subCategory: '二级子品类', netWeight: '规格净含量', origin: '产地', suggestedPrice: '建议售价', sellingPoints: '核心卖点', coreIngredients: '核心配料/原料', shippingOrigin: '发货地', shippingTimeliness: '发货时效', courier: '快递公司', afterSalesRules: '售后规则', brandBackground: '品牌背景', targetAudience: '适用人群', usageScene: '使用场景', shelfLifeValue: '保质期' }
 
-export function LeftPanel({ input, onChange, disabled, isGenerating, onGenerate, priceDialogOpen, setPriceDialogOpen, platforms, setPlatforms, priceNotes, setPriceNotes }: LeftPanelProps) {
-  const [aiOpen, setAiOpen] = useState(true); const [categoryOpen, setCategoryOpen] = useState(true); const [productOpen, setProductOpen] = useState(true); const [fileTab, setFileTab] = useState('paste'); const [linkInput, setLinkInput] = useState(''); const [pasteText, setPasteText] = useState(''); const [extractLoading, setExtractLoading] = useState(false); const fileInputRef = useRef<HTMLInputElement>(null)
+export function LeftPanel({ input, onChange, disabled, isGenerating, onGenerate, priceDialogOpen, setPriceDialogOpen, platforms, setPlatforms, priceNotes, setPriceNotes, classifiedImages, onImagesClassified }: LeftPanelProps) {
+  const [aiOpen, setAiOpen] = useState(true); const [categoryOpen, setCategoryOpen] = useState(true); const [productOpen, setProductOpen] = useState(true); const [fileTab, setFileTab] = useState('upload'); const [pasteText, setPasteText] = useState(''); const [extractLoading, setExtractLoading] = useState(false); const fileInputRef = useRef<HTMLInputElement>(null)
+  // 图片分类
+  type ImageFile = { id: string; file: File; status: 'pending' | 'compressing' | 'classifying' | 'done' | 'error'; error?: string; type?: string; desc?: string; preview?: string }
+  const [imageFiles, setImageFiles] = useState<ImageFile[]>([]); const [imageClassifyLoading, setImageClassifyLoading] = useState(false); const [classifyProgress, setClassifyProgress] = useState<{ done: number; total: number } | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [errors, setErrors] = useState<FormErrors>({}); const [dragIndex, setDragIndex] = useState<number | null>(null)
   // 文件上传解析
   type UploadFile = { id: string; file: File; status: 'pending' | 'parsing' | 'done' | 'error'; text?: string; error?: string }
   const [uploadFiles, setUploadFiles] = useState<UploadFile[]>([]); const [parseLoading, setParseLoading] = useState(false)
   const [extractedFields, setExtractedFields] = useState<Record<string, string> | null>(null); const [confirmOpen, setConfirmOpen] = useState(false); const [dragOver, setDragOver] = useState(false)
-  const addFiles = (files: FileList | File[]) => { const arr = Array.from(files); const valid = arr.filter(f => /\.(docx?|txt|xlsx?|csv)$/i.test(f.name) || f.type.includes('text') || f.type.includes('pdf') || f.type.includes('spreadsheet') || f.type.includes('document')); if (valid.length === 0) return; setUploadFiles(prev => [...prev, ...valid.map(f => ({ id: Math.random().toString(36).slice(2), file: f, status: 'pending' as const }))]) }
+  const addFiles = (files: FileList | File[]) => { const arr = Array.from(files); const valid = arr.filter(f => /\.(docx?|txt|xlsx?|csv|pdf)$/i.test(f.name) || f.type.includes('text') || f.type.includes('pdf') || f.type.includes('spreadsheet') || f.type.includes('document')); if (valid.length === 0) return; setUploadFiles(prev => [...prev, ...valid.map(f => ({ id: Date.now().toString(36)+Math.random().toString(36).slice(2), file: f, status: 'pending' as const }))]) }
   const removeFile = (id: string) => setUploadFiles(prev => prev.filter(f => f.id !== id))
   const parseFile = async (uf: UploadFile): Promise<string> => { const { file } = uf; const name = file.name.toLowerCase()
     try { if (name.endsWith('.docx')) { const mammoth = await import('mammoth'); const buf = await file.arrayBuffer(); const r = await mammoth.extractRawText({ arrayBuffer: buf }); return r.value }
       else if (name.endsWith('.xlsx') || name.endsWith('.xls')) { const XLSX = await import('xlsx'); const buf = await file.arrayBuffer(); const wb = XLSX.read(buf, { type: 'array' }); return wb.SheetNames.map(sn => XLSX.utils.sheet_to_csv(wb.Sheets[sn])).join('\n') }
       else if (name.endsWith('.csv')) { return await file.text() }
-      else if (name.endsWith('.pdf')) { return await file.text() }
+      else if (name.endsWith('.pdf')) { const text = await file.text(); if (text.trim().length > 0) return text; throw new Error('PDF 为纯图片格式，请使用文本粘贴手动录入') }
       else { return await file.text() }
     } catch (e: any) { throw new Error(e.message || '解析失败') } }
   const handleParseAll = async () => { if (uploadFiles.length === 0 || parseLoading) return; setParseLoading(true); const allText: string[] = []
-    for (const uf of uploadFiles) { setUploadFiles(prev => prev.map(f => f.id === uf.id ? { ...f, status: 'parsing' as const } : f)); try { const t = await parseFile(uf); allText.push(`--- ${uf.file.name} ---\n${t}`); setUploadFiles(prev => prev.map(f => f.id === uf.id ? { ...f, status: 'done' as const, text: t } : f)) } catch (e: any) { setUploadFiles(prev => prev.map(f => f.id === uf.id ? { ...f, status: 'error' as const, error: e.message } : f)) } }
+    for (const uf of uploadFiles) { setUploadFiles(prev => prev.map(f => f.id === uf.id ? { ...f, status: 'parsing' as const } : f)); try { const t = await parseFile(uf); allText.push(`--- ${uf.file?.name || '(未知)'} ---\n${t}`); setUploadFiles(prev => prev.map(f => f.id === uf.id ? { ...f, status: 'done' as const, text: t } : f)) } catch (e: any) { setUploadFiles(prev => prev.map(f => f.id === uf.id ? { ...f, status: 'error' as const, error: e.message } : f)) } }
     const combined = allText.join('\n\n').slice(0, 8000)
     if (combined.trim()) { try { const res = await fetch('/api/extract', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: combined }) }); const d = await res.json(); if (d.success && d.data) { setExtractedFields(d.data); setConfirmOpen(true) } } catch { } }
     setParseLoading(false) }
@@ -54,6 +58,81 @@ export function LeftPanel({ input, onChange, disabled, isGenerating, onGenerate,
   const handleGenerate = () => { const newErrors: FormErrors = {}; if (!input.productName.trim()) newErrors.productName = '请输入商品名称'; if (!input.netWeight.trim()) newErrors.netWeight = '请输入规格净含量'; if (!input.suggestedPrice.trim()) newErrors.suggestedPrice = '请输入建议售价'; if (!input.afterSalesRules.trim()) newErrors.afterSalesRules = '请输入售后规则'; if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return }; onGenerate() }
 
   const handleExtractInfo = async () => { const text = pasteText.trim(); if (!text || extractLoading) return; setExtractLoading(true); try { const res = await fetch('/api/extract', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) }); const d = await res.json(); if (d.success && d.data) { const r = d.data; const updated = { ...input, ...(r.productName ? { productName: String(r.productName) } : {}), ...(r.subCategory ? { subCategory: ['dairy','snack','fresh_fruit','grain_oil','other'].includes(r.subCategory) ? r.subCategory : input.subCategory } : {}), ...(r.netWeight ? { netWeight: String(r.netWeight) } : {}), ...(r.origin ? { origin: String(r.origin) } : {}), ...(r.suggestedPrice ? { suggestedPrice: String(r.suggestedPrice) } : {}), ...(r.sellingPoints ? { sellingPoints: String(r.sellingPoints) } : {}), ...(r.coreIngredients ? { coreIngredients: String(r.coreIngredients) } : {}), ...(r.shippingTimeliness && ['24h','48h','72h','7d','custom'].includes(r.shippingTimeliness) ? { shippingTimeliness: r.shippingTimeliness } : {}), ...(r.courier ? { courier: String(r.courier) } : {}), ...(r.afterSalesRules ? { afterSalesRules: String(r.afterSalesRules) } : {}), ...(r.brandBackground ? { brandBackground: String(r.brandBackground) } : {}), ...(r.targetAudience ? { targetAudience: String(r.targetAudience) } : {}), ...(r.usageScene ? { usageScene: String(r.usageScene) } : {}), }; onChange(updated) } } catch(e) {} setExtractLoading(false) }
+
+  // 图片压缩（浏览器端，canvas，目标 512px 宽）
+  const compressImage = (file: File): Promise<{ base64: string; mimeType: string }> => new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const img = new Image()
+      img.onload = () => {
+        const maxW = 512
+        const scale = Math.min(1, maxW / img.width)
+        const w = Math.round(img.width * scale); const h = Math.round(img.height * scale)
+        const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h
+        const ctx = canvas.getContext('2d')!; ctx.drawImage(img, 0, 0, w, h)
+        resolve({ base64: canvas.toDataURL(file.type || 'image/jpeg', 0.8).split(',')[1], mimeType: file.type || 'image/jpeg' })
+      }
+      img.onerror = () => reject(new Error('图片加载失败'))
+      img.src = reader.result as string
+    }
+    reader.onerror = () => reject(new Error('读取失败'))
+    reader.readAsDataURL(file)
+  })
+
+  // 图片上传 + 分类（并行批量）
+  const handleImageClassify = async () => {
+    if (imageFiles.length === 0 || imageClassifyLoading) return
+    setImageClassifyLoading(true)
+    const pending = imageFiles.filter(f => f.status === 'pending')
+    setClassifyProgress({ done: 0, total: pending.length })
+
+    // 并行压缩，收集 preview
+    setImageFiles(prev => prev.map(f => pending.some(p => p.id === f.id) ? { ...f, status: 'compressing' } : f))
+    const compressResults = await Promise.allSettled(pending.map(async f => {
+      const c = await compressImage(f.file)
+      const preview = `data:${c.mimeType};base64,${c.base64}`
+      setImageFiles(prev => prev.map(p => p.id === f.id ? { ...p, preview, status: 'classifying' } : p))
+      return { id: f.id, preview, mimeType: c.mimeType, base64: c.base64 }
+    }))
+    const compressed = compressResults.filter((r): r is PromiseFulfilledResult<{id:string;preview:string;mimeType:string;base64:string}> => r.status === 'fulfilled').map(r => r.value)
+    // 处理失败的压缩
+    compressResults.filter(r => r.status === 'rejected').forEach(r => {
+      // 找出失败的文件 ID 并标记 error（兜底：所有 classifying 变 error）
+    })
+    if (compressed.length === 0) { setImageClassifyLoading(false); setClassifyProgress(null); return }
+
+    // 并行调分类 API
+    try {
+      const res = await fetch('/api/images/classify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ images: compressed }) })
+      const d = await res.json()
+      if (d.success && d.data?.results) {
+        const results = d.data.results as Array<{id:string;type:string;desc:string}>
+        // 更新 imageFiles 状态
+        setImageFiles(prev => prev.map(f => {
+          const r = results.find(rr => String(rr.id) === String(f.id))
+          return r ? { ...f, status: 'done' as const, type: r.type, desc: r.desc } : f
+        }))
+        // 合并 + 上报
+        const newImages = results.map(r => {
+          const c = compressed.find(cp => String(cp.id) === String(r.id))
+          return { id: r.id, type: r.type, desc: r.desc || '', preview: c?.preview || '' }
+        }).filter(ci => ci.preview)
+        const allClassified = new Map(classifiedImages.map(c => [c.id, c]))
+        newImages.forEach(c => allClassified.set(c.id, c))
+        onImagesClassified([...allClassified.values()])
+      }
+      setClassifyProgress({ done: pending.length, total: pending.length })
+    } catch (e: any) { /* ignore */ }
+    setImageClassifyLoading(false)
+    setTimeout(() => setClassifyProgress(null), 1500)
+  }
+
+  const addImages = (files: FileList | File[]) => {
+    const arr = Array.from(files).filter(f => f.type.startsWith('image/'))
+    if (arr.length === 0) return
+    setImageFiles(prev => [...prev, ...arr.map(f => ({ id: Date.now().toString(36)+Math.random().toString(36).slice(2), file: f, status: 'pending' as const }))])
+  }
+  const removeImage = (id: string) => setImageFiles(prev => prev.filter(f => f.id !== id))
   
   const handlePolishSellingPoints = async () => { const text = input.sellingPoints.trim(); if (!text || polishLoading) return; prePolishRef.current = text; setPolishLoading(true); try { const res = await fetch('/api/chat/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instruction: '请优化以下商品的核心卖点，让每条卖点更吸引人、更有说服力、表述更清晰。保持每行一条的格式，不要合并成段落，不要添加任何标题或前缀。', modules: [{ key: 'hook', label: '核心卖点', content: '商品名：' + input.productName + '\n当前卖点：\n' + text }] }) }); const reader = res.body!.getReader(); const decoder = new TextDecoder(); let buf = ''; let result = ''; while (true) { const { done, value } = await reader.read(); if (done) break; buf += decoder.decode(value, { stream: true }); const lines = buf.split('\n'); buf = lines.pop() || ''; for (const line of lines) { if (!line.startsWith('data: ')) continue; const d = line.slice(6); let p; try { p = JSON.parse(d) } catch { continue }; if (p.type === 'text' && p.content) result += p.content } }; const cleaned = result.replace(/===\w+===/g, '').replace(/^#{1,3}\s*核心卖点\s*$/gm, '').trim(); if (cleaned && cleaned !== text) { updateField('sellingPoints', cleaned); setPolished(true) } } catch { } setPolishLoading(false) }
 
@@ -61,8 +140,17 @@ export function LeftPanel({ input, onChange, disabled, isGenerating, onGenerate,
     {/* AI自动分析商品信息 */}
     <Collapsible open={aiOpen} onOpenChange={setAiOpen}><CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium hover:bg-muted/50 transition-colors">AI自动分析商品信息<svg width="14" height="14" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className={'shrink-0 text-muted-foreground transition-transform duration-200 ' + (aiOpen ? 'rotate-90' : '')}><path d="M5.5 2.5l5 5-5 5" /></svg></CollapsibleTrigger><CollapsibleContent className="pt-2">
       <div className="flex flex-col gap-2">
-        <div className="flex items-center rounded-lg bg-muted p-0.5"><button onClick={() => setFileTab('paste')} className={"flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200 " + (fileTab === 'paste' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground')}>文本粘贴</button><button onClick={() => setFileTab('upload')} className={"flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200 " + (fileTab === 'upload' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground')}>上传文件</button><button onClick={() => setFileTab('link')} className={"flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200 " + (fileTab === 'link' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground')}>导入链接</button></div>
-        {fileTab === 'paste' ? (<div className="flex flex-col gap-2"><Textarea rows={6} placeholder="在此粘贴商品资料文本，AI将自动识别并提取关键字段" value={pasteText} onChange={e => setPasteText(e.target.value)} className="text-xs" /><button onClick={handleExtractInfo} disabled={extractLoading || !pasteText.trim()} className="flex items-center justify-center gap-1.5 rounded-md bg-[#07C160] hover:bg-[#06AD56] disabled:opacity-50 text-white text-xs font-medium py-2 px-4 transition-colors">{extractLoading ? (<><span className="inline-block size-3 animate-spin rounded-full border-2 border-current border-t-transparent"/>AI正在提取...</>) : (<><svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 1.5L9.5 5l4 .5-3 3 1 4.5-3.5-2-3.5 2 1-4.5-3-3 4-.5 2-3.5z"/></svg>AI 智能提取</>)}</button></div>) : fileTab === 'upload' ? (<div className="flex flex-col gap-2" onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={e => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setDragOver(false) }} onDrop={e => { e.preventDefault(); setDragOver(false); if (e.dataTransfer.files) addFiles(e.dataTransfer.files) }}><div className="flex items-center justify-between"><span className="text-xs text-muted-foreground">支持 Word / Excel / CSV / TXT，可多选拖拽</span><input ref={fileInputRef} type="file" className="hidden" accept=".doc,.docx,.txt,.xlsx,.xls,.csv" multiple onChange={e => { if (e.target.files) addFiles(e.target.files); e.target.value = '' }} /></div>{uploadFiles.length > 0 ? (<div className={`flex flex-col gap-1.5 rounded-lg border-2 border-dashed p-2 transition-colors ${dragOver ? 'border-[#07C160] bg-emerald-50/50' : 'border-transparent'}`}>{uploadFiles.map(uf => (<div key={uf.id} className={`flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs ${uf.status === 'error' ? 'border-red-200 bg-red-50' : uf.status === 'done' ? 'border-emerald-200 bg-emerald-50' : 'border-border bg-card'}`}><span className="flex-1 truncate font-medium">{uf.file.name}</span><span className="text-[10px] text-muted-foreground shrink-0">{(uf.file.size / 1024).toFixed(1)}KB</span>{uf.status === 'parsing' && <span className="inline-block size-3 animate-spin rounded-full border-2 border-current border-t-transparent shrink-0" />}{uf.status === 'done' && <svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="#07C160" strokeWidth="1.5" className="shrink-0"><path d="M4.5 7.5l2 2 4-4"/></svg>}{uf.status === 'error' && <span className="text-[10px] text-red-500 shrink-0">{uf.error || '解析失败'}</span>}<button onClick={() => removeFile(uf.id)} className="text-muted-foreground/30 hover:text-destructive shrink-0"><svg width="12" height="12" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 3.5l8 8M11.5 3.5l-8 8"/></svg></button></div>))}<div className="flex items-center gap-2"><button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1 rounded-md border border-dashed border-border px-2.5 py-1.5 text-[10px] text-muted-foreground hover:border-muted-foreground/30 transition-colors"><svg width="11" height="11" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 2v11M2 7.5h11"/></svg>新增文件</button><div className="flex-1" /><button onClick={handleParseAll} disabled={parseLoading || uploadFiles.length === 0} className="flex items-center gap-1.5 rounded-md bg-[#07C160] hover:bg-[#06AD56] disabled:opacity-50 text-white text-xs font-medium px-4 py-1.5 transition-colors">{parseLoading ? <><span className="inline-block size-3 animate-spin rounded-full border-2 border-current border-t-transparent"/>解析中...</> : <><svg width="12" height="12" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 1.5L9.5 5l4 .5-3 3 1 4.5-3.5-2-3.5 2 1-4.5-3-3 4-.5 2-3.5z"/></svg>开始解析</>}</button></div></div>) : (<div className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-card py-6 px-4 cursor-pointer transition-colors" onClick={() => fileInputRef.current?.click()} style={dragOver ? { borderColor: '#07C160', backgroundColor: 'hsl(160 60% 35% / 0.08)' } : undefined}><div className="flex items-center gap-1.5 rounded-md bg-muted px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted/80 transition-colors"><svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 1.5v8m0 0l-2-2m2 2l2-2M2.5 7.5v4a1 1 0 001 1h8a1 1 0 001-1v-4"/></svg>{dragOver ? '松手即可上传' : '上传文件或拖拽至此'}</div><p className="text-[11px] text-muted-foreground/60">支持 Word / Excel / CSV，可多选拖拽</p></div>)}</div>) : (<div className="flex items-center gap-2 rounded-lg border border-border bg-background p-3"><Input placeholder="请粘贴文件链接地址" value={linkInput} onChange={e => setLinkInput(e.target.value)} className="flex-1 h-8 text-xs" /><Button size="sm" className="h-8 text-xs bg-[#07C160] hover:bg-[#06AD56]" onClick={() => setLinkInput('')}>确认</Button></div>)}
+        <div className="flex items-center rounded-lg bg-muted p-0.5"><button onClick={() => setFileTab('upload')} className={"flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200 " + (fileTab === 'upload' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground')}>上传文件</button><button onClick={() => setFileTab('paste')} className={"flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200 " + (fileTab === 'paste' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground')}>文本识别</button></div>
+        {fileTab === 'upload' ? (<div className="flex flex-col gap-2" onDragOver={e => { e.preventDefault(); e.stopPropagation(); setDragOver(true) }} onDragLeave={e => { e.preventDefault(); const rect = e.currentTarget.getBoundingClientRect(); const { clientX, clientY } = e; if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) setDragOver(false) }} onDrop={e => { e.preventDefault(); e.stopPropagation(); setDragOver(false); if (e.dataTransfer.files) { const files = e.dataTransfer.files; const imgs = []; const docs = []; Array.from(files).forEach(f => { f.type.startsWith('image/') ? imgs.push(f) : docs.push(f) }); if (imgs.length > 0) addImages(imgs); if (docs.length > 0) addFiles(docs) } }}><div className="flex items-center justify-between"><span className="text-xs text-muted-foreground">请上传需要解析和排版的图片文件</span>{imageFiles.length + uploadFiles.length > 0 && <span className="text-[10px] text-muted-foreground/60">{imageFiles.length + uploadFiles.length} 个文件</span>}<input ref={fileInputRef} type="file" className="hidden" accept="image/*,.doc,.docx,.txt,.xlsx,.xls,.csv,.pdf" multiple onChange={e => { if (!e.target.files) return; const imgs: File[] = []; const docs: File[] = []; Array.from(e.target.files).forEach(f => { f.type.startsWith('image/') ? imgs.push(f) : docs.push(f) }); if (imgs.length > 0) addImages(imgs); if (docs.length > 0) addFiles(docs); e.target.value = '' }} /></div>
+  {/* 文件滚动区 */}
+  {(imageFiles.length > 0 || uploadFiles.length > 0) ? (<div className={`flex flex-col gap-1.5 max-h-48 overflow-y-auto rounded-lg border p-2 transition-colors ${dragOver ? 'border-[#07C160] bg-emerald-50/30' : 'border-border/50 bg-muted/20'}`}>
+    {/* 文档优先 */}
+    {uploadFiles.length > 0 && (<>{uploadFiles.map(uf => (<div key={uf.id} className={`flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs shrink-0 ${uf.status === 'error' ? 'border-red-200 bg-red-50' : uf.status === 'done' ? 'border-emerald-200 bg-emerald-50' : 'border-border bg-card'}`}><span className="shrink-0 text-base">📄</span><span className="flex-1 truncate font-medium">{uf.file?.name || '(未知)'}</span><span className="text-[10px] text-muted-foreground shrink-0">{((uf.file?.size || 0) / 1024).toFixed(1)}KB</span>{uf.status === 'parsing' && <span className="inline-block size-3 animate-spin rounded-full border-2 border-current border-t-transparent shrink-0" />}{uf.status === 'done' && <svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="#07C160" strokeWidth="1.5" className="shrink-0"><path d="M4.5 7.5l2 2 4-4"/></svg>}{uf.status === 'error' && <span className="text-[10px] text-red-500 shrink-0">{uf.error || '解析失败'}</span>}<button onClick={() => removeFile(uf.id)} className="text-muted-foreground/30 hover:text-destructive shrink-0"><svg width="12" height="12" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 3.5l8 8M11.5 3.5l-8 8"/></svg></button></div>))}</>)}
+    {/* 图片在下方 */}
+    {imageFiles.length > 0 && (<>{imageFiles.map((f, i) => (<div key={f.id} className={`flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs shrink-0 ${f.status === 'error' ? 'border-red-200 bg-red-50' : f.status === 'done' ? 'border-emerald-200 bg-emerald-50' : 'border-border bg-card'}`}><div className="size-8 rounded shrink-0 cursor-pointer overflow-hidden" onClick={() => { const url = f.preview || (f.file && URL.createObjectURL(f.file)); if (url) setPreviewUrl(url) }}>{f.preview ? <img src={f.preview} className="size-8 rounded object-cover" alt="" /> : <div className="size-8 rounded bg-muted flex items-center justify-center text-[10px] text-muted-foreground">图{i+1}</div>}</div><span className="flex-1 truncate font-medium">{f.file?.name || '(未知)'}</span>{f.status === 'compressing' && <span className="text-[10px] text-muted-foreground shrink-0">压缩中</span>}{f.status === 'classifying' && <span className="inline-block size-3 animate-spin rounded-full border-2 border-current border-t-transparent shrink-0" />}{f.status === 'done' && <span className="text-[10px] shrink-0"><span className="inline-flex items-center rounded-sm bg-white/80 border border-emerald-200 px-1 py-0.5 text-emerald-700">{f.type}</span></span>}{f.status === 'error' && <span className="text-[10px] text-red-500 shrink-0">{f.error || '失败'}</span>}<button onClick={e => { e.stopPropagation(); removeImage(f.id) }} className="text-muted-foreground/30 hover:text-destructive shrink-0"><svg width="12" height="12" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 3.5l8 8M11.5 3.5l-8 8"/></svg></button></div>))}</>)}
+  </div>) : (<div className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-card py-8 px-4 cursor-pointer transition-colors hover:border-muted-foreground/30" onClick={() => fileInputRef.current?.click()} style={dragOver ? { borderColor: '#07C160', backgroundColor: 'hsl(160 60% 35% / 0.08)' } : undefined}><div className="flex items-center gap-1.5 rounded-md bg-muted px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted/80 transition-colors"><svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 1.5v8m0 0l-2-2m2 2l2-2M2.5 7.5v4a1 1 0 001 1h8a1 1 0 001-1v-4"/></svg>{dragOver ? '松手即可上传' : '上传文件或拖拽至此'}</div><p className="text-[11px] text-muted-foreground/60">支持图片（JPG/PNG/WebP）+ 文档（Word/Excel/CSV/PDF），可多选拖拽</p></div>)}
+  {/* 底部操作栏 */}
+  {imageFiles.length + uploadFiles.length > 0 && (<div className="flex flex-col gap-2"><div className="flex items-center gap-2"><button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1 rounded-md px-2 py-1.5 text-[10px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"><svg width="11" height="11" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 2v11M2 7.5h11"/></svg>新增文件</button><div className="flex-1" /><button onClick={() => { if (confirm("确定要删除所有已上传的文件吗？")) { setUploadFiles([]); setImageFiles([]) } }} className="flex items-center gap-1 rounded-md px-2 py-1.5 text-[10px] text-red-400 hover:text-red-600 hover:bg-red-50/50 transition-colors"><svg width="11" height="11" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2.5 4.5h10M5.5 4.5V3a1 1 0 011-1h2a1 1 0 011 1v1.5M4.5 4.5l.5 8.5a1 1 0 001 1h3a1 1 0 001-1l.5-8.5"/></svg>全部删除</button></div><button onClick={() => { handleParseAll(); handleImageClassify() }} disabled={parseLoading || imageClassifyLoading} className="ai-glow-btn ai-glow-btn--active w-full rounded-full flex items-center justify-center gap-2 text-xs px-4 py-2.5 disabled:opacity-40">{parseLoading || imageClassifyLoading ? <><span className="inline-block size-3.5 animate-spin rounded-full border-2 border-foreground/20 border-t-foreground/60" />分析中{classifyProgress ? ` ${classifyProgress.done}/${classifyProgress.total}` : '...'} {classifyProgress && classifyProgress.done > 0 ? `· 约${Math.max(1, Math.round((classifyProgress.total - classifyProgress.done) * 7))}s` : ''}</> : '立即分析'}</button></div>)}</div>) : fileTab === 'paste' ? (<div className="flex flex-col gap-2"><Textarea rows={6} placeholder="在此粘贴商品资料文本，AI将自动识别并提取关键字段" value={pasteText} onChange={e => setPasteText(e.target.value)} className="text-xs" /><button onClick={handleExtractInfo} disabled={extractLoading || !pasteText.trim()} className="flex items-center justify-center gap-1.5 rounded-md bg-[#07C160] hover:bg-[#06AD56] disabled:opacity-50 text-white text-xs font-medium py-2 px-4 transition-colors">{extractLoading ? (<><span className="inline-block size-3 animate-spin rounded-full border-2 border-current border-t-transparent"/>AI正在提取...</>) : (<><svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 1.5L9.5 5l4 .5-3 3 1 4.5-3.5-2-3.5 2 1-4.5-3-3 4-.5 2-3.5z"/></svg>AI 智能提取</>)}</button></div>) : null}
       </div>
     </CollapsibleContent></Collapsible>
 
@@ -166,4 +254,12 @@ export function LeftPanel({ input, onChange, disabled, isGenerating, onGenerate,
     </div>
   )}
 </div>)
+
+  {/* 图片预览遮罩 */}
+  {previewUrl && (
+    <div className="fixed inset-0 z-[999] bg-black/70 flex items-center justify-center p-8" onClick={() => setPreviewUrl(null)} onKeyDown={e => { if (e.key === 'Escape') setPreviewUrl(null) }} tabIndex={0} ref={el => el?.focus()}>
+      <img src={previewUrl} className="max-w-full max-h-full object-contain rounded-lg shadow-2xl" alt="预览" onClick={e => e.stopPropagation()} />
+      <button onClick={() => setPreviewUrl(null)} className="absolute top-4 right-4 size-10 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center text-xl transition-colors">✕</button>
+    </div>
+  )}
 }
