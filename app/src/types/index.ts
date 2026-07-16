@@ -12,7 +12,7 @@ export interface SubCategoryConfig { key: SubCategory; label: string }
 export interface ShippingOption { key: ShippingTimeliness; label: string }
 
 export interface ProductInput {
-  productName: string; subCategory: SubCategory | ''; netWeight: string; origin: string
+  productName: string; subCategory: SubCategory | ''; catLevel1: string; catLevel2: string; catLevel3: string; netWeight: string; origin: string
   productionDate: string; shelfLifeValue: string; shelfLifeUnit: ShelfLifeUnit
   suggestedPrice: string; sellingPoints: string; coreIngredients: string
   shippingOrigin: string; shippingTimeliness: ShippingTimeliness; customShippingDays: string
@@ -32,7 +32,7 @@ export interface GenerateResult { productName: string; style: ContentStyle; modu
 export interface GenerateResponse { success: boolean; data?: GenerateResult; error?: string; preBannedHit?: ComplianceHit }
 export type GenerateStatus = 'idle' | 'checking' | 'generating' | 'completed' | 'error' | 'blocked'
 
-export interface ClassifiedImage { id: string; type: string; desc: string; preview?: string; suggestedModule?: string }
+export interface ClassifiedImage { id: string; type: string; desc: string; preview?: string; suggestedModule?: string; layout_role?: string }
 // 图片类型 → 建议模块映射
 export const IMAGE_MODULE_MAP: Record<string, ModuleKey[]> = {
   '产品图': ['taste', 'hook'],

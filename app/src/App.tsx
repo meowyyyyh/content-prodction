@@ -11,7 +11,7 @@ import { MODULE_CONFIG, STYLE_CONFIG, SHORT_TEMPLATE, STYLE_LABEL_MAP } from '@/
 import type { ProductInput, ModuleResult, GenerateStatus, ModuleKey, ContentStyle, ShippingTimeliness, GenerateCount, ClassifiedImage } from '@/types'
 
 const DEFAULT_INPUT: ProductInput = {
-  productName: '认养一头牛 每日吨吨木姜子香茅酸奶', subCategory: 'dairy', netWeight: '200g×12瓶',
+  productName: '认养一头牛 每日吨吨木姜子香茅酸奶', subCategory: 'dairy', catLevel1: '美食酒水', catLevel2: '酒水饮料', catLevel3: '乳制品', netWeight: '200g×12瓶',
   origin: '内蒙古呼和浩特', suggestedPrice: '59.90',
   sellingPoints: '0添加蔗糖\n3.0g优质乳蛋白\n北纬40°黄金奶源\n口感醇厚不酸涩\n木姜子+香茅独特风味',
   coreIngredients: '生牛乳（≥90%）、白砂糖、木姜子提取物、香茅提取物、发酵菌',
@@ -40,6 +40,9 @@ export default function App() {
   const [versionLabelV2, setVersionLabelV2] = useState('')
   const [versionLabelV3, setVersionLabelV3] = useState('')
   const [displayOrder, setDisplayOrder] = useState<string[]>([]); const [expandHintCount, setExpandHintCount] = useState(0)
+  const [showModuleDialog, setShowModuleDialog] = useState(false)
+  const [pendingModuleKeys, setPendingModuleKeys] = useState<string[]>([])
+  const skipModuleCheckRef = useRef(false)
   const customBlockCounter = useRef(0)
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true')
   useEffect(() => { document.documentElement.classList.toggle('dark', darkMode); localStorage.setItem('darkMode', String(darkMode)) }, [darkMode])
@@ -53,13 +56,34 @@ export default function App() {
   ])
   const [priceNotes, setPriceNotes] = useState('')
   const [classifiedImages, setClassifiedImages] = useState<ClassifiedImage[]>([])
+  const fileMapRef = useRef<Map<string, File>>(new Map())
+  const handleFileRegistered = useCallback((id: string, file: File) => { fileMapRef.current.set(id, file) }, [])
 
   const hasRequiredFields = useMemo(() => input.productName.trim().length > 0 && input.netWeight.trim().length > 0 && input.suggestedPrice.trim().length > 0 && input.afterSalesRules.trim().length > 0, [input.productName, input.subCategory, input.netWeight, input.suggestedPrice, input.afterSalesRules])
   const isGenerating = status === 'generating' || status === 'checking'
 
-  const handleGenerate = useCallback(async () => {
+  const handleGenerate = useCallback(async (forceModules?: ModuleKey[]) => {
     if (!hasRequiredFields) return
-    const orderedKeys = input.moduleOrder.filter(k => input.selectedModules.includes(k as ModuleKey))
+    if (!skipModuleCheckRef.current) {
+      // 检查已分类图片的标签是否提示未勾选的笔记模块
+      if (classifiedImages.length > 0) {
+        const labelMap: Record<string, string> = { hook: '首屏钩子', price: '价格福利', taste: '口感体验', trust: '基础信任', aftercare: '物流售后', tips: '储存贴士', cta: '行动召唤', ingredient: '成分科普', origin: '原料溯源', brand: '品牌背书', scene: '场景共情', feedback: '用户反馈', comparison: '全网比价', faq: '常见问题' }
+        const typeMap: Record<string, string[]> = { '产品图': ['taste', 'hook'], '封面图': ['hook'], '配料表': ['trust', 'ingredient'], '场景图': ['scene'], '品牌图': ['brand'], '包装图': ['hook'], '其他': [] }
+        const unselected = new Set<string>()
+        for (const img of classifiedImages) {
+          const keys = typeMap[img.type] || []
+          for (const k of keys) { if (!(forceModules || input.selectedModules).includes(k as any)) unselected.add(k) }
+        }
+        if (unselected.size > 0) {
+          setPendingModuleKeys([...unselected])
+          setShowModuleDialog(true)
+          return
+        }
+      }
+    } else {
+      skipModuleCheckRef.current = false
+    }
+    const orderedKeys = input.moduleOrder.filter(k => (forceModules || input.selectedModules).includes(k as ModuleKey))
     const makeModules = () => orderedKeys.map(key => { const config = MODULE_CONFIG.find(m => m.key === key); return { moduleKey: key, moduleLabel: config?.label || key, content: '', status: 'loading' as const, adopted: false } })
     const v1 = makeModules(); const v2 = makeModules(); const v3 = makeModules()
     setRightModulesV1(v1); setRightModulesV2(v2); setRightModulesV3(v3)
@@ -77,20 +101,93 @@ export default function App() {
     setTimeout(() => { if (doneCount < 3) { doneCount = 3; setStatus('completed') } }, 90000)
   }, [hasRequiredFields, input])
 
-  const handleAdoptAll = useCallback((versionModules: ModuleResult[], versionImages?: Map<string, ClassifiedImage[]>) => {
+  const handleAdoptAll = useCallback(async (versionModules: ModuleResult[], versionImages?: Map<string, ClassifiedImage[]>) => {
     const completed = versionModules.filter(m => m.status === 'completed'); if (completed.length === 0) return
-    setCenterModules(prev => { const updated = prev.map(m => { const src = completed.find(s => s.moduleKey === m.moduleKey); return src ? { ...m, content: src.content } : m }); const newOnes = completed.filter(s => !prev.find(m => m.moduleKey === s.moduleKey)).map(s => ({ ...s, adopted: true })); return [...updated, ...newOnes] })
-    if (versionImages && versionImages.size > 0) setModuleImages(prev => { const next = { ...prev }; versionImages.forEach((imgs, key) => { next[key] = imgs }); return next })
+    // 预读取所有图片为 data URL（保留 GIF 动图）
+    const imageDataUrls = new Map<string, string>()
+    if (versionImages) {
+      const allIds = new Set<string>()
+      versionImages.forEach(imgs => imgs.forEach(img => allIds.add(img.id)))
+      await Promise.all(Array.from(allIds).map(async imgId => {
+        const img = [...versionImages.values()].flat().find(i => i.id === imgId)
+        if (!img) return
+        const file = fileMapRef.current.get(imgId)
+        if (file) {
+          return new Promise<void>(resolve => {
+            const reader = new FileReader()
+            reader.onload = () => { imageDataUrls.set(imgId, reader.result as string); resolve() }
+            reader.onerror = () => { if (img.preview) imageDataUrls.set(imgId, img.preview); resolve() }
+            reader.readAsDataURL(file)
+          })
+        } else if (img.preview) {
+          imageDataUrls.set(imgId, img.preview)
+        }
+      }))
+    }
+    const getSrc = (img: ClassifiedImage) => imageDataUrls.get(img.id) || img.preview || ''
+    setCenterModules(prev => {
+      const updated = prev.map(m => {
+        const src = completed.find(s => s.moduleKey === m.moduleKey);
+        if (!src) return m;
+        const imgs = versionImages?.get(m.moduleKey) || [];
+        const imgTags = imgs.map(img => {
+          const srcUrl = getSrc(img)
+          return srcUrl ? `<img src="${srcUrl}" style="display:block;max-width:100%;border-radius:8px;margin:8px 0" alt="${img.desc || ''}" /><br>` : ''
+        }).filter(Boolean).join('')
+        return { ...m, content: imgTags + src.content }
+      });
+      const newOnes = completed.filter(s => !prev.find(m => m.moduleKey === s.moduleKey)).map(s => {
+        const imgs = versionImages?.get(s.moduleKey) || [];
+        const imgTags = imgs.map(img => {
+          const srcUrl = getSrc(img)
+          return srcUrl ? `<img src="${srcUrl}" style="display:block;max-width:100%;border-radius:8px;margin:8px 0" alt="${img.desc || ''}" /><br>` : ''
+        }).filter(Boolean).join('')
+        return { ...s, content: imgTags + s.content, adopted: true }
+      });
+      return [...updated, ...newOnes]
+    })
     setDisplayOrder(prev => { const newKeys = completed.map(m => m.moduleKey).filter(k => !prev.includes(k)); return newKeys.length > 0 ? [...prev, ...newKeys] : prev }); setExpandHintCount(c => c + 1)
   }, [showToast])
-  const [moduleImages, setModuleImages] = useState<Record<string, ClassifiedImage[]>>({})
-  const handleAdopt = useCallback((moduleKey: string, content: string, images?: ClassifiedImage[]) => { if (!content) return; setCenterModules(prev => { const exists = prev.find(m => m.moduleKey === moduleKey); if (exists) return prev.map(m => m.moduleKey === moduleKey ? { ...m, content } : m); const newMod: ModuleResult = { moduleKey: moduleKey as ModuleKey, moduleLabel: MODULE_CONFIG.find(c => c.key === moduleKey)?.label || '', content, status: 'completed', adopted: true }; return [...prev, newMod] }); if (images && images.length > 0) { setModuleImages(prev => ({ ...prev, [moduleKey]: images })); }; setDisplayOrder(prev => prev.includes(moduleKey) ? prev : [...prev, moduleKey]) }, [])
+  const handleAdopt = useCallback(async (moduleKey: string, content: string, images?: ClassifiedImage[]) => {
+    if (!content && (!images || images.length === 0)) return;
+    // 原图嵌入 contentEditable — 用 FileReader.readAsDataURL 保持 GIF 动图和格式一致
+    let imgTags = ''
+    if (images && images.length > 0) {
+      const results = await Promise.all(images.map(img => new Promise<string>(resolve => {
+        const file = fileMapRef.current.get(img.id)
+        if (file) {
+          const reader = new FileReader()
+          reader.onload = () => resolve(`<img src="${reader.result}" alt="${img.desc || ''}" style="display:block;max-width:100%;border-radius:8px;margin:8px 0"><br>`)
+          reader.onerror = () => { const fb = img.preview || ''; resolve(fb ? `<img src="${fb}" alt="${img.desc || ''}" style="display:block;max-width:100%;border-radius:8px;margin:8px 0"><br>` : '') }
+          reader.readAsDataURL(file)
+        } else {
+          const fb = img.preview || ''
+          resolve(fb ? `<img src="${fb}" alt="${img.desc || ''}" style="display:block;max-width:100%;border-radius:8px;margin:8px 0"><br>` : '')
+        }
+      })))
+      imgTags = results.filter(Boolean).join('')
+    }
+    const fullContent = content ? (imgTags + content) : (imgTags || '<br>')
+    setCenterModules(prev => { const exists = prev.find(m => m.moduleKey === moduleKey); if (exists) return prev.map(m => m.moduleKey === moduleKey ? { ...m, content: fullContent } : m); const newMod: ModuleResult = { moduleKey: moduleKey as ModuleKey, moduleLabel: MODULE_CONFIG.find(c => c.key === moduleKey)?.label || '', content: fullContent, status: 'completed', adopted: true }; return [...prev, newMod] }); setDisplayOrder(prev => prev.includes(moduleKey) ? prev : [...prev, moduleKey]) }, [])
   const handleDislikeVersion = useCallback((version: number, label: string) => { showToast(`已记录：版本${version}（${label}）点踩反馈`, 'info') }, [showToast])
   const handleDislikeModule = useCallback((moduleKey: string, moduleLabel: string) => { showToast(`已记录：${moduleLabel}模块 点踩反馈`, 'info') }, [showToast])
   const handleCenterEdit = useCallback((moduleKey: string, content: string) => { setCenterModules(prev => prev.map(m => m.moduleKey === moduleKey ? { ...m, content } : m)) }, [])
   const handleAddBlock = useCallback(() => { customBlockCounter.current += 1; const newKey = `__custom_${customBlockCounter.current}`; setDisplayOrder(prev => [...prev, newKey]); setCenterModules(prev => [...prev, { moduleKey: newKey as ModuleKey, moduleLabel: '自定义文本', content: '<br>', status: 'completed' as const, adopted: true }]); setTimeout(() => { const el = document.querySelector(`[data-block-key="${newKey}"]`) as HTMLDivElement; if (el) { el.focus(); document.getSelection()?.collapse(el, 0) } }, 50) }, [])
   const handleDeleteBlock = useCallback((moduleKey: string) => { setDisplayOrder(prev => prev.filter(k => k !== moduleKey)); setCenterModules(prev => prev.filter(m => m.moduleKey !== moduleKey)) }, [])
-  const handleClearAll = useCallback(() => { setCenterModules([]); setDisplayOrder([]); setModuleImages({}) }, [])
+  const handleClearAll = useCallback(() => { setCenterModules([]); setDisplayOrder([]) }, [])
+
+  const handleConfirmGenerate = useCallback(() => {
+    const deduped = [...new Set([...input.selectedModules, ...pendingModuleKeys])] as ModuleKey[]
+    setInput({ ...input, selectedModules: deduped })
+    setShowModuleDialog(false)
+    setPendingModuleKeys([])
+    skipModuleCheckRef.current = true
+    handleGenerate(deduped)
+  }, [input, pendingModuleKeys, setInput, handleGenerate])
+  const handleCancelGenerate = useCallback(() => {
+    setShowModuleDialog(false)
+    setPendingModuleKeys([])
+  }, [])
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-gradient-to-br from-indigo-50/80 via-white to-purple-50/80 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -127,11 +224,31 @@ export default function App() {
       {/* 三栏主体 */}
       <div className="flex flex-1 min-h-0 gap-4 px-4 pb-4">
         {toast && (<div className={`fixed top-16 left-1/2 -translate-x-1/2 z-[999] flex items-center gap-2.5 rounded-lg border px-4 py-2.5 text-sm shadow-lg ${toast.type === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : toast.type === 'error' ? 'border-red-200 bg-red-50 text-red-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0"><circle cx="7.5" cy="7.5" r="6" /><path d={toast.type === 'success' ? "M4.5 7.5l2 2 4-4" : "M7.5 4.5v3M7.5 10v.5"} /></svg><span>{toast.msg}</span></div>)}
-        <div className="w-[320px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><LeftPanel input={input} onChange={setInput} disabled={isGenerating} isGenerating={isGenerating} onGenerate={handleGenerate} hasRequiredFields={hasRequiredFields} priceDialogOpen={priceDialogOpen} setPriceDialogOpen={setPriceDialogOpen} platforms={platforms} setPlatforms={setPlatforms} priceNotes={priceNotes} setPriceNotes={setPriceNotes} classifiedImages={classifiedImages} onImagesClassified={(imgs) => setClassifiedImages(prev => { const map = new Map(prev.map(c => [c.id, c])); imgs.forEach(c => map.set(c.id, c)); return [...map.values()] })} /></div>
-        <div className="w-[450px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><CenterPanel status={status} modules={centerModules} mandatoryKeys={displayOrder} onEdit={handleCenterEdit} onReorder={setDisplayOrder} onAddBlock={handleAddBlock} onDeleteBlock={handleDeleteBlock} showToast={showToast} triggerExpandHint={expandHintCount} moduleImages={moduleImages} onClearAll={handleClearAll} /></div>
+        <div className="w-[320px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><LeftPanel input={input} onChange={setInput} disabled={isGenerating} isGenerating={isGenerating} onGenerate={handleGenerate} hasRequiredFields={hasRequiredFields} priceDialogOpen={priceDialogOpen} setPriceDialogOpen={setPriceDialogOpen} platforms={platforms} setPlatforms={setPlatforms} priceNotes={priceNotes} setPriceNotes={setPriceNotes} classifiedImages={classifiedImages} onImagesClassified={(imgs) => setClassifiedImages(prev => { const map = new Map(prev.map(c => [c.id, c])); imgs.forEach(c => map.set(c.id, c)); return [...map.values()] })} onFileRegistered={handleFileRegistered} /></div>
+        <div className="w-[450px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><CenterPanel status={status} modules={centerModules} mandatoryKeys={displayOrder} onEdit={handleCenterEdit} onReorder={setDisplayOrder} onAddBlock={handleAddBlock} onDeleteBlock={handleDeleteBlock} showToast={showToast} triggerExpandHint={expandHintCount} onClearAll={handleClearAll} /></div>
         <div className="flex-1 min-w-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><RightPanel status={status} modulesV1={rightModulesV1} modulesV2={rightModulesV2} modulesV3={rightModulesV3} versionLabelV1={versionLabelV1} versionLabelV2={versionLabelV2} versionLabelV3={versionLabelV3} onAdopt={handleAdopt} onAdoptAll={handleAdoptAll} onDislikeVersion={handleDislikeVersion} onDislikeModule={handleDislikeModule} classifiedImages={classifiedImages} /></div>
       </div>
 
+      {/* 模块未勾选确认弹窗 */}
+      {showModuleDialog && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={handleCancelGenerate}>
+          <div className="bg-card rounded-2xl shadow-2xl max-w-md w-full p-6 border border-border animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-semibold mb-3">检测到推荐模块未勾选</h3>
+            <p className="text-sm text-muted-foreground mb-2">已上传图片的标签对应以下笔记模块未勾选：</p>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {pendingModuleKeys.map(k => {
+                const labels: Record<string, string> = { hook: '首屏钩子', price: '价格福利', taste: '口感体验', trust: '基础信任', aftercare: '物流售后', tips: '储存贴士', cta: '行动召唤', ingredient: '成分科普', origin: '原料溯源', brand: '品牌背书', scene: '场景共情', feedback: '用户反馈', comparison: '全网比价', faq: '常见问题' }
+                return <span key={k} className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-sm font-medium text-emerald-700">{labels[k] || k}</span>
+              })}
+            </div>
+            <p className="text-sm text-muted-foreground mb-5">是否自动勾选上述模块并继续生成？</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={handleCancelGenerate} className="rounded-md border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted transition-colors">取消</button>
+              <button onClick={handleConfirmGenerate} className="rounded-md bg-[#07C160] hover:bg-[#06AD56] px-4 py-2 text-sm font-medium text-white transition-colors">同意并生成</button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* 全局：配置比价清单弹窗 */}
       {priceDialogOpen && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setPriceDialogOpen(false)}>

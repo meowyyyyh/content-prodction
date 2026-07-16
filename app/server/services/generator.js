@@ -149,14 +149,27 @@ export function buildPrompt({ product, modules, focus, images, isDefault }) {
     // 注入到 system prompt
     if (Object.keys(moduleImages).length > 0) {
       const imageParts = ['## 图片排版指令']
-      imageParts.push('运营已上传商品图片。每个模块的图片数量如下，请严格按 图1→文→图2→文→... 的节奏写对应文案。每张图后跟 1-2 句话，描述图里的细节，不要泛泛而谈。')
+      imageParts.push('运营已上传商品图片。每张图片已标注布局角色（layout_role）。请根据角色自然地安排图片在文案中的位置：')
+      imageParts.push('- hero（主视觉）：放在模块开篇，全宽大图，后跟开篇文案')
+      imageParts.push('- detail（细节特写）：适合 2-4 张分组排列，配在对应的细节描述旁边')
+      imageParts.push('- scene（生活场景）：独立段落，配在场景描述文字附近')
+      imageParts.push('- info（信息图/配料表）：嵌入相关段落，小图展示')
+      imageParts.push('- step（步骤图/流程）：横向连排，按步骤顺序放置')
+      imageParts.push('\n不要固定"图→文→图→文"节奏。让每张图出现在文案中描述它的那段文字旁边。')
       for (const [mod, imgs] of Object.entries(moduleImages)) {
+        // 按 layout_role 分组展示
+        const byRole = {}
+        imgs.forEach(img => { const role = img.layout_role || 'detail'; if (!byRole[role]) byRole[role] = []; byRole[role].push(img) })
         imageParts.push(`\n### ${mod} 模块（${imgs.length} 张图）`)
-        imgs.forEach((img, i) => {
-          imageParts.push(`图${i + 1}：${img.desc || '商品图片'}`)
-        })
+        for (const [role, roleImgs] of Object.entries(byRole)) {
+          const labels = { hero: '主视觉', detail: '细节特写', scene: '生活场景', info: '信息图', step: '步骤图' }
+          imageParts.push(`${labels[role] || role}（${roleImgs.length}张）：`)
+          roleImgs.forEach((img, i) => {
+            imageParts.push(`  图${imgs.indexOf(img) + 1}：${img.desc || '商品图片'}`)
+          })
+        }
       }
-      imageParts.push('\n请确保每段文字紧跟在对应图片之后，文案自然引用图片中的视觉细节。')
+      imageParts.push('\n每段文案自然衔接它描述的图片，文案中引用图片的视觉细节。')
       systemParts.push(imageParts.join('\n'))
     }
   }

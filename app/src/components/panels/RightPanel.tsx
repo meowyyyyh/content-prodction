@@ -112,12 +112,19 @@ function ModuleCard({ mod, isGenerating, onAdopt, onDislikeModule, moduleImages,
   const layout = MODULE_LAYOUT[mod.moduleKey] || 'text_first'
   const imgs = moduleImages || []
 
-  const renderImages = () => imgs.map(img => (
-    <div key={img.id} className="mb-3">
-      {img.preview && <img src={img.preview} className="w-full rounded-lg object-cover border border-border/30" style={{ maxHeight: '240px' }} alt={img.desc || ''} />}
-      <div className="text-[10px] text-muted-foreground/50 mt-0.5">{img.type}</div>
-    </div>
-  ))
+  const renderImages = () => {
+    const byRole: Record<string, ClassifiedImage[]> = { hero: [], detail: [], scene: [], info: [], step: [] }
+    imgs.forEach(i => { const role = i.layout_role || 'detail'; if (byRole[role]) byRole[role].push(i); else byRole.detail.push(i) })
+    return (
+      <div className="flex flex-col gap-2">
+        {byRole.hero.length > 0 && byRole.hero.map(img => img.preview && <img key={img.id} src={img.preview} className="w-full rounded-lg object-cover border border-border/30" style={{ maxHeight: '240px' }} alt={img.desc || ''} />)}
+        {byRole.detail.length > 0 && <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${Math.min(byRole.detail.length, 3)}, 1fr)` }}>{byRole.detail.map(img => img.preview && <img key={img.id} src={img.preview} className="w-full rounded object-cover border border-border/30" style={{ maxHeight: '120px', aspectRatio: '1' }} alt={img.desc || ''} />)}</div>}
+        {byRole.scene.length > 0 && byRole.scene.map(img => img.preview && <img key={img.id} src={img.preview} className="w-full rounded-lg object-cover border border-border/30" style={{ maxHeight: '200px' }} alt={img.desc || ''} />)}
+        {byRole.info.length > 0 && byRole.info.map(img => img.preview && <img key={img.id} src={img.preview} className="max-w-[160px] rounded object-cover border border-border/30" alt={img.desc || ''} />)}
+        {byRole.step.length > 0 && <div className="flex gap-1.5 overflow-x-auto">{byRole.step.map((img, idx) => img.preview && <img key={img.id} src={img.preview} className="h-20 rounded object-cover border border-border/30 shrink-0" alt={img.desc || ''} />)}</div>}
+      </div>
+    )
+  }
 
   return (
     <div className="rounded-lg border border-border bg-card overflow-hidden">
@@ -141,11 +148,21 @@ function ModuleCard({ mod, isGenerating, onAdopt, onDislikeModule, moduleImages,
           {layout === 'text_first' && <>{mod.content}{imgs.length > 0 && <div className="mt-3">{renderImages()}</div>}</>}
           {layout === 'image_last' && <>{imgs.length > 0 && <div className="mb-3">{renderImages()}</div>}{mod.content}</>}
           {layout === 'interleave' && imgs.length > 0 && (() => {
-            // 图文穿插：文→图→文→图
+            // 图文穿插：安全实现 — renderImages() 返回 React 元素，不能用 .find()
             const parts = mod.content.split(/\n\n/)
             const result = []
-            parts.forEach((p, i) => { result.push(<p key={`t${i}`} className="mb-2">{p}</p>); if (i < imgs.length) result.push(<div key={`img${i}`}>{renderImages()[i]}</div>) })
-            if (imgs.length > parts.length && result.length > 0) result.push(<div key="imgextra">{imgs.slice(parts.length).map(img => renderImages().find(r => r.key === img.id))}</div>)
+            parts.forEach((p, i) => {
+              result.push(<p key={`t${i}`} className="mb-2">{p}</p>)
+              if (i < imgs.length) {
+                result.push(<div key={`img${i}`} className="mb-2">{imgs[i].preview && <img src={imgs[i].preview} className="w-full rounded object-cover border border-border/30" style={{maxHeight:'180px'}} alt={imgs[i].desc||''} />}</div>)
+              }
+            })
+            // 多余的图片附加到末尾
+            if (imgs.length > parts.length) {
+              imgs.slice(parts.length).forEach((img, i) => {
+                result.push(<div key={`imgextra${i}`} className="mb-2">{img.preview && <img src={img.preview} className="w-full rounded object-cover border border-border/30" style={{maxHeight:'180px'}} alt={img.desc||''} />}</div>)
+              })
+            }
             return result
           })()}
           {layout === 'interleave' && imgs.length === 0 && mod.content}

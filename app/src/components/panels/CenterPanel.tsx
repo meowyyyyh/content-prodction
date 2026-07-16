@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Empty, EmptyMedia, EmptyHeader, EmptyTitle, EmptyDescription } from '@/components/ui/empty'
-import type { ModuleResult, GenerateStatus, ClassifiedImage } from '@/types'
+import type { ModuleResult, GenerateStatus } from '@/types'
 
 interface CenterPanelProps {
   status: GenerateStatus; modules: ModuleResult[]; mandatoryKeys: string[]
@@ -12,7 +12,6 @@ interface CenterPanelProps {
   onAddBlock: () => void; onDeleteBlock: (moduleKey: string) => void
   showToast: (msg: string, type?: 'info' | 'success' | 'error') => void
   triggerExpandHint?: number
-  moduleImages?: Record<string, ClassifiedImage[]>
   onClearAll?: () => void
 }
 
@@ -74,7 +73,7 @@ function typewrite(finalContents: Record<string, string>, onEdit: (key: string, 
 type HistoryEntry = { type: 'content'; key: string; content: string } | { type: 'order'; order: string[] }
 let undoStack: HistoryEntry[] = []; let redoStack: HistoryEntry[] = []; const MAX_HISTORY = 100
 
-export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder, onAddBlock, onDeleteBlock, showToast, triggerExpandHint, moduleImages, onClearAll }: CenterPanelProps) {
+export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder, onAddBlock, onDeleteBlock, showToast, triggerExpandHint, onClearAll }: CenterPanelProps) {
   const getModule = (key: string) => modules.find(m => m.moduleKey === key)
   const isIdle = status === 'idle'; const isBlocked = status === 'blocked'
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
@@ -91,10 +90,17 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
   const [optimizingKeys, setOptimizingKeys] = useState<Set<string>>(new Set())
   const abortRef = useRef<AbortController | null>(null); const snapshotRef = useRef<Record<string, string>>({}); const typewriteTimerRef = useRef<number | null>(null); const activeInstructionRef = useRef<string>('')
   const savedRangeRef = useRef<Range | null>(null) // 保存光标位置，用于图片插入定位
+  const imageClipboardRef = useRef<{ src: string; alt: string } | null>(null)
+  // 图片悬浮工具栏
+  const hoveredImageRef = useRef<HTMLImageElement | null>(null)
+  const toolbarTimerRef = useRef<number | null>(null)
+  const [hoveredImagePos, setHoveredImagePos] = useState<{ left: number; top: number; width: number; height: number; key: string } | null>(null)
+  const selectedImageRef = useRef<HTMLImageElement | null>(null)
+  const [selectedImageKey, setSelectedImageKey] = useState<string | null>(null)
 
   useEffect(() => { chatLoadingRef.current = chatLoading }, [chatLoading])
   useEffect(() => { if (triggerExpandHint && triggerExpandHint > 0 && !localStorage.getItem('expand_hint_shown')) { showToast('💡 生成的文字过少了？请尝试点击「📝 扩充文案」试试', 'info'); localStorage.setItem('expand_hint_shown', '1') } }, [triggerExpandHint])
-  useEffect(() => { if (composingRef.current) return; modules.forEach(mod => { const el = editorRefs.current[mod.moduleKey]; if (!el || !mod.content) return; if (lastSavedRef.current[mod.moduleKey] === mod.content) return; lastSavedRef.current[mod.moduleKey] = mod.content; el.innerHTML = mod.content }) }, [modules])
+  useEffect(() => { if (composingRef.current) return; modules.forEach(mod => { const el = editorRefs.current[mod.moduleKey]; if (!el || !mod.content) return; if (lastSavedRef.current[mod.moduleKey] === mod.content) return; lastSavedRef.current[mod.moduleKey] = mod.content; el.focus(); document.execCommand("selectAll"); document.execCommand("insertHTML", false, mod.content) }) }, [modules])
 
   const handleUndo = useCallback(() => { if (undoStack.length === 0) return; const entry = undoStack.pop()!; if (entry.type === 'content') { const mod = getModule(entry.key); const current = mod?.content || ''; redoStack.push({ type: 'content', key: entry.key, content: current }); delete lastSavedRef.current[entry.key]; onEdit(entry.key, entry.content) } else { redoStack.push({ type: 'order', order: [...mandatoryKeys] }); onReorder(entry.order) } }, [mandatoryKeys, getModule, onEdit, onReorder])
   const handleRedo = useCallback(() => { if (redoStack.length === 0) return; const entry = redoStack.pop()!; if (entry.type === 'content') { const mod = getModule(entry.key); const current = mod?.content || ''; undoStack.push({ type: 'content', key: entry.key, content: current }); delete lastSavedRef.current[entry.key]; onEdit(entry.key, entry.content) } else { undoStack.push({ type: 'order', order: [...mandatoryKeys] }); onReorder(entry.order) } }, [mandatoryKeys, getModule, onEdit, onReorder])
@@ -135,6 +141,34 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
     sel?.collapseToEnd()
     return false
   }, [])
+  // 图片点击选中
+  const handleEditorClick = useCallback((e: React.MouseEvent, key: string) => {
+    const target = e.target as HTMLElement
+    if (target.tagName === 'IMG') {
+      // 清除上一个选中态
+      if (selectedImageRef.current && selectedImageRef.current !== target) {
+        selectedImageRef.current.style.outline = 'none'
+        selectedImageRef.current.style.boxShadow = 'none'
+      }
+      // 选中当前图片
+      const img = target as HTMLImageElement
+      img.draggable = true
+      img.style.outline = 'none'
+      img.style.boxShadow = '0 0 0 3px #07C160, 0 0 12px rgba(7, 193, 96, 0.3)'
+      img.style.borderRadius = '8px'
+      selectedImageRef.current = img
+      setSelectedImageKey(key)
+      e.stopPropagation()
+    } else if (!(target as HTMLElement).closest('[data-img-toolbar]')) {
+      if (selectedImageRef.current) {
+        selectedImageRef.current.draggable = false
+        selectedImageRef.current.style.outline = 'none'
+        selectedImageRef.current.style.boxShadow = 'none'
+      }
+      selectedImageRef.current = null
+      setSelectedImageKey(null)
+    }
+  }, [])
 
   // 在指定模块的光标位置插入图片
   const insertImageAtCursor = useCallback((key: string, file: File, dataUrl: string) => {
@@ -143,10 +177,8 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
     const mod = getModule(key)
     if (mod) pushContentHistory(key, mod.content)
     restoreSelection(key)
-    const img = `<img src="${dataUrl}" alt="${file.name}" style="max-width:100%;border-radius:8px;margin:8px 0" />`
+    const img = `<img src="${dataUrl}" alt="${file.name}" style="display:block;max-width:100%;border-radius:8px;margin:8px 0" />`
     document.execCommand('insertHTML', false, img)
-    // 插入后在图片后面加一个换行，方便继续编辑
-    document.execCommand('insertHTML', false, '<br>')
     onEdit(key, el.innerHTML)
     el.focus()
   }, [getModule, onEdit, pushContentHistory, restoreSelection])
@@ -184,6 +216,24 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
 
   // 拖拽图片到编辑器
   const handleEditorDrop = useCallback((e: React.DragEvent, key: string) => {
+    // 左侧配置区拖拽图片到中栏
+    const dragImgData = (window as any).__dragImageData__
+    if (dragImgData) {
+      e.preventDefault()
+      const el = editorRefs.current[key]
+      if (!el) { (window as any).__dragImageData__ = null; return }
+      const mod = getModule(key)
+      if (mod) pushContentHistory(key, mod.content)
+      el.focus()
+      if (document.caretRangeFromPoint) {
+        const r = document.caretRangeFromPoint(e.clientX, e.clientY)
+        if (r) { const s = window.getSelection(); s?.removeAllRanges(); s?.addRange(r) }
+      }
+      document.execCommand('insertHTML', false, `<img src="${dragImgData.src}" alt="${dragImgData.alt}" style="display:block;max-width:100%;border-radius:8px;margin:8px 0" />`)
+      onEdit(key, el.innerHTML)
+      (window as any).__dragImageData__ = null
+      return
+    }
     const files = e.dataTransfer.files
     if (!files || files.length === 0) return
     const imageFiles = Array.from(files).filter(f => f.type.startsWith('image/'))
@@ -220,8 +270,7 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
       reader.readAsDataURL(file)
     })
   }, [insertImageAtCursor])
-  const handleExportWord = useCallback(() => { const content = mandatoryKeys.map(key => getModule(key)?.content || '').filter(Boolean).join('<br>'); const body = content.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); const html = `<html><head><meta charset="utf-8"><style>body{font-family:'PingFang SC',sans-serif;line-height:1.8;padding:40px;white-space:pre-wrap}</style></head><body>${body}</body></html>`; const blob = new Blob([html], { type: 'application/msword' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = '笔记定稿.doc'; a.click(); URL.revokeObjectURL(a.href) }, [mandatoryKeys, getModule])
-
+  // 图片悬浮工具栏
   const handleChatSubmit = useCallback(async (instructionOverride?: string) => { const instruction = (instructionOverride || chatInput).trim(); if (!instruction || chatLoading || mandatoryKeys.length === 0) return;
   // 去除emoji：本地处理，不调 AI
   if (instruction === '__STRIP_EMOJI__') { setChatLoading(true); showToast('正在去除emoji...', 'info'); const targetModule = focusedKeyRef.current; const keys = targetModule ? [targetModule] : mandatoryKeys.filter(k => getModule(k)?.content); let changed = 0; keys.forEach(k => { const mod = getModule(k); if (!mod?.content) return; const stripped = mod.content.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}‍️]/gu, '').replace(/\s{2,}/g, ' ').trim(); if (stripped !== mod.content.replace(/<[^>]+>/g, '').trim()) { pushContentHistory(k, mod.content); delete lastSavedRef.current[k]; onEdit(k, stripped); changed++ } }); setChatLoading(false); showToast(changed > 0 ? `已去除 ${changed} 个模块的emoji` : '没有找到emoji', changed > 0 ? 'success' : 'info'); chatRef.current?.focus(); return }
@@ -256,6 +305,208 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
     setOptimizingKeys(new Set()); if (!targetModule) chatRef.current?.focus() }, [chatInput, chatLoading, mandatoryKeys, getModule, onEdit, pushContentHistory, showToast])
   const handleChatKeyDown = useCallback((e: React.KeyboardEvent) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatSubmit() } }, [handleChatSubmit])
 
+  const handleEditorHoverIn = useCallback((e: React.MouseEvent, key: string) => {
+    const target = e.target as HTMLElement
+    if (target.tagName === 'IMG') {
+      if (toolbarTimerRef.current) clearTimeout(toolbarTimerRef.current)
+      const img = target as HTMLImageElement
+      // 把上一张悬浮的图片恢复原状
+      if (hoveredImageRef.current && hoveredImageRef.current !== img) {
+        hoveredImageRef.current.style.transform = ''
+        hoveredImageRef.current.style.transition = ''
+      }
+      img.style.cursor = 'pointer'
+      img.style.transition = 'transform 0.2s ease'
+      img.style.transform = 'scale(1.03)'
+      hoveredImageRef.current = img
+      const r = img.getBoundingClientRect()
+      setHoveredImagePos({ left: r.left, top: r.top, width: r.width, height: r.height, key })
+    } else if (hoveredImageRef.current) {
+      const related = e.relatedTarget as HTMLElement
+      if (related?.closest && !related.closest('[data-img-toolbar]') && !target.closest('[data-img-toolbar]')) {
+        if (hoveredImageRef.current) { hoveredImageRef.current.style.transform = ''; hoveredImageRef.current.style.transition = '' }
+        toolbarTimerRef.current = window.setTimeout(() => { hoveredImageRef.current = null; setHoveredImagePos(null) }, 300)
+      }
+    }
+  }, [])
+  const handleEditorHoverOut = useCallback((e: React.MouseEvent) => {
+    const related = e.relatedTarget as HTMLElement
+    if (related?.closest && related.closest('[data-img-toolbar]')) return
+    if (toolbarTimerRef.current) clearTimeout(toolbarTimerRef.current)
+    if (hoveredImageRef.current) { hoveredImageRef.current.style.transform = ''; hoveredImageRef.current.style.transition = '' }
+    toolbarTimerRef.current = window.setTimeout(() => { hoveredImageRef.current = null; setHoveredImagePos(null) }, 300)
+  }, [])
+  const handleDeleteHoveredImage = useCallback(() => {
+    const img = hoveredImageRef.current
+    if (!img || !hoveredImagePos) return
+    const el = editorRefs.current[hoveredImagePos.key]
+    if (!el) return
+    const mod = getModule(hoveredImagePos.key)
+    if (mod) pushContentHistory(hoveredImagePos.key, mod.content)
+    // 删除图片及前后的 <br>
+    const prev = img.previousElementSibling
+    if (prev && prev.tagName === 'BR') prev.remove()
+    const next = img.nextElementSibling
+    if (next && next.tagName === 'BR') next.remove()
+    img.remove()
+    if (!el.innerHTML.trim() || el.innerHTML === '<br>') el.innerHTML = '<br>'
+    onEdit(hoveredImagePos.key, el.innerHTML)
+    hoveredImageRef.current = null
+    setHoveredImagePos(null); selectedImageRef.current = null; setSelectedImageKey(null)
+    if (toolbarTimerRef.current) clearTimeout(toolbarTimerRef.current)
+  }, [hoveredImagePos, getModule, onEdit, pushContentHistory])
+  // 图片移动 — 解析 innerHTML 中的段落，与 img 标签交换位置
+  const moveImageInHtml = useCallback((html: string, direction: 'up' | 'down'): string => {
+    const parts = html.split(/(<br\s*\/?>)/i)
+    let imgIdx = -1
+    for (let i = 0; i < parts.length; i++) {
+      if (parts[i].includes('<img')) { imgIdx = i; break }
+    }
+    if (imgIdx === -1) return html
+    if (direction === 'up' && imgIdx >= 2) {
+      const tmp = parts[imgIdx]; parts[imgIdx] = parts[imgIdx - 2]; parts[imgIdx - 2] = tmp
+    } else if (direction === 'down' && imgIdx + 2 < parts.length) {
+      const tmp = parts[imgIdx]; parts[imgIdx] = parts[imgIdx + 2]; parts[imgIdx + 2] = tmp
+    }
+    return parts.join('')
+  }, [])
+  const handleMoveImage = useCallback((dir: 'up' | 'down') => {
+    if (!hoveredImagePos) return
+    const el = editorRefs.current[hoveredImagePos.key]
+    if (!el) return
+    const mod = getModule(hoveredImagePos.key)
+    if (mod) pushContentHistory(hoveredImagePos.key, mod.content)
+    const newHtml = moveImageInHtml(el.innerHTML, dir)
+    if (newHtml === el.innerHTML) return
+    el.innerHTML = newHtml; onEdit(hoveredImagePos.key, newHtml)
+    hoveredImageRef.current = null; setHoveredImagePos(null); selectedImageRef.current = null; setSelectedImageKey(null)
+  }, [hoveredImagePos, getModule, onEdit, moveImageInHtml])
+  const handleCutCopyImage = useCallback(async (action: 'cut' | 'copy') => {
+    const img = hoveredImageRef.current
+    if (!img || !hoveredImagePos) return
+    imageClipboardRef.current = { src: img.src, alt: img.getAttribute('alt') || '' }
+    // 写入系统剪贴板，方便快捷键粘贴
+    try { const r = await fetch(img.src); const b = await r.blob(); await navigator.clipboard.write([new ClipboardItem({ [b.type]: b })]) } catch (_) {}
+    if (action === 'cut') {
+      const el = editorRefs.current[hoveredImagePos.key]
+      if (!el) return
+      const mod = getModule(hoveredImagePos.key)
+      if (mod) pushContentHistory(hoveredImagePos.key, mod.content)
+      const prev = img.previousElementSibling; if (prev && prev.tagName === 'BR') prev.remove()
+      const next = img.nextElementSibling; if (next && next.tagName === 'BR') next.remove()
+      img.remove(); if (!el.innerHTML.trim() || el.innerHTML === '<br>') el.innerHTML = '<br>'
+      onEdit(hoveredImagePos.key, el.innerHTML)
+    }
+    hoveredImageRef.current = null; setHoveredImagePos(null); selectedImageRef.current = null; setSelectedImageKey(null)
+  }, [hoveredImagePos, getModule, onEdit, pushContentHistory])
+  // 鼠标拖拽图片（绕过浏览器默认 contentEditable 拖拽行为）
+  const mouseDragRef = useRef<{ key: string; src: string; alt: string; startX: number; startY: number; dragging: boolean } | null>(null)
+  const handleImageMouseDown = useCallback((e: React.MouseEvent, key: string) => {
+    const target = e.target as HTMLElement
+    if (target.tagName !== 'IMG') return
+    const img = target as HTMLImageElement
+    if (!img.draggable) return
+    e.preventDefault()
+    mouseDragRef.current = { key, src: img.src, alt: img.getAttribute('alt') || '', startX: e.clientX, startY: e.clientY, dragging: false }
+    const onMove = (ev: MouseEvent) => {
+      if (!mouseDragRef.current) return
+      if (!mouseDragRef.current.dragging && (Math.abs(ev.clientX - mouseDragRef.current.startX) > 5 || Math.abs(ev.clientY - mouseDragRef.current.startY) > 5)) {
+        mouseDragRef.current.dragging = true; img.style.opacity = '0.3'
+        document.body.style.cursor = 'grabbing'
+        const ghost = document.createElement('div')
+        ghost.id = '__img_drag_ghost__'
+        ghost.style.cssText = 'position:fixed;pointer-events:none;z-index:99999;opacity:0.5;transform:scale(0.35);transform-origin:top left;'
+        const gImg = document.createElement('img')
+        gImg.src = img.src
+        gImg.style.cssText = 'max-width:300px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.3);'
+        ghost.appendChild(gImg); document.body.appendChild(ghost)
+      }
+      if (mouseDragRef.current?.dragging) {
+        const ghost = document.getElementById('__img_drag_ghost__')
+        if (ghost) { ghost.style.left = (ev.clientX + 15) + 'px'; ghost.style.top = (ev.clientY + 15) + 'px' }
+        const el = document.elementFromPoint(ev.clientX, ev.clientY)
+        const editor = el?.closest('[contenteditable]') as HTMLElement
+        if (editor && editor.closest('[data-block-key]')) {
+          const range = document.caretRangeFromPoint?.(ev.clientX, ev.clientY)
+          if (range) { const s = window.getSelection(); s?.removeAllRanges(); s?.addRange(range) }
+        }
+      }
+    }
+        const onUp = (ev: MouseEvent) => {
+      document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp)
+      document.body.style.cursor = ''
+      const ghost = document.getElementById('__img_drag_ghost__')
+      if (ghost) ghost.remove()
+      document.querySelectorAll('[contenteditable]').forEach(el => { (el as HTMLElement).style.outline = '' })
+      if (mouseDragRef.current?.dragging) {
+        const el = document.elementFromPoint(ev.clientX, ev.clientY)
+        const editorDiv = el?.closest('[contenteditable]') as HTMLElement
+        const targetKey = editorDiv?.getAttribute('data-block-key')
+        if (targetKey && mouseDragRef.current) {
+          const src = mouseDragRef.current
+          const mod = getModule(targetKey)
+          if (mod) pushContentHistory(targetKey, mod.content)
+          const srcEl = editorRefs.current[src.key]
+          if (srcEl) {
+            const imgs = srcEl.querySelectorAll('img')
+            for (const i of imgs) {
+              if (i.src === src.src && i.getAttribute('alt') === src.alt) {
+                const p = i.previousElementSibling; if (p && p.tagName === 'BR') p.remove()
+                const n = i.nextElementSibling; if (n && n.tagName === 'BR') n.remove()
+                i.remove(); break
+              }
+            }
+            if (!srcEl.innerHTML.trim() || srcEl.innerHTML === '<br>') srcEl.innerHTML = '<br>'
+            if (src.key !== targetKey) onEdit(src.key, srcEl.innerHTML)
+          }
+          const dstEl = editorRefs.current[targetKey]
+          if (dstEl) {
+            dstEl.focus()
+            document.execCommand('insertHTML', false, `<img src="${src.src}" alt="${src.alt}" style="display:block;max-width:100%;border-radius:8px;margin:8px 0" />`)
+            onEdit(targetKey, dstEl.innerHTML)
+            setTimeout(() => {
+              const dstEl = editorRefs.current[targetKey]
+              if (dstEl) {
+                const images = dstEl.querySelectorAll('img')
+                const lastImg = images[images.length - 1]
+                if (lastImg) {
+                  lastImg.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                  // 将光标定位到图片后方
+                  const range = document.createRange()
+                  range.setStartAfter(lastImg)
+                  range.collapse(true)
+                  const sel = window.getSelection()
+                  sel?.removeAllRanges()
+                  sel?.addRange(range)
+                }
+              }
+            }, 100)
+            // 放置后滚动视口使图片居中
+          }
+          if (src.key !== targetKey) { const se = editorRefs.current[src.key]; if (se) onEdit(src.key, se.innerHTML) }
+        }
+        img.style.opacity = '1'
+      }
+      mouseDragRef.current = null
+      selectedImageRef.current = null; setSelectedImageKey(null)
+    }
+    document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp)
+  }, [getModule, onEdit, pushContentHistory])
+  
+  const handlePasteImage = useCallback(() => {
+    const clip = imageClipboardRef.current
+    if (!clip) return
+    const key = focusedKeyRef.current
+    if (!key) return
+    const el = editorRefs.current[key]
+    if (!el) return
+    const mod = getModule(key)
+    if (mod) pushContentHistory(key, mod.content)
+    restoreSelection(key)
+    document.execCommand('insertHTML', false, `<img src="${clip.src}" alt="${clip.alt}" style="display:block;max-width:100%;border-radius:8px;margin:8px 0" />`)
+    onEdit(key, el.innerHTML); imageClipboardRef.current = null; el.focus()
+  }, [getModule, onEdit, pushContentHistory, restoreSelection])
+  
   const handleStop = useCallback(() => {
     // 1. 中断 fetch
     if (abortRef.current) { abortRef.current.abort(); abortRef.current = null }
@@ -274,6 +525,7 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
     showToast('已中止操作，文稿已恢复', 'info')
   }, [onEdit, showToast])
 
+  const handleExportWord = useCallback(() => { const content = mandatoryKeys.map(key => (getModule(key)?.content || '')).filter(Boolean).join('<br>'); const body = content.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); const html = `<html><head><meta charset="utf-8"><style>body{font-family:'PingFang SC',sans-serif;line-height:1.8;padding:40px;white-space:pre-wrap}</style></head><body>${body}</body></html>`; const blob = new Blob([html], { type: 'application/msword' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = '笔记定稿.doc'; a.click(); URL.revokeObjectURL(a.href) }, [mandatoryKeys, getModule])
   const handleDragStart = useCallback((e: React.DragEvent, index: number) => { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(index)); const img = new Image(); img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; e.dataTransfer.setDragImage(img, 0, 0) }, [])
   const handleDrop = useCallback((e: React.DragEvent, targetIndex: number) => { e.preventDefault(); setDragOverIndex(null); const sourceIndex = Number(e.dataTransfer.getData('text/plain')); if (isNaN(sourceIndex) || sourceIndex === targetIndex) return; undoStack.push({ type: 'order', order: [...mandatoryKeys] }); redoStack = []; const newOrder = [...mandatoryKeys]; const [item] = newOrder.splice(sourceIndex, 1); newOrder.splice(targetIndex, 0, item); onReorder(newOrder) }, [mandatoryKeys, onReorder])
 
@@ -284,7 +536,7 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
       <label className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer" onMouseDown={() => { pendingActionKeyRef.current = focusedKeyRef.current }}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1.5" y="2.5" width="12" height="10" rx="1.5" /><circle cx="5" cy="6" r="1.25" /><path d="M1.5 11l3-3 3 3L10.5 7.5l3 3.5" /></svg><span>插入图片</span><input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleImagePicked} /></label>
       <button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" onClick={onAddBlock}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 2v11M2 7.5h11" /></svg><span>文本块</span></button><button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-colors" onClick={() => { if (!confirm('确定清空编辑区？所有文案和图片将被删除。')) return; mandatoryKeys.forEach(k => { const mod = getModule(k); if (mod?.content && mod.content !== '<br>') { pushContentHistory(k, mod.content); delete lastSavedRef.current[k]; onEdit(k, '<br>') } }); onClearAll?.(); showToast('已清空', 'info') }}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2.5 4.5h10M5.5 4.5V3a1 1 0 011-1h2a1 1 0 011 1v1.5M4.5 4.5l.5 8.5a1 1 0 001 1h3a1 1 0 001-1l.5-8.5" /></svg><span>清空</span></button>
             <div className="flex-1" />
-      <button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" onClick={() => { const content = mandatoryKeys.map(key => { const imgs = moduleImages?.[key]; const imgTags = imgs && imgs.length > 0 ? imgs.filter(i => i.preview).map(i => `<img src="${i.preview}" alt="${i.desc||''}" />`).join('') : ''; return imgTags + (getModule(key)?.content || '') }).filter(Boolean).join('<br>'); const body = content.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); const w = window.open('', '_blank', 'width=420,height=780'); if (w) { w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{margin:0;padding:0;box-sizing:border-box}html{scrollbar-width:none}html::-webkit-scrollbar{display:none}body{font-family:"PingFang SC",sans-serif;line-height:1.8;font-size:15px;color:#333;background:#fff}.top-img{width:100%;max-width:400px;display:block;margin:0 auto}.content{max-width:400px;margin:0 auto;padding:20px 16px;white-space:pre-wrap}.content img{max-width:100%;height:auto;border-radius:8px;margin:8px 0}.bottom-wrap{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center}.bottom-img{width:100%;max-width:400px;display:block}.spacer{padding-bottom:100px}</style></head><body><img class="top-img" src="/docs/1.png"><div class="content">'+body+'</div><div class="spacer"></div><div class="bottom-wrap"><img class="bottom-img" src="/docs/2.png"></div></body></html>'); w.document.close() } }}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="7.5" cy="7.5" r="2.5"/><path d="M2.5 7.5c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5-5-2.2-5-5z"/><path d="M7.5 2.5v10"/></svg><span>预览</span></button><button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" onClick={handleExportWord}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2.5 1.5h10a1 1 0 011 1v10a1 1 0 01-1 1h-10a1 1 0 01-1-1v-10a1 1 0 011-1zM4.5 4.5h6M4.5 7.5h6M4.5 10.5h4" /></svg><span>导出</span></button><button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight bg-[#07C160] text-white hover:bg-[#06AD56] transition-colors font-medium"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>去发布</span></button>
+      <button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" onClick={() => { const content = mandatoryKeys.map(key => { return (getModule(key)?.content || '') }).filter(Boolean).join('<br>'); const body = content.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); const w = window.open('', '_blank', 'width=420,height=780'); if (w) { w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{margin:0;padding:0;box-sizing:border-box}html{scrollbar-width:none}html::-webkit-scrollbar{display:none}body{font-family:"PingFang SC",sans-serif;line-height:1.8;font-size:15px;color:#333;background:#fff}.top-img{width:100%;max-width:400px;display:block;margin:0 auto}.content{max-width:400px;margin:0 auto;padding:20px 16px;white-space:pre-wrap}.content img{max-width:100%;height:auto;border-radius:8px;margin:8px 0}.bottom-wrap{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center}.bottom-img{width:100%;max-width:400px;display:block}.spacer{padding-bottom:100px}</style></head><body><img class="top-img" src="/docs/1.png"><div class="content">'+body+'</div><div class="spacer"></div><div class="bottom-wrap"><img class="bottom-img" src="/docs/2.png"></div></body></html>'); w.document.close() } }}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="7.5" cy="7.5" r="2.5"/><path d="M2.5 7.5c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5-5-2.2-5-5z"/><path d="M7.5 2.5v10"/></svg><span>预览</span></button><button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" onClick={handleExportWord}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2.5 1.5h10a1 1 0 011 1v10a1 1 0 01-1 1h-10a1 1 0 01-1-1v-10a1 1 0 011-1zM4.5 4.5h6M4.5 7.5h6M4.5 10.5h4" /></svg><span>导出</span></button><button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight bg-[#07C160] text-white hover:bg-[#06AD56] transition-colors font-medium"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>去发布</span></button>
     </div>
     <div className={`center-scroll-area flex-1 overflow-y-auto ${isIdle || isBlocked ? 'flex items-center justify-center' : ''} ${chatLoading ? 'cursor-not-allowed' : ''}`} style={{ paddingBottom: chatFocused ? '180px' : '72px' }}>
       <div className="py-8 px-4 w-[92%] max-w-4xl mx-auto translate-x-[5px]">
@@ -294,7 +546,7 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
           return (<div key={key} onDragOver={e => { e.preventDefault(); setDragOverIndex(index) }} onDragLeave={() => setDragOverIndex(null)} onDrop={e => handleDrop(e, index)} className={`relative group ${index > 0 ? 'mt-8' : ''} transition-all duration-200 rounded-lg ${focusedKey === key ? 'ring-2 ring-primary/20 bg-primary/5 px-2 py-2 -mx-2 -my-2' : ''} ${dragOverIndex === index ? 'border-t-2 border-primary bg-primary/5 -mt-[2px]' : 'border-t-2 border-transparent'}`}>
             <div className="flex items-center justify-between mb-1"><div draggable onDragStart={e => handleDragStart(e, index)} onDragEnd={() => setDragOverIndex(null)} className={`inline-flex items-center gap-1 cursor-grab active:cursor-grabbing transition-colors rounded ${focusedKey === key ? 'text-primary' : 'text-muted-foreground/25 hover:text-muted-foreground/50'}`}><span className="text-xs select-none leading-none">⋮⋮</span><span className={`text-[11px] font-medium select-none leading-tight whitespace-nowrap ${focusedKey === key ? 'text-primary' : 'text-muted-foreground/30'}`}>{getLabel(key)}</span></div>
             <button onClick={() => { const m = getModule(key); if (m && m.content && m.content !== '<br>' && !confirm('确定删除？')) return; onDeleteBlock(key) }} className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity text-muted-foreground/30 hover:text-destructive p-0.5 -mr-0.5"><svg width="14" height="14" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2.5 4.5h10M5.5 4.5V3a1 1 0 011-1h2a1 1 0 011 1v1.5M4.5 4.5l.5 8.5a1 1 0 001 1h3a1 1 0 001-1l.5-8.5" /></svg></button></div>
-            <div>{moduleImages && Object.keys(moduleImages).length > 0 && moduleImages[key] && moduleImages[key].length > 0 && (<div className="flex flex-col gap-2 mb-3">{moduleImages[key].map(img => img.preview && <img key={img.id} src={img.preview} className="w-full rounded-lg object-cover border border-border/50" style={{ maxHeight: '320px' }} alt={img.desc || ''} />)}</div>)}{optimizingKeys.has(key) ? (<div key="skel" className="flex flex-col gap-2 py-0.5">{Array.from({ length: estimateLines(mod?.content || '') }, (_, i) => (<Skeleton key={i} className={`h-4 rounded ${SKEL_WIDTHS[i % SKEL_WIDTHS.length]}`} />))}</div>) : (<div key="editor" data-block-key={key} ref={el => { editorRefs.current[key] = el; if (el && mod && mod.content && mod.content !== '<br>' && el.innerHTML !== mod.content && !el.textContent?.trim()) el.innerHTML = mod.content }} contentEditable suppressContentEditableWarning onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = e.dataTransfer.types.includes('Files') ? 'copy' : 'move' }} onDrop={e => handleEditorDrop(e, key)} data-placeholder="从右栏版本候选区点击「采纳」后，文案将出现在此处供编辑定稿" onFocus={() => { focusedKeyRef.current = key; setFocusedKey(key); savePointRef.current[key] = editorRefs.current[key]?.innerHTML || '' }} onCompositionStart={() => { composingRef.current = true }} onCompositionEnd={() => handleCompositionEnd(key)} onInput={() => handleEditorInput(key)} onBlur={() => { saveSelection(); setTimeout(() => { if (chatLoadingRef.current) return; const ae = document.activeElement; if (ae !== chatRef.current && focusedKeyRef.current === key) { setFocusedKey(null); focusedKeyRef.current = null } }, 120) }} className="text-base leading-relaxed outline-none text-justify empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40 empty:before:italic" style={{ lineHeight: '1.7' }} />)}</div>
+            <div>{optimizingKeys.has(key) ? (<div key="skel" className="flex flex-col gap-2 py-0.5">{Array.from({ length: estimateLines(mod?.content || '') }, (_, i) => (<Skeleton key={i} className={`h-4 rounded ${SKEL_WIDTHS[i % SKEL_WIDTHS.length]}`} />))}</div>) : (<div key="editor" data-block-key={key} ref={el => { editorRefs.current[key] = el; if (el && mod && mod.content && mod.content !== '<br>' && el.innerHTML !== mod.content && lastSavedRef.current[key] !== mod.content) el.innerHTML = mod.content }} contentEditable suppressContentEditableWarning onDragOver={e => { e.preventDefault(); if ((window as any).__dragImageData__) { e.dataTransfer.dropEffect = 'copy'; if (document.caretRangeFromPoint) { const r = document.caretRangeFromPoint(e.clientX, e.clientY); if (r) { const s = window.getSelection(); s?.removeAllRanges(); s?.addRange(r) } } } else { e.dataTransfer.dropEffect = e.dataTransfer.types.includes('Files') ? 'copy' : 'move' } }} onDrop={e => handleEditorDrop(e, key)} onMouseOver={e => handleEditorHoverIn(e, key)} onMouseLeave={handleEditorHoverOut} onClick={e => handleEditorClick(e, key)} onMouseDown={e => handleImageMouseDown(e, key)} data-placeholder="从右栏版本候选区点击「采纳」后，文案将出现在此处供编辑定稿" onFocus={() => { focusedKeyRef.current = key; setFocusedKey(key); savePointRef.current[key] = editorRefs.current[key]?.innerHTML || '' }} onCompositionStart={() => { composingRef.current = true }} onCompositionEnd={() => handleCompositionEnd(key)} onInput={() => handleEditorInput(key)} onBlur={() => { saveSelection(); setTimeout(() => { if (chatLoadingRef.current) return; const ae = document.activeElement; if (ae !== chatRef.current && focusedKeyRef.current === key) { setFocusedKey(null); focusedKeyRef.current = null } }, 120) }} className="text-base leading-relaxed outline-none text-justify empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40 empty:before:italic" style={{ lineHeight: '1.7' }} />)}</div>
           </div>)})}</div>)}
       </div>
     </div>
@@ -319,5 +571,77 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
         <div className="ai-input-glow"><Textarea ref={chatRef} value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={handleChatKeyDown} onFocus={() => setChatFocused(true)} onBlur={() => { setChatFocused(false); if (!chatInput.trim()) setChatInput('') }} placeholder={focusedKey ? `当前聚焦在「${getLabel(focusedKey)}」，可以和我讲讲您想如何优化此部分呢？按Enter键发送` : '有什么想让我帮您优化的请和我讲哦～按Enter键发送'} disabled={chatLoading} rows={chatFocused ? 4 : 2} className="min-h-[36px] resize-none rounded-lg bg-muted/50 text-sm transition-all duration-200 placeholder:text-muted-foreground/40 focus-visible:ring-1 focus-visible:ring-border/60" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 2px 6px rgba(0,0,0,0.03)', maxHeight: '220px' }} /></div>
       )}
     </div>
+  {/* 图片悬浮工具栏 */}
+  {hoveredImagePos && ReactDOM.createPortal(
+    <div data-img-toolbar style={{
+      position: 'fixed',
+      left: hoveredImagePos.left + hoveredImagePos.width / 2,
+      top: Math.max(hoveredImagePos.top - 28, (document.querySelector('.center-scroll-area')?.getBoundingClientRect().top ?? 8) + 2),
+      transform: 'translateX(-50%)',
+      zIndex: 99999,
+    }}>
+      <div style={{
+        background: 'rgba(0,0,0,0.72)',
+        backdropFilter: 'blur(6px)',
+        borderRadius: '10px',
+        padding: '5px 8px',
+        display: 'flex',
+        gap: '3px',
+        boxShadow: '0 3px 14px rgba(0,0,0,0.3)',
+        alignItems: 'center',
+      }}>
+
+        <button onClick={() => handleCutCopyImage('cut')} title="剪切图片" style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          color: '#fff', padding: '5px', borderRadius: '6px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'background 0.15s',
+        }} onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
+           onMouseLeave={e => (e.currentTarget.style.background = 'none')}>
+          <svg width="18" height="18" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+            <circle cx="4" cy="4" r="2.5"/><path d="M7 7 13 3"/><path d="M7 8 13 12"/><circle cx="4" cy="11" r="2.5"/>
+          </svg>
+        </button>
+        <button onClick={() => handleCutCopyImage('copy')} title="复制图片" style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          color: '#fff', padding: '5px', borderRadius: '6px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'background 0.15s',
+        }} onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
+           onMouseLeave={e => (e.currentTarget.style.background = 'none')}>
+          <svg width="18" height="18" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <rect x="3.5" y="3.5" width="10" height="10" rx="1" /><path d="M1.5 10.5V2a.5.5 0 01.5-.5h8" />
+          </svg>
+        </button>
+        <button onClick={handlePasteImage} title="粘贴图片（到当前聚焦的模块）" style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          color: imageClipboardRef.current ? '#fff' : 'rgba(255,255,255,0.3)',
+          padding: '5px', borderRadius: '6px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'background 0.15s',
+          pointerEvents: imageClipboardRef.current ? 'auto' : 'none',
+        }} onMouseEnter={e => { if (imageClipboardRef.current) e.currentTarget.style.background = 'rgba(255,255,255,0.15)' }}
+           onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+          <svg width="18" height="18" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M4.5 5.5V2.5a1 1 0 011-1h7a1 1 0 011 1v8a1 1 0 01-1 1h-3" />
+            <rect x="1.5" y="5.5" width="8" height="8" rx="1" />
+          </svg>
+        </button>
+        <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.2)', margin: '0 2px' }} />
+        <button onClick={handleDeleteHoveredImage} title="删除图片" style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          color: '#ff6b6b', padding: '5px', borderRadius: '6px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'background 0.15s',
+        }} onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,107,107,0.15)')}
+           onMouseLeave={e => (e.currentTarget.style.background = 'none')}>
+          <svg width="18" height="18" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M2.5 4.5h10M5.5 4.5V3a1 1 0 011-1h2a1 1 0 011 1v1.5M4.5 4.5l.5 8.5a1 1 0 001 1h3a1 1 0 001-1l.5-8.5" />
+          </svg>
+        </button>
+      </div>
+    </div>,
+    document.body
+  )}
   </div>)
 }

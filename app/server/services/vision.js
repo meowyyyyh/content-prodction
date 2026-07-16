@@ -7,19 +7,27 @@ import { CONFIG } from '../config/index.js'
 
 const { endpoint, apiKey, model, temperature, maxTokens, timeout } = CONFIG.vision
 
-const CLASSIFY_PROMPT = `请判断这张图片属于以下哪种类型，并给出一句简短描述。
+const CLASSIFY_PROMPT = `请分析这张图片：
 
-类型选项：产品图、配料表、场景图、品牌图、包装图、其他
+1. 类型（type）：产品图/配料表/场景图/品牌图/包装图/其他
+   - 产品图 = 展示商品本身的照片（含产品特写、多角度展示）
+   - 配料表 = 配料表或营养成分表的截图
+   - 场景图 = 商品在生活场景中使用的照片（办公桌、餐桌、户外等）
+   - 品牌图 = 品牌logo、门店、工厂、证书、代言人
+   - 包装图 = 外包装、礼盒、快递箱
+   - 其他 = 以上都不是
 
-- 产品图 = 展示商品本身的照片（含产品特写、多角度展示）
-- 配料表 = 配料表或营养成分表的截图
-- 场景图 = 商品在生活场景中使用的照片（办公桌、餐桌、户外等）
-- 品牌图 = 品牌logo、门店、工厂、证书、代言人
-- 包装图 = 外包装、礼盒、快递箱
-- 其他 = 以上都不是
+2. 一句话描述（desc）
+
+3. 布局角色（layout_role）：
+   hero   — 主视觉，占全宽大空间（产品正面、包装展开图）
+   detail — 细节特写，适合和同类分组排列（微距、质地、纹理）
+   scene  — 生活场景，适合独立段落（办公桌、餐桌、户外）
+   info   — 信息图/配料表/文字说明，适合嵌入段落（截图、表格、标识）
+   step   — 步骤图/流程，适合横向连排（开箱、冲泡、使用过程）
 
 请严格按以下JSON格式返回，不要输出其他内容：
-{"type":"产品图","desc":"白色酸奶瓶，绿色标签，木姜子+香茅口味"}`
+{"type":"产品图","desc":"白色酸奶瓶，绿色标签","layout_role":"hero"}`
 
 /**
  * 分类单张图片
@@ -68,14 +76,16 @@ export async function classifyImage(base64, mimeType = 'image/jpeg') {
     const result = JSON.parse(content)
     return {
       type: result.type || '其他',
-      desc: result.desc || ''
+      desc: result.desc || '',
+      layout_role: result.layout_role || 'detail'
     }
   } catch {
     // 兜底：尝试从文本中提取 type
     const typeMatch = content.match(/产品图|配料表|场景图|品牌图|包装图|其他/)
     return {
       type: typeMatch ? typeMatch[0] : '其他',
-      desc: content.replace(/\{|\}|"type"|"desc"|:/g, '').trim()
+      desc: content.replace(/\{|\}|"type"|"desc"|"layout_role"|:/g, '').trim(),
+      layout_role: 'detail'
     }
   }
 }
