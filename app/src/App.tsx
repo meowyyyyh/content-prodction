@@ -26,7 +26,7 @@ const DEFAULT_INPUT: ProductInput = {
   moduleOrder: MODULE_CONFIG.map(m => m.key), // 14模块完整排序 generateCount: 2 as GenerateCount,
   textLength: 'long' as const,
   enableRAG: true, enableCompliance: true,
-  versionStyles: ['xiaohongshu', 'girlfriend', 'fun'] as ContentStyle[],
+  versionStyles: ['xiaohongshu', 'xiaohongshu', 'fun'] as ContentStyle[],
 }
 
 export default function App() {
@@ -71,7 +71,7 @@ export default function App() {
     setVersionLabelV3(STYLE_LABEL_MAP[v3Style] || v3Style)
     setStatus('generating')
     let doneCount = 0; const onStreamDone = () => { doneCount++; if (doneCount >= 3) setStatus('completed') }
-    streamGenerate({ ...input, style: v1Style }, orderedKeys, 'taste', v1, setRightModulesV1, onStreamDone, classifiedImages)
+    streamGenerate({ ...input, style: v1Style }, orderedKeys, 'taste', v1, setRightModulesV1, onStreamDone, classifiedImages, true)
     streamGenerate({ ...input, style: v2Style }, orderedKeys, 'taste', v2, setRightModulesV2, onStreamDone, classifiedImages)
     streamGenerate({ ...input, style: v3Style }, orderedKeys, 'taste', v3, setRightModulesV3, onStreamDone, classifiedImages)
     setTimeout(() => { if (doneCount < 3) { doneCount = 3; setStatus('completed') } }, 90000)
@@ -185,8 +185,8 @@ export default function App() {
 function plainToHTML(text: string): string { return text.replace(/<br\s*\/?>/gi, '\n').replace(/<\/tr>/gi, '\n').replace(/<\/t[dh]>\s*<t[dh][^>]*>/gi, ' / ').replace(/<[^>]+>/g, '').replace(/\n/g, '<br>') }
 function stripEmoji(text: string): string { return text.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}‍️]/gu, '').replace(/\s+/g, ' ').trim() }
 
-async function streamGenerate(product: ProductInput, moduleKeys: string[], focus: 'taste' | 'value', _mods: ModuleResult[], setModules: (v: React.SetStateAction<ModuleResult[]>) => void, onDone: () => void, images?: ClassifiedImage[]) {
-  try { const response = await fetch('/api/generate/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product, modules: moduleKeys, focus, images: images || [] }) }); if (!response.ok) throw new Error('Stream failed'); const reader = response.body!.getReader(); const decoder = new TextDecoder(); let buf = ''; const contents: Record<string, string> = {}; let curMod = ''; let lastUpdate = Date.now()
+async function streamGenerate(product: ProductInput, moduleKeys: string[], focus: 'taste' | 'value', _mods: ModuleResult[], setModules: (v: React.SetStateAction<ModuleResult[]>) => void, onDone: () => void, images?: ClassifiedImage[], isDefault?: boolean) {
+  try { const response = await fetch('/api/generate/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product, modules: moduleKeys, focus, images: images || [], isDefault: isDefault || false }) }); if (!response.ok) throw new Error('Stream failed'); const reader = response.body!.getReader(); const decoder = new TextDecoder(); let buf = ''; const contents: Record<string, string> = {}; let curMod = ''; let lastUpdate = Date.now()
     const clean = (t: string) => plainToHTML(t.replace(/===\w+===/g, '').trim()); const flush = () => { const now = Date.now(); if (now - lastUpdate < 40) return; lastUpdate = now; setModules(prev => prev.map(m => ({ ...m, status: 'completed' as const, content: clean(contents[m.moduleKey] || '') }))) }
     while (true) { const { done, value } = await reader.read(); if (done) break; buf += decoder.decode(value, { stream: true }); const lines = buf.split('\n'); buf = lines.pop() || ''; for (const line of lines) { if (!line.startsWith('data: ')) continue; const d = line.slice(6); let p; try { p = JSON.parse(d) } catch { continue }; if (p.type === 'done') continue; if (p.type === 'text' && p.content) { contents[curMod] = (contents[curMod] || '') + p.content; const m = /===(hook|price|taste|trust|aftercare|tips|cta|ingredient|origin|brand|scene|feedback|comparison|faq)===/.exec(contents[curMod] || ''); if (m) { const idx = (contents[curMod] || '').indexOf(m[0]); const before = (contents[curMod] || '').slice(0, idx); if (before.trim()) contents[curMod] = before; else delete contents[curMod]; curMod = m[1]; contents[curMod] = (contents[curMod] || '').slice(idx + m[0].length) } flush() } } }
     setModules(prev => prev.map(m => ({ ...m, status: 'completed' as const, content: clean(contents[m.moduleKey] || '') }))); onDone()

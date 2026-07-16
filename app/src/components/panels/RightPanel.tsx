@@ -177,10 +177,10 @@ export function RightPanel({ status, modulesV1, modulesV2, modulesV3, versionLab
    {/* 三版头部 — 吸顶 */}
     <div className="flex min-w-fit sticky top-0 z-10 bg-background/95 backdrop-blur-xl border-b border-border/40 px-4 pt-4 pb-3 shadow-sm">
       <div className="flex-1 min-w-[280px] pr-3"><VersionHeader version={1} label={versionLabelV1} modules={modulesV1} onAdoptAll={onAdoptAll} onDislikeVersion={onDislikeVersion} isRecommended={true} imageMap={imageMap} /></div>
-      <div className="flex-1 min-w-[280px] border-l border-border/30 pl-3 pr-3"><VersionHeader version={2} label={versionLabelV2} modules={modulesV2} onAdoptAll={onAdoptAll} onDislikeVersion={onDislikeVersion} /></div>
-      <div className="flex-1 min-w-[280px] border-l border-border/30 pl-3"><VersionHeader version={3} label={versionLabelV3} modules={modulesV3} onAdoptAll={onAdoptAll} onDislikeVersion={onDislikeVersion} /></div>
-   </div>
-    <div className="px-4 pb-4">
+      <div className="flex-1 min-w-[280px] border-l border-border/30 pl-3 pr-3"><VersionHeader version={2} label={versionLabelV2} modules={modulesV2} onAdoptAll={onAdoptAll} onDislikeVersion={onDislikeVersion} imageMap={imageMap} /></div>
+      <div className="flex-1 min-w-[280px] border-l border-border/30 pl-3"><VersionHeader version={3} label={versionLabelV3} modules={modulesV3} onAdoptAll={onAdoptAll} onDislikeVersion={onDislikeVersion} imageMap={imageMap} /></div>
+    </div>
+    <div className="px-4 pb-4 flex flex-col gap-3">
     {/* 按模块行：三版并排 */}
     {modulesV1.map((mod, i) => {
       const mod2 = modulesV2[i]

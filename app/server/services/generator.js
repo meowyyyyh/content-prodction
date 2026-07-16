@@ -33,6 +33,65 @@ function retrieveCorpus(subCategory, moduleKey) {
   return candidates
 }
 
+// 分析语料写作因子（语料驱动 + 未来个人风格复用同一结构）
+function analyzeCorpusFactors(corpusEntries) {
+  if (!corpusEntries || corpusEntries.length === 0) return null
+  const contents = corpusEntries.map(e => e.content)
+  const joined = contents.join('\n')
+
+  // emoji 统计
+  const emojiRe = /[\p{Emoji_Presentation}\p{Extended_Pictographic}✂️➗✖️➕➖✳️❇️⭕🅿️🈁🈂️🈚🈷️🈶🈯🉐🈹🈲🈸🈴🈵🈺🉑©®™〰️➰➿⁉️‼️⭕❌⭕❎ℹ️Ⓜ️🅰️🅱️🆎🆑🆒🆓🆔🆕🆖🆗🆘🆙🆚🈁🈂️🈷️🈶🈯🉐🈹🈲🈸🈴🈵🈺🉑]+/gu
+  const allEmojis = joined.match(emojiRe) || []
+  const emojiCount = allEmojis.length
+  const emojiDensity = (emojiCount / joined.replace(/\s/g, '').length * 100).toFixed(1)
+
+  // 段落统计
+  const paragraphs = contents.flatMap(c => c.split(/\n+/).filter(p => p.trim()))
+  const avgParaLen = Math.round(paragraphs.reduce((s, p) => s + p.replace(/\s/g, '').length, 0) / Math.max(1, paragraphs.length))
+  const paraCountPerModule = Math.round(paragraphs.length / contents.length)
+
+  // 句子统计
+  const sentences = joined.split(/[。！？!?\n]+/).filter(s => s.trim())
+  const avgSentenceLen = Math.round(sentences.reduce((s, sen) => s + sen.replace(/\s/g, '').length, 0) / Math.max(1, sentences.length))
+
+  // 字数统计
+  const charCounts = contents.map(c => c.replace(/\s/g, '').length)
+  const avgChars = Math.round(charCounts.reduce((a, b) => a + b, 0) / charCounts.length)
+  const minChars = Math.min(...charCounts)
+  const maxChars = Math.max(...charCounts)
+
+  // 开头方式
+  const openings = contents.map(c => c.replace(/[\s\n]+/g, '').slice(0, 15))
+  const openingPatterns = [...new Set(openings)]
+
+  // 标点密度
+  const exclamationRe = /[！!]/g
+  const exclamationCount = (joined.match(exclamationRe) || []).length
+  const exclamationDensity = (exclamationCount / Math.max(1, paragraphs.length)).toFixed(1)
+
+  // emoji 位置偏好
+  const lines = joined.split('\n').filter(l => l.trim())
+  const emojiAtStart = lines.filter(l => emojiRe.test(l.trimStart().slice(0, 2))).length
+  const emojiStartRatio = Math.round(emojiAtStart / Math.max(1, lines.length) * 100)
+
+  // 数字使用密度
+  const numberRe = /[\d.]+/g
+  const numberCount = (joined.match(numberRe) || []).length
+  const numberDensity = (numberCount / Math.max(1, paragraphs.length)).toFixed(1)
+
+  return {
+    avgChars, minChars, maxChars,
+    emojiCount, emojiDensity,
+    paraCountPerModule, avgParaLen,
+    avgSentenceLen,
+    exclamationDensity,
+    emojiStartRatio,
+    numberDensity,
+    openingSample: openingPatterns.slice(0, 3),
+    sampleSize: contents.length,
+  }
+}
+
 /**
  * 构建完整 Prompt
  * @param {object} params
@@ -44,14 +103,23 @@ function retrieveCorpus(subCategory, moduleKey) {
  * @param {string[]} params.modules - 需要生成的模块列表
  * @returns {object} { systemPrompt, userPrompt }
  */
-export function buildPrompt({ product, modules, focus, images }) {
+export function buildPrompt({ product, modules, focus, images, isDefault }) {
   // 全局系统指令
   const systemParts = [GLOBAL_SYSTEM_PROMPT]
 
-  // 风格指令（6套风格统一入口，管"怎么写"）
-  const stylePrompt = STYLE_PROMPTS[product.style]
-  if (stylePrompt) {
-    systemParts.push(stylePrompt)
+  // 默认风格：语料库驱动（不用固定风格模板）
+  if (isDefault) {
+    systemParts.push(`## 默认风格指令
+这是为你定制的默认风格。你不需要套用任何预设风格模板（不是小红书、不是闺蜜风、不是任何固定风格）。
+下方的"语料写作因子分析"是你必须严格遵循的精确写作参数——每个模块的字数、emoji密度、段落结构、开头方式、感叹号频率都已量化。
+"语料完整参考"是这些因子的具体示例，帮助你理解这些数字对应什么样的文案质感。
+如果没有语料参考的模块，使用朴实口语化中文，像在微信群里给朋友推荐商品。\n`)
+  } else {
+    // 纯风格：使用预设风格模板
+    const stylePrompt = STYLE_PROMPTS[product.style]
+    if (stylePrompt) {
+      systemParts.push(stylePrompt)
+    }
   }
 
   // 轻量版本侧重提示（不改人设，只提示侧重方向）
@@ -93,17 +161,45 @@ export function buildPrompt({ product, modules, focus, images }) {
     }
   }
 
-  // 语料库 RAG 注入
+  // 语料库 RAG 注入（模糊匹配品类：product.subCategory 是短码如 'dairy'，语料库用全名如 '调制乳/风味牛奶'）
   const subCategory = product.subCategory || '调制乳/风味牛奶'
+  const subCategoryShort = { dairy: '调制乳/风味牛奶', snack: '调制乳/风味牛奶', fresh_fruit: '调制乳/风味牛奶', grain_oil: '调制乳/风味牛奶', other: '调制乳/风味牛奶' }
+  const corpusCategory = subCategoryShort[subCategory] || subCategory
   const corpusRefs = []
+  const maxLen = isDefault ? 800 : 200  // 默认风格用更长的语料参考
   for (const modKey of modules) {
-    const refs = retrieveCorpus(subCategory, modKey)
+    const refs = retrieveCorpus(corpusCategory, modKey)
     if (refs.length > 0) {
-      corpusRefs.push(`### ${modKey}\n${refs.map(r => `> ${r.content.slice(0, 200)}`).join('\n\n')}`)
+      corpusRefs.push(`### ${modKey}\n${refs.map(r => `> ${r.content.slice(0, maxLen)}`).join('\n\n')}`)
     }
   }
   if (corpusRefs.length > 0) {
-    systemParts.push(`## 参考语料（同类目高分笔记，仅参考写作风格和表达方式，具体产品信息以输入为准）\n\n${corpusRefs.join('\n\n')}`)
+    if (isDefault) {
+      // V1 默认风格：提取量化写作因子 + 完整语料参考
+      const factorLines = ['## 语料写作因子分析（精确风格参数，严格遵循）']
+      for (const modKey of modules) {
+        const refs = retrieveCorpus(corpusCategory, modKey)
+        if (refs.length === 0) continue
+        const f = analyzeCorpusFactors(refs)
+        if (!f) continue
+        factorLines.push(`### ${modKey} 模块 · 语料因子（${f.sampleSize}篇参考）`)
+        factorLines.push(`| 参数 | 值 | 说明 |`)
+        factorLines.push(`|------|-----|------|`)
+        factorLines.push(`| 字数 | ${f.avgChars}字（${f.minChars}~${f.maxChars}） | 生成字数控制在此范围 |`)
+        factorLines.push(`| emoji密度 | ${f.emojiDensity}%（每百字约${Math.round(f.emojiCount / Math.max(1, f.avgChars / 100))}个） | 严格按此密度使用emoji |`)
+        factorLines.push(`| 段落 | ${f.paraCountPerModule}段，均长${f.avgParaLen}字 | 每段字数+段落数保持一致 |`)
+        factorLines.push(`| 句长 | ${f.avgSentenceLen}字/句 | 句式长短节-奏 |`)
+        factorLines.push(`| 感叹密度 | ${f.exclamationDensity}个/段 | 感叹号使用频率 |`)
+        factorLines.push(`| emoji位置 | ${f.emojiStartRatio}%在段首 | 段首锚点 vs 行内穿插 |`)
+        factorLines.push(`| 数字密度 | ${f.numberDensity}个/段 | 价格、规格等数字出现频率 |`)
+        factorLines.push(`| 开头示例 | ${f.openingSample.join(' / ')} | 开头语气的参考模板 |`)
+        factorLines.push('')
+      }
+      systemParts.push(factorLines.join('\n'))
+      systemParts.push(`## 语料完整参考\n${corpusRefs.join('\n\n')}\n\n请严格遵循上述因子参数写作。每个模块的字数、emoji密度、段落结构、开头方式和感叹号使用频率必须与因子分析一致。这是你写作的精确参数，不是建议。`)
+    } else {
+      systemParts.push(`## 参考语料（同类目高分笔记，仅参考写作风格和表达方式，具体产品信息以输入为准）\n\n${corpusRefs.join('\n\n')}`)
+    }
   }
 
   const systemPrompt = systemParts.join('\n\n---\n\n')
