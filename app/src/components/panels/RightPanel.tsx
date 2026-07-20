@@ -46,7 +46,7 @@ function VersionHeader({ version, label, modules, onAdoptAll, onDislikeVersion, 
 }
 
 // 默认映射（语料库为空时的回退）
-const DEFAULT_TYPE_MAP: Record<string, string[]> = {
+export const DEFAULT_TYPE_MAP: Record<string, string[]> = {
   '封面图': ['hook'], '产品图': ['taste'],
   '配料表': ['ingredient', 'trust', 'origin'], '配料图': ['ingredient', 'trust', 'origin'],
   '场景图': ['scene'], '品牌图': ['brand'], '包装图': ['hook'],
@@ -72,7 +72,7 @@ async function loadCorpusMap(): Promise<Record<string, string[]>> {
 }
 
 // 图片唯一分配：语料库驱动优先级，每张图只分配给最匹配的模块
-function assignImages(images: ClassifiedImage[], typeMap: Record<string, string[]>): Map<string, ClassifiedImage[]> {
+export function assignImages(images: ClassifiedImage[], typeMap: Record<string, string[]>): Map<string, ClassifiedImage[]> {
   const assigned = new Map<string, ClassifiedImage[]>()
   const used = new Set<string>()
   for (const [imgType, modules] of Object.entries(typeMap)) {

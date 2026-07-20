@@ -139,10 +139,9 @@ app.post('/api/generate/stream', async (req, res) => {
   res.setHeader('Connection', 'keep-alive')
   res.flushHeaders()
 
-  const { systemPrompt, userPrompt } = buildPrompt({ product, modules: moduleKeys, focus: focus || 'taste', images: images || [], isDefault: isDefault || false })
-  const { endpoint, apiKey, model, maxTokens, temperature } = CONFIG.llm
-
   try {
+    const { systemPrompt, userPrompt } = buildPrompt({ product, modules: moduleKeys, focus: focus || 'taste', images: images || [], isDefault: isDefault || false })
+    const { endpoint, apiKey, model, maxTokens, temperature } = CONFIG.llm
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
@@ -399,6 +398,38 @@ app.get('/api/health', (_req, res) => {
 })
 
 // ============================================================
+// POST /api/images/match-corpus
+// 语料库图片指纹匹配 — 上传图 vs 语料库
+// ============================================================
+app.post('/api/images/match-corpus', async (_req, res) => {
+  try {
+    const { hashes } = _req.body
+    if (!hashes || !Array.isArray(hashes)) return res.json({ success: true, data: {} })
+
+    const indexPath = path.resolve(__dirname, '../../data/rag/corpus_hashes.json')
+    if (!fs.existsSync(indexPath)) return res.json({ success: true, data: {} })
+
+    const index = JSON.parse(fs.readFileSync(indexPath, 'utf-8'))
+    const { hammingDistance } = await import('./services/corpus-hash.js')
+
+    const matches = {}
+    for (const { id, hash } of hashes) {
+      let bestMatch = null; let bestDist = 99
+      for (const [fileName, corpusHash] of Object.entries(index.hashes || {})) {
+        const dist = hammingDistance(hash, corpusHash)
+        if (dist < bestDist && dist <= 10) { bestDist = dist; bestMatch = fileName }
+      }
+      if (bestMatch && index.meta?.[bestMatch]) {
+        matches[id] = { ...index.meta[bestMatch], matchedFile: bestMatch, distance: bestDist }
+      }
+    }
+    res.json({ success: true, data: { matches, total: Object.keys(matches).length } })
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message })
+  }
+})
+
+// ============================================================
 // POST /api/images/classify
 // 图片分类 + 描述（doubao-seed-2.0-lite）
 // ============================================================
@@ -481,7 +512,42 @@ app.get('/api/corpus/image-map', (_req, res) => {
 // ============================================================
 // 启动服务
 // ============================================================
+
+// ============================================================
+// POST /api/corpus/save-to-review
+// 导出/发布时自动存入预审语料库
+// ============================================================
+app.post("/api/corpus/save-to-review", (req, res) => {
+  try {
+    const { corpus, images } = req.body
+    if (!corpus || !corpus.productName || !corpus.category) {
+      return res.status(400).json({ success: false, error: "缺少必填字段" })
+    }
+    const { level1, level2, level3 } = corpus.category
+    const productName = corpus.productName.replace(/[/\\?%*:|"<>]/g, "-")
+    const dir = path.resolve(__dirname, `../../data/corpus-review/${level1}/${level2}/${level3}/${productName}`)
+    fs.mkdirSync(dir, { recursive: true })
+
+    fs.writeFileSync(path.join(dir, `${productName}.json`), JSON.stringify(corpus, null, 2))
+
+    if (images && images.length > 0) {
+      const imgDir = path.join(dir, "images")
+      fs.mkdirSync(imgDir, { recursive: true })
+      images.forEach(img => {
+        const buf = Buffer.from(img.base64, "base64")
+        fs.writeFileSync(path.join(imgDir, img.fileName), buf)
+      })
+    }
+
+    res.json({ success: true, path: path.relative(path.resolve(__dirname, "../.."), path.join(dir, `${productName}.json`)) })
+  } catch (e) {
+    console.error("[api/corpus/save-to-review] Error:", e.message)
+    res.status(500).json({ success: false, error: e.message })
+  }
+})
+
 app.listen(CONFIG.port, () => {
+
   console.log(`🚀 内容生产智能体后端服务已启动：http://localhost:${CONFIG.port}`)
   console.log(`   POST /api/generate        - 全量生成`)
   console.log(`   POST /api/generate/module - 单模块重写`)

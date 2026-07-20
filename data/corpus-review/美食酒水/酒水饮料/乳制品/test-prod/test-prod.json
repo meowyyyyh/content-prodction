@@ -1,0 +1,10 @@
+{
+  "productName": "test-prod",
+  "category": {
+    "level1": "美食酒水",
+    "level2": "酒水饮料",
+    "level3": "乳制品"
+  },
+  "modules": [],
+  "images": []
+}

@@ -3,7 +3,7 @@
 // 负责组装 Prompt、调用 LLM、解析返回结果
 // ============================================================
 
-import { readFileSync, existsSync } from 'fs'
+import { readFileSync, readdirSync, existsSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { CONFIG } from '../config/index.js'
@@ -31,6 +31,69 @@ function retrieveCorpus(subCategory, moduleKey) {
     .filter(e => e.category === subCategory && e.module_id === moduleKey)
     .slice(0, 3)
   return candidates
+}
+
+
+// ============================================================
+// V2 语料库图文排版索引
+// 扫描 data/corpus/ 下的 v2 格式语料 JSON，提取模块排版模式
+// ============================================================
+
+let v2CorpusIndex = null
+
+const MODULE_LABELS = {
+  hook: '首屏钩子', price: '价格福利', taste: '口感体验',
+  trust: '基础信任', aftercare: '物流售后', tips: '储存贴士',
+  cta: '行动召唤', ingredient: '成分科普', origin: '原料溯源',
+  brand: '品牌背书', scene: '场景共情', feedback: '用户反馈',
+  comparison: '全网比价', faq: '常见问题'
+}
+
+function loadV2CorpusIndex() {
+  if (v2CorpusIndex) return v2CorpusIndex
+  const corpusDir = resolve(__dirname, '../../../data/corpus')
+  if (!existsSync(corpusDir)) return null
+  v2CorpusIndex = { layouts: [], imageSummaries: [] }
+  function scan(dir) {
+    const entries = readdirSync(dir, { withFileTypes: true })
+    for (const e of entries) {
+      if (e.isDirectory() && !e.name.startsWith('.') && e.name !== 'images') {
+        scan(resolve(dir, e.name))
+      } else if (e.name.endsWith('.json')) {
+        try {
+          const data = JSON.parse(readFileSync(resolve(dir, e.name), 'utf-8'))
+          if (data.modules && Array.isArray(data.modules) && data.category) {
+            const level3 = data.category.level3 || ''
+            for (const mod of data.modules) {
+              v2CorpusIndex.layouts.push({
+                categoryLevel3: level3, moduleKey: mod.moduleKey,
+                layout: mod.layout || null, styleTag: data.styleTag || ''
+              })
+            }
+            if (data.images) {
+              for (const img of data.images) {
+                v2CorpusIndex.imageSummaries.push({
+                  categoryLevel3: level3, type: img.primaryType || '',
+                  desc: img.desc || '', summary: img.imageContentSummary || null
+                })
+              }
+            }
+          }
+        } catch { /* skip */ }
+      }
+    }
+  }
+  scan(corpusDir)
+  return v2CorpusIndex
+}
+
+function retrieveCorpusLayout(categoryLevel3, moduleKey) {
+  const index = loadV2CorpusIndex()
+  if (!index) return null
+  const matches = index.layouts.filter(
+    l => l.categoryLevel3 === categoryLevel3 && l.moduleKey === moduleKey
+  )
+  return matches.length > 0 ? matches[0].layout : null
 }
 
 // 分析语料写作因子（语料驱动 + 未来个人风格复用同一结构）
@@ -174,10 +237,72 @@ export function buildPrompt({ product, modules, focus, images, isDefault }) {
     }
   }
 
+
+  // ============================================================
+  // V2: 注入同类目图文排版模式（从语料库学习）
+  // ============================================================
+  const catLevel3 = product.catLevel3 || ''
+  const layoutPrompt = ['## 图文排版参考（语料驱动）']
+  layoutPrompt.push('以下是从"' + catLevel3 + '"类目优秀笔记中提取的图文排版模式。AI 应严格参考每个模块的排版方式安排图片位置：')
+  layoutPrompt.push('')
+  
+  let hasLayout = false
+  for (const modKey of modules) {
+    const layout = retrieveCorpusLayout(catLevel3, modKey)
+    if (layout && layout.overallPattern && layout.overallPattern !== 'text_only') {
+      const densityLabel = { high: '高', medium: '中', low: '低', none: '无' }
+      const patternLabels = {
+        image_footer_only: '图片全部放在文案之后',
+        image_header_only: '图片全部放在文案之前',
+        images_interspersed: '图片穿插在文案之间',
+        images_only: '纯图片模块'
+      }
+      layoutPrompt.push('### ' + (MODULE_LABELS[modKey] || modKey))
+      layoutPrompt.push('- 排版方式：' + (patternLabels[layout.overallPattern] || layout.overallPattern))
+      layoutPrompt.push('- 图片密度：' + (densityLabel[layout.density] || layout.density) + '（' + layout.imageCount + '张图配' + layout.textSegmentCount + '段文字）')
+      if (modKey === 'taste') layoutPrompt.push('- 参考：多角度产品图和场景图统一放在文案之后')
+      else if (modKey === 'trust') layoutPrompt.push('- 参考：配料表和营养成分表截图放在文案后面作为信任证据')
+      else if (modKey === 'brand') layoutPrompt.push('- 参考：品牌图统一放在模块末尾作为信任墙')
+      else if (modKey === 'hook') layoutPrompt.push('- 参考：封面图和产品图统一放在模块末尾，全宽连续排列')
+      else if (modKey === 'ingredient') layoutPrompt.push('- 参考：科普图统一放在科普文案之后')
+      else if (modKey === 'scene') layoutPrompt.push('- 参考：场景图统一放在场景文案之后')
+      hasLayout = true
+    }
+  }
+  
+  if (hasLayout && !isDefault) {
+    // For non-default styles, only give a brief hint
+    systemParts.push('## 图文排版提示\n参考同类目优秀笔记的排版：每个模块的图片统一放在文案之后（image_footer_only），不穿插在文案中。\n')
+  } else if (hasLayout) {
+    systemParts.push(layoutPrompt.join('\n') + '\n')
+  }
+
+  // ============================================================
+  // V2: 注入当前图片的内容摘要（避免图文冗余）
+  // ============================================================
+  if (images && images.length > 0) {
+    const summaryLines = ['## 图片信息摘要（避免图文信息冗余）']
+    summaryLines.push('已上传的图片中已包含以下文字信息。这些内容图片已经替你展示了，文案中请勿重复，转而用文案补充图片未展示的信息：')
+    summaryLines.push('')
+    
+    for (const img of images) {
+      if (img.imageContentSummary) {
+        const desc = img.desc || '图片'
+        const summary = img.imageContentSummary.slice(0, 150)
+        summaryLines.push('- ' + desc + '：图中包含 "' + summary + '"')
+      }
+    }
+    
+    if (summaryLines.length > 3) {
+      systemParts.push(summaryLines.join('\n') + '\n')
+    }
+  }
+
+
   // 语料库 RAG 注入（模糊匹配品类：product.subCategory 是短码如 'dairy'，语料库用全名如 '调制乳/风味牛奶'）
   const subCategory = product.subCategory || '调制乳/风味牛奶'
-  const subCategoryShort = { dairy: '调制乳/风味牛奶', snack: '调制乳/风味牛奶', fresh_fruit: '调制乳/风味牛奶', grain_oil: '调制乳/风味牛奶', other: '调制乳/风味牛奶' }
-  const corpusCategory = subCategoryShort[subCategory] || subCategory
+  const subCategoryShort = { dairy: '乳制品', snack: '休闲零食', fresh_fruit: '生鲜水果', grain_oil: '粮油调味', other: '其他' }
+  const corpusCategory = product.catLevel3 || subCategoryShort[subCategory] || subCategory || '乳制品'
   const corpusRefs = []
   const maxLen = isDefault ? 800 : 200  // 默认风格用更长的语料参考
   for (const modKey of modules) {

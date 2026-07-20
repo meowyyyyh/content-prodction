@@ -1,27 +1,18 @@
-import type { ModuleConfig, StyleConfig, SubCategoryConfig, ShippingOption } from '@/types'
+import type { ModuleConfig, StyleConfig, SubCategoryConfig, ShippingOption, ModuleKey } from '@/types'
+import { ALL_MODULES, getDefaultModules } from '@/config/moduleRegistry'
 
-export const MODULE_CONFIG: ModuleConfig[] = [
-  // 必选模块（7个）+ 可选模块（7个），按购买决策流排序
-  { key: 'hook', label: '首屏钩子', category: 'mandatory', description: '开篇抓注意力，利益点前置，讲清产品是什么、核心亮点' },
-  { key: 'price', label: '价格福利', category: 'mandatory', description: '集中展示售价、规格数量、赠品权益、优惠力度、单份单价' },
-  { key: 'brand', label: '品牌背书', category: 'optional', description: '介绍品牌实力、牧场/工厂资质、权威认证与奖项' },
-  { key: 'trust', label: '基础信任', category: 'mandatory', description: '拆解配料表、核心含量数据、无添加承诺，建立基础品质信任' },
-  { key: 'taste', label: '口感体验', category: 'mandatory', description: '从嗅觉、入口、余韵多维度分层描述风味与质地' },
-  { key: 'ingredient', label: '成分科普', category: 'optional', description: '对核心功效成分做深度原理科普，讲清对用户的实际好处' },
-  { key: 'origin', label: '原料溯源', category: 'optional', description: '核心原料的产地优势、品质特点、产地故事' },
-  { key: 'scene', label: '场景共情', category: 'optional', description: '结合目标人群日常场景，引发使用共鸣' },
-  { key: 'comparison', label: '全网比价', category: 'optional', description: '对标主流平台价格，突出当前渠道的差价优势' },
-  { key: 'aftercare', label: '物流售后', category: 'mandatory', description: '清晰说明发货时效、快递方式、售后规则与不发货区域' },
-  { key: 'tips', label: '食用储存贴士', category: 'mandatory', description: '说明保质期、储存条件、适用人群、饮用注意事项' },
-  { key: 'feedback', label: '用户反馈', category: 'optional', description: '模拟真实用户评价口吻，增强真实感与种草感' },
-  { key: 'faq', label: '常见问题', category: 'optional', description: '集中解答用户高频疑问，降低决策顾虑' },
-  { key: 'cta', label: '行动召唤', category: 'mandatory', description: '强化购买理由，降低决策门槛，引导立即下单' },
-]
+// MODULE_CONFIG 现在从 moduleRegistry 导出，保持向后兼容
+export const MODULE_CONFIG: ModuleConfig[] = ALL_MODULES
 
-// 短版种草模板（7必选）
+// 短版种草模板（7模块）— 保留旧的作为默认回退
 export const SHORT_TEMPLATE: ModuleKey[] = ['hook','price','taste','trust','aftercare','tips','cta']
 // 长版详情模板（14全选）
 export const LONG_TEMPLATE: ModuleKey[] = MODULE_CONFIG.map(m => m.key)
+
+// 根据类目获取默认模板（新版：类目驱动）
+export function getTemplateForCategory(catLevel1: string, catLevel2: string, catLevel3: string): ModuleKey[] {
+  return getDefaultModules(catLevel1, catLevel2, catLevel3)
+}
 
 export const STYLE_CONFIG: StyleConfig[] = [
   { key: 'xiaohongshu', label: '小红书种草风', description: '对标小红书热门食品种草笔记，用词鲜活有网感，情绪饱满，分享感强', example: '最近挖到的宝藏酸奶！一口下去直接惊艳到了！！' },

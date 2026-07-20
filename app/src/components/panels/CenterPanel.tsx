@@ -73,11 +73,10 @@ function typewrite(finalContents: Record<string, string>, onEdit: (key: string, 
 type HistoryEntry = { type: 'content'; key: string; content: string } | { type: 'order'; order: string[] }
 let undoStack: HistoryEntry[] = []; let redoStack: HistoryEntry[] = []; const MAX_HISTORY = 100
 
-export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder, onAddBlock, onDeleteBlock, showToast, triggerExpandHint, onClearAll }: CenterPanelProps) {
+export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder, onAddBlock, onDeleteBlock, showToast, triggerExpandHint, onClearAll, input, classifiedImages, fileMapRef, onExportCorpus }: CenterPanelProps) {
   const getModule = (key: string) => modules.find(m => m.moduleKey === key)
   const isIdle = status === 'idle'; const isBlocked = status === 'blocked'
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const editorRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const focusedKeyRef = useRef<string | null>(null); const [focusedKey, setFocusedKey] = useState<string | null>(null)
   const pendingActionKeyRef = useRef<string | null>(null) // 工具栏操作前暂存当前聚焦模块
@@ -182,37 +181,6 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
     onEdit(key, el.innerHTML)
     el.focus()
   }, [getModule, onEdit, pushContentHistory, restoreSelection])
-
-  const handleInsertImage = useCallback(() => {
-    saveSelection() // 保存当前光标位置
-    fileInputRef.current?.click()
-  }, [saveSelection])
-
-  const handleImagePicked = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files || files.length === 0) { e.target.value = ''; return }
-    const key = pendingActionKeyRef.current || focusedKeyRef.current
-    if (!key) { showToast('请先点击一个编辑模块再插入图片', 'info'); e.target.value = ''; return }
-    const el = editorRefs.current[key]
-    if (!el) { e.target.value = ''; return }
-    // 如果之前没有保存光标位置，聚焦编辑器并定位到末尾
-    if (!savedRangeRef.current) {
-      el.focus()
-      const sel = window.getSelection()
-      sel?.selectAllChildren(el)
-      sel?.collapseToEnd()
-    }
-    let loaded = 0
-    Array.from(files).forEach(file => {
-      const reader = new FileReader()
-      reader.onload = () => {
-        loaded++
-        insertImageAtCursor(key, file, reader.result as string)
-      }
-      reader.readAsDataURL(file)
-    })
-    e.target.value = ''
-  }, [focusedKeyRef, showToast, insertImageAtCursor])
 
   // 拖拽图片到编辑器
   const handleEditorDrop = useCallback((e: React.DragEvent, key: string) => {
@@ -525,7 +493,11 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
     showToast('已中止操作，文稿已恢复', 'info')
   }, [onEdit, showToast])
 
-  const handleExportWord = useCallback(() => { const content = mandatoryKeys.map(key => (getModule(key)?.content || '')).filter(Boolean).join('<br>'); const body = content.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); const html = `<html><head><meta charset="utf-8"><style>body{font-family:'PingFang SC',sans-serif;line-height:1.8;padding:40px;white-space:pre-wrap}</style></head><body>${body}</body></html>`; const blob = new Blob([html], { type: 'application/msword' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = '笔记定稿.doc'; a.click(); URL.revokeObjectURL(a.href) }, [mandatoryKeys, getModule])
+  const handleExportWord = useCallback(() => {
+    // 异步保存到预审语料库（不阻塞下载）
+    if (onExportCorpus) {
+      onExportCorpus()
+    } const content = mandatoryKeys.map(key => (getModule(key)?.content || '')).filter(Boolean).join('<br>'); const body = content.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); const html = `<html><head><meta charset="utf-8"><style>body{font-family:'PingFang SC',sans-serif;line-height:1.8;padding:40px;white-space:pre-wrap}</style></head><body>${body}</body></html>`; const blob = new Blob([html], { type: 'application/msword' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = '笔记定稿.doc'; a.click(); URL.revokeObjectURL(a.href) }, [mandatoryKeys, getModule])
   const handleDragStart = useCallback((e: React.DragEvent, index: number) => { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(index)); const img = new Image(); img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; e.dataTransfer.setDragImage(img, 0, 0) }, [])
   const handleDrop = useCallback((e: React.DragEvent, targetIndex: number) => { e.preventDefault(); setDragOverIndex(null); const sourceIndex = Number(e.dataTransfer.getData('text/plain')); if (isNaN(sourceIndex) || sourceIndex === targetIndex) return; undoStack.push({ type: 'order', order: [...mandatoryKeys] }); redoStack = []; const newOrder = [...mandatoryKeys]; const [item] = newOrder.splice(sourceIndex, 1); newOrder.splice(targetIndex, 0, item); onReorder(newOrder) }, [mandatoryKeys, onReorder])
 
@@ -533,10 +505,9 @@ export function CenterPanel({ status, modules, mandatoryKeys, onEdit, onReorder,
     <div className="flex-shrink-0 flex items-start gap-1 px-4 py-2.5 border-b border-border bg-background">
       <button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" onClick={handleUndo}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 5.5L1.5 7.5l2 2" /><path d="M1.5 7.5h8a4 4 0 010 8" /></svg><span>撤销</span></button>
       <button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" onClick={handleRedo}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M11.5 5.5L13.5 7.5l-2 2" /><path d="M13.5 7.5h-8a4 4 0 000 8" /></svg><span>重做</span></button>
-      <label className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer" onMouseDown={() => { pendingActionKeyRef.current = focusedKeyRef.current }}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1.5" y="2.5" width="12" height="10" rx="1.5" /><circle cx="5" cy="6" r="1.25" /><path d="M1.5 11l3-3 3 3L10.5 7.5l3 3.5" /></svg><span>插入图片</span><input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleImagePicked} /></label>
       <button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" onClick={onAddBlock}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7.5 2v11M2 7.5h11" /></svg><span>文本块</span></button><button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-colors" onClick={() => { if (!confirm('确定清空编辑区？所有文案和图片将被删除。')) return; mandatoryKeys.forEach(k => { const mod = getModule(k); if (mod?.content && mod.content !== '<br>') { pushContentHistory(k, mod.content); delete lastSavedRef.current[k]; onEdit(k, '<br>') } }); onClearAll?.(); showToast('已清空', 'info') }}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2.5 4.5h10M5.5 4.5V3a1 1 0 011-1h2a1 1 0 011 1v1.5M4.5 4.5l.5 8.5a1 1 0 001 1h3a1 1 0 001-1l.5-8.5" /></svg><span>清空</span></button>
             <div className="flex-1" />
-      <button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" onClick={() => { const content = mandatoryKeys.map(key => { return (getModule(key)?.content || '') }).filter(Boolean).join('<br>'); const body = content.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); const w = window.open('', '_blank', 'width=420,height=780'); if (w) { w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{margin:0;padding:0;box-sizing:border-box}html{scrollbar-width:none}html::-webkit-scrollbar{display:none}body{font-family:"PingFang SC",sans-serif;line-height:1.8;font-size:15px;color:#333;background:#fff}.top-img{width:100%;max-width:400px;display:block;margin:0 auto}.content{max-width:400px;margin:0 auto;padding:20px 16px;white-space:pre-wrap}.content img{max-width:100%;height:auto;border-radius:8px;margin:8px 0}.bottom-wrap{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center}.bottom-img{width:100%;max-width:400px;display:block}.spacer{padding-bottom:100px}</style></head><body><img class="top-img" src="/docs/1.png"><div class="content">'+body+'</div><div class="spacer"></div><div class="bottom-wrap"><img class="bottom-img" src="/docs/2.png"></div></body></html>'); w.document.close() } }}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="7.5" cy="7.5" r="2.5"/><path d="M2.5 7.5c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5-5-2.2-5-5z"/><path d="M7.5 2.5v10"/></svg><span>预览</span></button><button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" onClick={handleExportWord}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2.5 1.5h10a1 1 0 011 1v10a1 1 0 01-1 1h-10a1 1 0 01-1-1v-10a1 1 0 011-1zM4.5 4.5h6M4.5 7.5h6M4.5 10.5h4" /></svg><span>导出</span></button><button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight bg-[#07C160] text-white hover:bg-[#06AD56] transition-colors font-medium"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>去发布</span></button>
+      <button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" onClick={() => { const content = mandatoryKeys.map(key => { return (getModule(key)?.content || '') }).filter(Boolean).join('<br>'); const body = content.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); const w = window.open('', '_blank', 'width=420,height=780'); if (w) { w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{margin:0;padding:0;box-sizing:border-box}html{scrollbar-width:none}html::-webkit-scrollbar{display:none}body{font-family:"PingFang SC",sans-serif;line-height:1.8;font-size:15px;color:#333;background:#fff}.top-img{width:100%;max-width:400px;display:block;margin:0 auto}.content{max-width:400px;margin:0 auto;padding:20px 16px;white-space:pre-wrap}.content img{max-width:100%;height:auto;border-radius:8px;margin:8px 0}.bottom-wrap{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center}.bottom-img{width:100%;max-width:400px;display:block}.spacer{padding-bottom:100px}</style></head><body><img class="top-img" src="/docs/1.png"><div class="content">'+body+'</div><div class="spacer"></div><div class="bottom-wrap"><img class="bottom-img" src="/docs/2.png"></div></body></html>'); w.document.close() } }}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="7.5" cy="7.5" r="2.5"/><path d="M2.5 7.5c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5-5-2.2-5-5z"/><path d="M7.5 2.5v10"/></svg><span>预览</span></button><button className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight text-muted-foreground hover:bg-muted hover:text-foreground transition-colors" onClick={handleExportWord}><svg width="17" height="17" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2.5 1.5h10a1 1 0 011 1v10a1 1 0 01-1 1h-10a1 1 0 01-1-1v-10a1 1 0 011-1zM4.5 4.5h6M4.5 7.5h6M4.5 10.5h4" /></svg><span>导出</span></button><button onClick={() => { if (onExportCorpus) onExportCorpus() }} className="flex flex-col items-center justify-center gap-1.5 rounded-lg h-[52px] w-[52px] text-[11px] leading-tight bg-[#07C160] text-white hover:bg-[#06AD56] transition-colors font-medium"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>去发布</span></button>
     </div>
     <div className={`center-scroll-area flex-1 overflow-y-auto ${isIdle || isBlocked ? 'flex items-center justify-center' : ''} ${chatLoading ? 'cursor-not-allowed' : ''}`} style={{ paddingBottom: chatFocused ? '180px' : '72px' }}>
       <div className="py-8 px-4 w-[92%] max-w-4xl mx-auto translate-x-[5px]">

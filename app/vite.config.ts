@@ -15,6 +15,12 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3001',
         changeOrigin: true,
+        configure: (proxy: any) => {
+          proxy.on('proxyRes', (_proxyRes: any, _req: any, res: any) => {
+            // Prevent response buffering for SSE streams
+            res.flushHeaders()
+          })
+        },
       },
     },
   },

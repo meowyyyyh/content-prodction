@@ -6,12 +6,14 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { LeftPanel } from '@/components/panels/LeftPanel'
 import { CenterPanel } from '@/components/panels/CenterPanel'
+import { ImageConfirmDialog, type ModuleSuggestion } from '@/components/ui/image-confirm-dialog'
 import { RightPanel } from '@/components/panels/RightPanel'
 import { MODULE_CONFIG, STYLE_CONFIG, SHORT_TEMPLATE, STYLE_LABEL_MAP } from '@/config/modules'
 import type { ProductInput, ModuleResult, GenerateStatus, ModuleKey, ContentStyle, ShippingTimeliness, GenerateCount, ClassifiedImage } from '@/types'
+import { IMAGE_MODULE_MAP } from '@/types'
 
 const DEFAULT_INPUT: ProductInput = {
-  productName: '认养一头牛 每日吨吨木姜子香茅酸奶', subCategory: 'dairy', catLevel1: '美食酒水', catLevel2: '酒水饮料', catLevel3: '乳制品', netWeight: '200g×12瓶',
+  productName: '认养一头牛 每日吨吨木姜子香茅酸奶', subCategory: '' as const, catCode: '美食酒水::酒水饮料::乳制品', catLevel1: '美食酒水', catLevel2: '酒水饮料', catLevel3: '乳制品', netWeight: '200g×12瓶',
   origin: '内蒙古呼和浩特', suggestedPrice: '59.90',
   sellingPoints: '0添加蔗糖\n3.0g优质乳蛋白\n北纬40°黄金奶源\n口感醇厚不酸涩\n木姜子+香茅独特风味',
   coreIngredients: '生牛乳（≥90%）、白砂糖、木姜子提取物、香茅提取物、发酵菌',
@@ -40,9 +42,6 @@ export default function App() {
   const [versionLabelV2, setVersionLabelV2] = useState('')
   const [versionLabelV3, setVersionLabelV3] = useState('')
   const [displayOrder, setDisplayOrder] = useState<string[]>([]); const [expandHintCount, setExpandHintCount] = useState(0)
-  const [showModuleDialog, setShowModuleDialog] = useState(false)
-  const [pendingModuleKeys, setPendingModuleKeys] = useState<string[]>([])
-  const skipModuleCheckRef = useRef(false)
   const customBlockCounter = useRef(0)
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true')
   useEffect(() => { document.documentElement.classList.toggle('dark', darkMode); localStorage.setItem('darkMode', String(darkMode)) }, [darkMode])
@@ -56,33 +55,143 @@ export default function App() {
   ])
   const [priceNotes, setPriceNotes] = useState('')
   const [classifiedImages, setClassifiedImages] = useState<ClassifiedImage[]>([])
+  const [imageConfirmOpen, setImageConfirmOpen] = useState(false)
+  const [pendingConfirmImages, setPendingConfirmImages] = useState<(ClassifiedImage & { status?: 'success' | 'failed' })[]>([])
+  const [moduleSuggestions, setModuleSuggestions] = useState<ModuleSuggestion[]>([])
+  const [confirmKey, setConfirmKey] = useState(0)
   const fileMapRef = useRef<Map<string, File>>(new Map())
+  const updateClassifiedImages = useCallback((imgs: ClassifiedImage[]) => {
+    setClassifiedImages(prev => {
+      const map = new Map(prev.map(c => [c.id, c]))
+      imgs.forEach(c => map.set(c.id, c))
+      return [...map.values()]
+    })
+  }, [])
   const handleFileRegistered = useCallback((id: string, file: File) => { fileMapRef.current.set(id, file) }, [])
 
   const hasRequiredFields = useMemo(() => input.productName.trim().length > 0 && input.netWeight.trim().length > 0 && input.suggestedPrice.trim().length > 0 && input.afterSalesRules.trim().length > 0, [input.productName, input.subCategory, input.netWeight, input.suggestedPrice, input.afterSalesRules])
   const isGenerating = status === 'generating' || status === 'checking'
 
+  // 图片分析完成后，触发确认弹窗
+  const handleConfirmImages = useCallback((images: ClassifiedImage[]) => {
+    const final = images.map(img => ({
+      ...img,
+      status: (!img.type || (img.type === '其他' && (!img.desc || img.desc === '分析失败'))) ? 'failed' as const : 'success' as const
+    }))
+    setPendingConfirmImages(final)
+    updateClassifiedImages(final as ClassifiedImage[])
+    const suggestedModules = new Set<ModuleKey>()
+    for (const img of final) {
+      if (img.suggestedModule && MODULE_CONFIG.some(m => m.key === img.suggestedModule)) {
+        suggestedModules.add(img.suggestedModule as ModuleKey)
+      } else {
+        const keys = IMAGE_MODULE_MAP[img.type] || []
+        keys.forEach(k => suggestedModules.add(k))
+      }
+    }
+    const unselected = [...suggestedModules].filter(k => !input.selectedModules.includes(k))
+    const suggestions: ModuleSuggestion[] = unselected.map(k => {
+      const config = MODULE_CONFIG.find(m => m.key === k)
+      return {
+        moduleKey: k,
+        moduleLabel: config?.label || k,
+        description: config?.description || '',
+        isSelected: input.selectedModules.includes(k)
+      }
+    })
+    setModuleSuggestions(suggestions)
+    // 自动勾选建议的模块（不弹窗询问）
+    if (unselected.length > 0) {
+      const newSelected = [...new Set([...input.selectedModules, ...unselected])]
+      setInput(prev => ({ ...prev, selectedModules: newSelected }))
+    }
+    // 不自动弹窗，等用户点击"点我查看解析结果"再弹
+  }, [input.selectedModules])
+
+  const handleConfirmImageDialog = useCallback((confirmedImages: (ClassifiedImage & { status?: string })[], checkModules: ModuleKey[]) => {
+    updateClassifiedImages(confirmedImages as ClassifiedImage[])
+    // 同步更新弹窗副本，否则下次打开弹窗会是旧数据
+    setPendingConfirmImages(confirmedImages)
+    if (checkModules.length > 0) {
+      const newSelected = [...new Set([...input.selectedModules, ...checkModules])]
+      setInput(prev => ({ ...prev, selectedModules: newSelected }))
+    }
+    setImageConfirmOpen(false)
+    setModuleSuggestions([])
+  }, [input.selectedModules, setInput, updateClassifiedImages])
+
+  const handleRemoveClassifiedImage = useCallback((id: string) => {
+    setClassifiedImages(prev => prev.filter(c => c.id !== id))
+    setPendingConfirmImages(prev => prev.filter(c => c.id !== id))
+  }, [])
+
+  // 重新分析失败图片
+  const handleReanalyze = useCallback(async (imageIds: string[]) => {
+    for (const id of imageIds) {
+      const file = fileMapRef.current.get(id)
+      if (!file) continue
+      try {
+        // 压缩图片
+        const base64: string = await new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => {
+            const img = new Image()
+            img.onload = () => {
+              const maxW = 512; const scale = Math.min(1, maxW / img.width)
+              const w = Math.round(img.width * scale); const h = Math.round(img.height * scale)
+              const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h
+              const ctx = canvas.getContext('2d')!; ctx.drawImage(img, 0, 0, w, h)
+              resolve(canvas.toDataURL(file.type || 'image/jpeg', 0.8).split(',')[1])
+            }
+            img.onerror = () => reject(new Error('图片加载失败'))
+            img.src = reader.result as string
+          }
+          reader.onerror = () => reject(new Error('读取失败'))
+          reader.readAsDataURL(file)
+        })
+
+        // 调用分类 API
+        const res = await fetch('/api/images/classify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ images: [{ id, base64, mimeType: file.type || 'image/jpeg' }] })
+        })
+        const d = await res.json()
+        if (d.success && d.data?.results?.length > 0) {
+          const r = d.data.results[0]
+          setPendingConfirmImages(prev => prev.map(p => p.id === id ? { ...p, type: r.type || '其他', desc: r.desc || '', layout_role: r.layout_role, imageContentSummary: r.imageContentSummary || '', imageOcrText: r.imageOcrText || '', suggestedModule: r.suggestedModule, status: 'success' as const } : p))
+        }
+      } catch (e: any) {
+        console.error('Reanalysis failed for', id, e)
+      }
+    }
+    setConfirmKey(prev => prev + 1)
+  }, [])
+
+  const handleClearClassifiedImages = useCallback(() => {
+    setClassifiedImages([])
+    setPendingConfirmImages([])
+  }, [])
+
+  const handleOpenImageConfirm = useCallback(() => {
+    // 用 pendingConfirmImages（最新分析结果）或 classifiedImages（已确认的图片）兜底
+    const imgs = pendingConfirmImages.length > 0 ? pendingConfirmImages : classifiedImages.map(img => ({ ...img, status: 'success' as const }))
+    if (imgs.length > 0) {
+      setPendingConfirmImages(imgs)
+      // 递增 key 强制弹窗完全销毁重建，确保在 React 19 下不会保留上一次的 editingImages 旧状态
+      setConfirmKey(k => k + 1)
+      setImageConfirmOpen(true)
+    }
+  }, [pendingConfirmImages, classifiedImages])
+
+  const handleCancelImageDialog = useCallback(() => {
+    setImageConfirmOpen(false)
+    setModuleSuggestions([])
+  }, [])
+
+  // 图片分析完成后，触发确认弹窗
   const handleGenerate = useCallback(async (forceModules?: ModuleKey[]) => {
     if (!hasRequiredFields) return
-    if (!skipModuleCheckRef.current) {
-      // 检查已分类图片的标签是否提示未勾选的笔记模块
-      if (classifiedImages.length > 0) {
-        const labelMap: Record<string, string> = { hook: '首屏钩子', price: '价格福利', taste: '口感体验', trust: '基础信任', aftercare: '物流售后', tips: '储存贴士', cta: '行动召唤', ingredient: '成分科普', origin: '原料溯源', brand: '品牌背书', scene: '场景共情', feedback: '用户反馈', comparison: '全网比价', faq: '常见问题' }
-        const typeMap: Record<string, string[]> = { '产品图': ['taste', 'hook'], '封面图': ['hook'], '配料表': ['trust', 'ingredient'], '场景图': ['scene'], '品牌图': ['brand'], '包装图': ['hook'], '其他': [] }
-        const unselected = new Set<string>()
-        for (const img of classifiedImages) {
-          const keys = typeMap[img.type] || []
-          for (const k of keys) { if (!(forceModules || input.selectedModules).includes(k as any)) unselected.add(k) }
-        }
-        if (unselected.size > 0) {
-          setPendingModuleKeys([...unselected])
-          setShowModuleDialog(true)
-          return
-        }
-      }
-    } else {
-      skipModuleCheckRef.current = false
-    }
     const orderedKeys = input.moduleOrder.filter(k => (forceModules || input.selectedModules).includes(k as ModuleKey))
     const makeModules = () => orderedKeys.map(key => { const config = MODULE_CONFIG.find(m => m.key === key); return { moduleKey: key, moduleLabel: config?.label || key, content: '', status: 'loading' as const, adopted: false } })
     const v1 = makeModules(); const v2 = makeModules(); const v3 = makeModules()
@@ -176,18 +285,23 @@ export default function App() {
   const handleDeleteBlock = useCallback((moduleKey: string) => { setDisplayOrder(prev => prev.filter(k => k !== moduleKey)); setCenterModules(prev => prev.filter(m => m.moduleKey !== moduleKey)) }, [])
   const handleClearAll = useCallback(() => { setCenterModules([]); setDisplayOrder([]) }, [])
 
-  const handleConfirmGenerate = useCallback(() => {
-    const deduped = [...new Set([...input.selectedModules, ...pendingModuleKeys])] as ModuleKey[]
-    setInput({ ...input, selectedModules: deduped })
-    setShowModuleDialog(false)
-    setPendingModuleKeys([])
-    skipModuleCheckRef.current = true
-    handleGenerate(deduped)
-  }, [input, pendingModuleKeys, setInput, handleGenerate])
-  const handleCancelGenerate = useCallback(() => {
-    setShowModuleDialog(false)
-    setPendingModuleKeys([])
-  }, [])
+  // 导出/发布时自动存预审语料库
+  const handleExportCorpus = useCallback((callback?: () => void) => {
+    try {
+      const data = buildCorpusJSON(input, classifiedImages, centerModules, displayOrder, fileMapRef.current)
+      fetch("/api/corpus/save-to-review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).then(r => r.json()).then(d => {
+        if (d.success) showToast("已存入预审语料库", "success")
+      }).catch(() => {})
+    } catch (e) {
+      console.error("Export corpus failed:", e)
+    }
+    if (callback) callback()
+  }, [input, classifiedImages, centerModules, displayOrder, showToast])
+
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-gradient-to-br from-indigo-50/80 via-white to-purple-50/80 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -224,31 +338,21 @@ export default function App() {
       {/* 三栏主体 */}
       <div className="flex flex-1 min-h-0 gap-4 px-4 pb-4">
         {toast && (<div className={`fixed top-16 left-1/2 -translate-x-1/2 z-[999] flex items-center gap-2.5 rounded-lg border px-4 py-2.5 text-sm shadow-lg ${toast.type === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : toast.type === 'error' ? 'border-red-200 bg-red-50 text-red-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0"><circle cx="7.5" cy="7.5" r="6" /><path d={toast.type === 'success' ? "M4.5 7.5l2 2 4-4" : "M7.5 4.5v3M7.5 10v.5"} /></svg><span>{toast.msg}</span></div>)}
-        <div className="w-[320px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><LeftPanel input={input} onChange={setInput} disabled={isGenerating} isGenerating={isGenerating} onGenerate={handleGenerate} hasRequiredFields={hasRequiredFields} priceDialogOpen={priceDialogOpen} setPriceDialogOpen={setPriceDialogOpen} platforms={platforms} setPlatforms={setPlatforms} priceNotes={priceNotes} setPriceNotes={setPriceNotes} classifiedImages={classifiedImages} onImagesClassified={(imgs) => setClassifiedImages(prev => { const map = new Map(prev.map(c => [c.id, c])); imgs.forEach(c => map.set(c.id, c)); return [...map.values()] })} onFileRegistered={handleFileRegistered} /></div>
-        <div className="w-[450px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><CenterPanel status={status} modules={centerModules} mandatoryKeys={displayOrder} onEdit={handleCenterEdit} onReorder={setDisplayOrder} onAddBlock={handleAddBlock} onDeleteBlock={handleDeleteBlock} showToast={showToast} triggerExpandHint={expandHintCount} onClearAll={handleClearAll} /></div>
+        <div className="w-[320px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><LeftPanel input={input} onChange={setInput} disabled={isGenerating} isGenerating={isGenerating} onGenerate={handleGenerate} hasRequiredFields={hasRequiredFields} priceDialogOpen={priceDialogOpen} setPriceDialogOpen={setPriceDialogOpen} platforms={platforms} setPlatforms={setPlatforms} priceNotes={priceNotes} setPriceNotes={setPriceNotes} classifiedImages={classifiedImages} onImagesClassified={updateClassifiedImages} onFileRegistered={handleFileRegistered} onConfirmImages={handleConfirmImages} onOpenImageConfirm={handleOpenImageConfirm} onClearClassifiedImages={handleClearClassifiedImages} onRemoveClassifiedImage={handleRemoveClassifiedImage} /></div>
+        <div className="w-[450px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><CenterPanel status={status} modules={centerModules} mandatoryKeys={displayOrder} onEdit={handleCenterEdit} onReorder={setDisplayOrder} onAddBlock={handleAddBlock} onDeleteBlock={handleDeleteBlock} showToast={showToast} triggerExpandHint={expandHintCount} onClearAll={handleClearAll} input={input} classifiedImages={classifiedImages} fileMapRef={fileMapRef} onExportCorpus={handleExportCorpus} /></div>
         <div className="flex-1 min-w-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><RightPanel status={status} modulesV1={rightModulesV1} modulesV2={rightModulesV2} modulesV3={rightModulesV3} versionLabelV1={versionLabelV1} versionLabelV2={versionLabelV2} versionLabelV3={versionLabelV3} onAdopt={handleAdopt} onAdoptAll={handleAdoptAll} onDislikeVersion={handleDislikeVersion} onDislikeModule={handleDislikeModule} classifiedImages={classifiedImages} /></div>
       </div>
 
-      {/* 模块未勾选确认弹窗 */}
-      {showModuleDialog && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={handleCancelGenerate}>
-          <div className="bg-card rounded-2xl shadow-2xl max-w-md w-full p-6 border border-border animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold mb-3">检测到推荐模块未勾选</h3>
-            <p className="text-sm text-muted-foreground mb-2">已上传图片的标签对应以下笔记模块未勾选：</p>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {pendingModuleKeys.map(k => {
-                const labels: Record<string, string> = { hook: '首屏钩子', price: '价格福利', taste: '口感体验', trust: '基础信任', aftercare: '物流售后', tips: '储存贴士', cta: '行动召唤', ingredient: '成分科普', origin: '原料溯源', brand: '品牌背书', scene: '场景共情', feedback: '用户反馈', comparison: '全网比价', faq: '常见问题' }
-                return <span key={k} className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-sm font-medium text-emerald-700">{labels[k] || k}</span>
-              })}
-            </div>
-            <p className="text-sm text-muted-foreground mb-5">是否自动勾选上述模块并继续生成？</p>
-            <div className="flex justify-end gap-3">
-              <button onClick={handleCancelGenerate} className="rounded-md border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted transition-colors">取消</button>
-              <button onClick={handleConfirmGenerate} className="rounded-md bg-[#07C160] hover:bg-[#06AD56] px-4 py-2 text-sm font-medium text-white transition-colors">同意并生成</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* 图片分析确认弹窗 */}
+      <ImageConfirmDialog
+        key={confirmKey}
+        open={imageConfirmOpen}
+        images={pendingConfirmImages}
+        moduleSuggestions={moduleSuggestions}
+        onConfirm={handleConfirmImageDialog}
+        onCancel={handleCancelImageDialog}
+        onReanalyze={handleReanalyze}
+      />
       {/* 全局：配置比价清单弹窗 */}
       {priceDialogOpen && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setPriceDialogOpen(false)}>
@@ -259,7 +363,7 @@ export default function App() {
             <div className="mb-4 p-3 rounded-xl bg-muted/50">
               <span className="text-xs text-muted-foreground">团购价</span>
               <span className="text-lg font-semibold text-[#07C160] ml-2">
-                {input.suggestedPrice ? `¥${input.suggestedPrice} / ${input.netWeight}` : '未设置'}
+                {input.suggestedPrice ? `¥{input.suggestedPrice} / {input.netWeight}` : '未设置'}
               </span>
             </div>
 
@@ -299,6 +403,117 @@ export default function App() {
   )
 }
 
+// 图片→模块映射
+const DEFAULT_TYPE_MAP: Record<string, string[]> = {
+  '产品图': ['taste'], '封面图': ['hook'], '配料表': ['trust', 'ingredient'],
+  '场景图': ['scene'], '品牌图': ['brand'], '包装图': ['hook'], '其他': [],
+}
+
+function assignImages(images: ClassifiedImage[], typeMap: Record<string, string[]>): Map<string, ClassifiedImage[]> {
+  const map = new Map<string, ClassifiedImage[]>()
+  for (const img of images) {
+    const targets = typeMap[img.type] || []
+    for (const mod of targets) {
+      if (!map.has(mod)) map.set(mod, [])
+      map.get(mod)!.push(img)
+    }
+  }
+  return map
+}
+
+function buildCorpusJSON(
+  input: ProductInput, classifiedImages: ClassifiedImage[],
+  centerModules: ModuleResult[], displayOrder: string[],
+  fileMap: Map<string, File>
+): { corpus: any; images: { id: string; base64: string; fileName: string }[] } {
+  const getExt = (f: File | undefined) => f ? (f.name.includes('.') ? f.name.split('.').pop() || 'jpg' : 'jpg') : 'jpg'
+
+  const corpus: any = {
+    version: "2.1", schema: "corpus-图文绑定-v2",
+    productName: input.productName,
+    sourceNote: `来源: ${input.productName}`,
+    category: { level1: input.catLevel1, level2: input.catLevel2, level3: input.catLevel3 },
+    styleTag: (input.versionStyles && input.versionStyles[0]) || input.style || 'xiaohongshu',
+    imageCount: classifiedImages.length,
+    source: "预审库自动收集",
+    convertedAt: new Date().toISOString(),
+    modules: [], images: []
+  }
+
+  // images[]
+  const imageFiles: { id: string; base64: string; fileName: string }[] = []
+  let imgIdx = 1
+  corpus.images = classifiedImages.map((img) => {
+    const f = fileMap.get(img.id)
+    const ext = getExt(f)
+    const fileName = `image${String(imgIdx).padStart(3, '0')}.${ext}`
+    imgIdx++
+    // Extract base64 from file
+    let base64 = ''
+    if (f) {
+      try {
+        const reader = new FileReader()
+        // We can't use FileReader sync — skip base64 for now, extract later
+      } catch {}
+    }
+    imageFiles.push({ id: img.id, base64: img.preview?.replace(/^data:image\/\w+;base64,/, '') || '', fileName })
+    return {
+      id: imgIdx - 1, file: `images/${fileName}`,
+      type: [img.type], primaryType: img.type, module: '',
+      desc: img.desc || '', layout_role: img.layout_role || 'detail',
+      imageContentSummary: img.imageContentSummary || '',
+      imageOcrText: (img as any).imageOcrText || '',
+      suggestedModule: (img as any).suggestedModule || ''
+    }
+  })
+
+  // Assign images to modules
+  const moduleImages = assignImages(classifiedImages, DEFAULT_TYPE_MAP)
+
+  // Build modules
+  for (const key of displayOrder) {
+    const cm = centerModules.find(m => m.moduleKey === key)
+    const imgs = moduleImages.get(key) || []
+    const text = cm ? cm.content.replace(/<[^>]+>/g, '').replace(/<br\s*\/?>/gi, '\n').trim() : ''
+    const imgCount = imgs.length
+    const density = imgCount === 0 ? 'none' : imgCount <= 2 ? 'low' : imgCount <= 8 ? 'medium' : 'high'
+    const pattern = text && imgCount > 0 ? 'image_before_text' : text ? 'text_only' : imgCount > 0 ? 'images_only' : 'text_only'
+
+    const segImages = imgs.map((img, i) => ({
+      imgId: classifiedImages.findIndex(ci => ci.id === img.id) + 1,
+      group: 'stack', role: img.desc || `图${i + 1}`,
+      position: 'before_text' as const,
+      relationship: img.imageContentSummary || ''
+    }))
+
+    const segment = {
+      text, textType: `${key}_main`,
+      images: segImages,
+      binding: segImages.length > 0 ? 'image_before_text' as const : 'no_image' as const
+    }
+
+    const mod = {
+      moduleKey: key, moduleName: cm?.moduleLabel || key, order: 0,
+      layout: { overallPattern: pattern, imageCount: imgCount, textSegmentCount: 1, density },
+      segments: [segment],
+      imageGroups: {} as any
+    }
+
+    if (imgCount > 0 && pattern === 'image_before_text') {
+      mod.imageGroups = {
+        footer: { imgIds: segImages.map(s => s.imgId), group: 'stack', desc: '' }
+      }
+    }
+
+    corpus.modules.push(mod)
+  }
+
+  // Re-number modules
+  corpus.modules.forEach((m: any, i: number) => { m.order = i + 1 })
+
+  return { corpus, images: imageFiles }
+}
+
 function plainToHTML(text: string): string { return text.replace(/<br\s*\/?>/gi, '\n').replace(/<\/tr>/gi, '\n').replace(/<\/t[dh]>\s*<t[dh][^>]*>/gi, ' / ').replace(/<[^>]+>/g, '').replace(/\n/g, '<br>') }
 function stripEmoji(text: string): string { return text.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}‍️]/gu, '').replace(/\s+/g, ' ').trim() }
 
@@ -307,7 +522,7 @@ async function streamGenerate(product: ProductInput, moduleKeys: string[], focus
     const clean = (t: string) => plainToHTML(t.replace(/===\w+===/g, '').trim()); const flush = () => { const now = Date.now(); if (now - lastUpdate < 40) return; lastUpdate = now; setModules(prev => prev.map(m => ({ ...m, status: 'completed' as const, content: clean(contents[m.moduleKey] || '') }))) }
     while (true) { const { done, value } = await reader.read(); if (done) break; buf += decoder.decode(value, { stream: true }); const lines = buf.split('\n'); buf = lines.pop() || ''; for (const line of lines) { if (!line.startsWith('data: ')) continue; const d = line.slice(6); let p; try { p = JSON.parse(d) } catch { continue }; if (p.type === 'done') continue; if (p.type === 'text' && p.content) { contents[curMod] = (contents[curMod] || '') + p.content; const m = /===(hook|price|taste|trust|aftercare|tips|cta|ingredient|origin|brand|scene|feedback|comparison|faq)===/.exec(contents[curMod] || ''); if (m) { const idx = (contents[curMod] || '').indexOf(m[0]); const before = (contents[curMod] || '').slice(0, idx); if (before.trim()) contents[curMod] = before; else delete contents[curMod]; curMod = m[1]; contents[curMod] = (contents[curMod] || '').slice(idx + m[0].length) } flush() } } }
     setModules(prev => prev.map(m => ({ ...m, status: 'completed' as const, content: clean(contents[m.moduleKey] || '') }))); onDone()
-  } catch { generateRight(_mods, product, focus, setModules, onDone) }
+  } catch { await generateRight(_mods, product, focus, setModules, onDone); onDone() }
 }
 
 function fillModules(mods: ModuleResult[], apiModules: Array<{ moduleKey: string; content: string }>, setModules: (v: React.SetStateAction<ModuleResult[]>) => void) { setModules(mods.map(m => { const api = apiModules.find(a => a.moduleKey === m.moduleKey); return api ? { ...m, status: 'completed' as const, content: plainToHTML(api.content) } : m })) }
