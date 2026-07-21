@@ -13,17 +13,17 @@ import type { ProductInput, ModuleResult, GenerateStatus, ModuleKey, ContentStyl
 import { IMAGE_MODULE_MAP } from '@/types'
 
 const DEFAULT_INPUT: ProductInput = {
-  productName: '认养一头牛 每日吨吨木姜子香茅酸奶', subCategory: '' as const, catCode: '美食酒水::酒水饮料::乳制品', catLevel1: '美食酒水', catLevel2: '酒水饮料', catLevel3: '乳制品', netWeight: '200g×12瓶',
-  origin: '内蒙古呼和浩特', suggestedPrice: '59.90',
-  sellingPoints: '0添加蔗糖\n3.0g优质乳蛋白\n北纬40°黄金奶源\n口感醇厚不酸涩\n木姜子+香茅独特风味',
-  coreIngredients: '生牛乳（≥90%）、白砂糖、木姜子提取物、香茅提取物、发酵菌',
-  shippingOrigin: '上海', shippingTimeliness: '48h' as ShippingTimeliness, courier: '顺丰冷链',
-  afterSalesRules: '生鲜不支持7天无理由退货，质量问题签收24小时内凭照片申请赔付',
-  brandBackground: '认养一头牛，自有牧场位于北纬40°黄金奶源带，通过ISO 22000认证',
-  targetAudience: '久坐办公党、下午茶爱好者、注重健康的家庭', usageScene: '早餐搭配、办公室下午茶、健身后加餐', textLength: 'long' as const,
+  productName: '', subCategory: '' as const, catCode: '美食酒水::酒水饮料::乳制品', catLevel1: '美食酒水', catLevel2: '酒水饮料', catLevel3: '乳制品', netWeight: '',
+  origin: '', suggestedPrice: '', groupBuyPrice: '',
+  sellingPoints: '',
+  coreIngredients: '',
+  shippingOrigin: '', shippingTimeliness: '48h' as ShippingTimeliness, courier: '',
+  afterSalesRules: '',
+  brandBackground: '',
+  targetAudience: '', usageScene: '', textLength: 'long' as const,
   productionDate: '', shelfLifeValue: '', shelfLifeUnit: 'day', customShippingDays: '',
   extraShippingFeeEnabled: false, extraShippingFeeAreas: '', noShippingAreasEnabled: false, noShippingAreas: '',
-  additionalNotes: '', style: 'xiaohongshu' as ContentStyle,
+  additionalNotes: '', rawProductText: '', style: 'xiaohongshu' as ContentStyle,
   selectedModules: SHORT_TEMPLATE,
   moduleOrder: MODULE_CONFIG.map(m => m.key), // 14模块完整排序 generateCount: 2 as GenerateCount,
   textLength: 'long' as const,
@@ -69,7 +69,7 @@ export default function App() {
   }, [])
   const handleFileRegistered = useCallback((id: string, file: File) => { fileMapRef.current.set(id, file) }, [])
 
-  const hasRequiredFields = useMemo(() => input.productName.trim().length > 0 && input.netWeight.trim().length > 0 && input.suggestedPrice.trim().length > 0 && input.afterSalesRules.trim().length > 0, [input.productName, input.subCategory, input.netWeight, input.suggestedPrice, input.afterSalesRules])
+  const hasRequiredFields = useMemo(() => input.rawProductText.trim().length > 0 || (input.productName.trim().length > 0 && input.netWeight.trim().length > 0 && input.suggestedPrice.trim().length > 0 && input.groupBuyPrice.trim().length > 0 && input.afterSalesRules.trim().length > 0), [input.rawProductText, input.productName, input.subCategory, input.netWeight, input.suggestedPrice, input.groupBuyPrice, input.afterSalesRules])
   const isGenerating = status === 'generating' || status === 'checking'
 
   // 图片分析完成后，触发确认弹窗
@@ -190,9 +190,14 @@ export default function App() {
   }, [])
 
   // 图片分析完成后，触发确认弹窗
-  const handleGenerate = useCallback(async (forceModules?: ModuleKey[]) => {
-    if (!hasRequiredFields) return
-    const orderedKeys = input.moduleOrder.filter(k => (forceModules || input.selectedModules).includes(k as ModuleKey))
+  const handleGenerate = useCallback(async (forceModulesOrRawText?: ModuleKey[] | string) => {
+    // 如果传入的是字符串，说明是从文本解析直接生成
+    const rawText = typeof forceModulesOrRawText === 'string' ? forceModulesOrRawText : undefined
+    const forceModules = Array.isArray(forceModulesOrRawText) ? forceModulesOrRawText : undefined
+    // 用传入的 rawText 覆盖 input.rawProductText（避免 React 状态更新时序问题）
+    const effectiveInput = rawText ? { ...input, rawProductText: rawText } : input
+    if (!effectiveInput.rawProductText.trim() && !(input.productName.trim() && input.netWeight.trim() && input.suggestedPrice.trim() && input.afterSalesRules.trim())) return
+    const orderedKeys = effectiveInput.moduleOrder.filter(k => (forceModules || effectiveInput.selectedModules).includes(k as ModuleKey))
     const makeModules = () => orderedKeys.map(key => { const config = MODULE_CONFIG.find(m => m.key === key); return { moduleKey: key, moduleLabel: config?.label || key, content: '', status: 'loading' as const, adopted: false } })
     const v1 = makeModules(); const v2 = makeModules(); const v3 = makeModules()
     setRightModulesV1(v1); setRightModulesV2(v2); setRightModulesV3(v3)
@@ -204,9 +209,9 @@ export default function App() {
     setVersionLabelV3(STYLE_LABEL_MAP[v3Style] || v3Style)
     setStatus('generating')
     let doneCount = 0; const onStreamDone = () => { doneCount++; if (doneCount >= 3) setStatus('completed') }
-    streamGenerate({ ...input, style: v1Style }, orderedKeys, 'taste', v1, setRightModulesV1, onStreamDone, classifiedImages, true)
-    streamGenerate({ ...input, style: v2Style }, orderedKeys, 'taste', v2, setRightModulesV2, onStreamDone, classifiedImages)
-    streamGenerate({ ...input, style: v3Style }, orderedKeys, 'taste', v3, setRightModulesV3, onStreamDone, classifiedImages)
+    streamGenerate({ ...effectiveInput, style: v1Style }, orderedKeys, 'taste', v1, setRightModulesV1, onStreamDone, classifiedImages, true)
+    streamGenerate({ ...effectiveInput, style: v2Style }, orderedKeys, 'taste', v2, setRightModulesV2, onStreamDone, classifiedImages)
+    streamGenerate({ ...effectiveInput, style: v3Style }, orderedKeys, 'taste', v3, setRightModulesV3, onStreamDone, classifiedImages)
     setTimeout(() => { if (doneCount < 3) { doneCount = 3; setStatus('completed') } }, 90000)
   }, [hasRequiredFields, input])
 
@@ -392,7 +397,7 @@ export default function App() {
               <Button variant="outline" size="sm" disabled className="text-xs"><svg width="13" height="13" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className="mr-1"><path d="M7.5 1.5L9.5 5l4 .5-3 3 1 4.5-3.5-2-3.5 2 1-4.5-3-3 4-.5 2-3.5z" /></svg>AI 帮我搜价</Button>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={() => setPriceDialogOpen(false)}>取消</Button>
-                <Button size="sm" className="bg-[#07C160] hover:bg-[#06AD56]" onClick={() => { if (platforms.some(p => p.enabled && p.price.trim())) { if (!input.selectedModules.includes('comparison')) { setInput({ ...input, selectedModules: [...input.selectedModules, 'comparison'] }) } setPriceDialogOpen(false) } }}>保存</Button>
+                <Button size="sm" className="bg-[#07C160] hover:bg-[#06AD56]" onClick={() => setPriceDialogOpen(false)}>保存</Button>
               </div>
             </div>
           </div>
@@ -520,7 +525,7 @@ function stripEmoji(text: string): string { return text.replace(/[\p{Emoji_Prese
 async function streamGenerate(product: ProductInput, moduleKeys: string[], focus: 'taste' | 'value', _mods: ModuleResult[], setModules: (v: React.SetStateAction<ModuleResult[]>) => void, onDone: () => void, images?: ClassifiedImage[], isDefault?: boolean) {
   try { const response = await fetch('/api/generate/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product, modules: moduleKeys, focus, images: images || [], isDefault: isDefault || false }) }); if (!response.ok) throw new Error('Stream failed'); const reader = response.body!.getReader(); const decoder = new TextDecoder(); let buf = ''; const contents: Record<string, string> = {}; let curMod = ''; let lastUpdate = Date.now()
     const clean = (t: string) => plainToHTML(t.replace(/===\w+===/g, '').trim()); const flush = () => { const now = Date.now(); if (now - lastUpdate < 40) return; lastUpdate = now; setModules(prev => prev.map(m => ({ ...m, status: 'completed' as const, content: clean(contents[m.moduleKey] || '') }))) }
-    while (true) { const { done, value } = await reader.read(); if (done) break; buf += decoder.decode(value, { stream: true }); const lines = buf.split('\n'); buf = lines.pop() || ''; for (const line of lines) { if (!line.startsWith('data: ')) continue; const d = line.slice(6); let p; try { p = JSON.parse(d) } catch { continue }; if (p.type === 'done') continue; if (p.type === 'text' && p.content) { contents[curMod] = (contents[curMod] || '') + p.content; const m = /===(hook|price|taste|trust|aftercare|tips|cta|ingredient|origin|brand|scene|feedback|comparison|faq)===/.exec(contents[curMod] || ''); if (m) { const idx = (contents[curMod] || '').indexOf(m[0]); const before = (contents[curMod] || '').slice(0, idx); if (before.trim()) contents[curMod] = before; else delete contents[curMod]; curMod = m[1]; contents[curMod] = (contents[curMod] || '').slice(idx + m[0].length) } flush() } } }
+    while (true) { const { done, value } = await reader.read(); if (done) break; buf += decoder.decode(value, { stream: true }); const lines = buf.split('\n'); buf = lines.pop() || ''; for (const line of lines) { if (!line.startsWith('data: ')) continue; const d = line.slice(6); let p; try { p = JSON.parse(d) } catch { continue }; if (p.type === 'done') continue; if (p.type === 'text' && p.content) { contents[curMod] = (contents[curMod] || '') + p.content; const m = /===(hook|price|taste|trust|aftercare|tips|cta|ingredient|origin|brand|scene|feedback|faq)===/.exec(contents[curMod] || ''); if (m) { const idx = (contents[curMod] || '').indexOf(m[0]); const before = (contents[curMod] || '').slice(0, idx); if (before.trim()) contents[curMod] = before; else delete contents[curMod]; curMod = m[1]; contents[curMod] = (contents[curMod] || '').slice(idx + m[0].length) } flush() } } }
     setModules(prev => prev.map(m => ({ ...m, status: 'completed' as const, content: clean(contents[m.moduleKey] || '') }))); onDone()
   } catch { await generateRight(_mods, product, focus, setModules, onDone); onDone() }
 }

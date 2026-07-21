@@ -16,17 +16,18 @@ export const ALL_MODULES: ModuleConfig[] = [
   { key: 'scene', label: '场景共情', scope: 'common', description: '使用场景、生活方式' },
   { key: 'aftercare', label: '物流售后', scope: 'common', description: '发货时效、快递方式、售后规则' },
   { key: 'tips', label: '使用贴士', scope: 'common', description: '储存/使用/注意事项' },
-  { key: 'cta', label: '行动召唤', scope: 'common', description: '引导下单、团购入口' },
   { key: 'feedback', label: '用户反馈', scope: 'common', description: '好评/用户晒单' },
   { key: 'faq', label: '常见问题', scope: 'common', description: 'Q&A解答' },
 
-  // === 可选通用模块 ===
-  { key: 'comparison', label: '全网比价', scope: 'optional', description: '多平台价格对比' },
+  // === 可选通用模块（暂无）===
 
   // === 美食酒水专属模块 ===
   { key: 'taste', label: '口感体验', scope: 'food', description: '味觉/嗅觉/质地描述' },
   { key: 'ingredient', label: '成分科普', scope: 'food', description: '配料/营养成分解读' },
   { key: 'origin', label: '原料溯源', scope: 'food', description: '产地/奶源/种植环境' },
+
+  // === 行动召唤（始终最后） ===
+  { key: 'cta', label: '行动召唤', scope: 'common', description: '引导下单、团购入口' },
 ]
 
 // ============================================================
@@ -48,18 +49,18 @@ export const LEVEL1_DEFAULTS: Record<string, CategoryModuleConfig> = {
   '__美食酒水__': {
     mandatory: ['hook', 'price', 'cta'],
     recommended: ['taste', 'trust', 'ingredient', 'origin', 'brand', 'scene', 'aftercare', 'tips', 'faq'],
-    optional: ['feedback', 'comparison'],
+    optional: ['feedback'],
   },
   '__美妆洗护__': {
     mandatory: ['hook', 'price', 'cta'],
     recommended: ['trust', 'brand', 'scene', 'aftercare', 'tips', 'faq'],
-    optional: ['feedback', 'comparison'],
+    optional: ['feedback'],
     // TODO Phase 3: recommended 加入 beauty_effect/beauty_ingredient/usage
   },
   '__default__': {  // 其他一级类目 → 纯通用
     mandatory: ['hook', 'price', 'cta'],
     recommended: ['trust', 'brand', 'scene', 'aftercare', 'tips', 'faq'],
-    optional: ['feedback', 'comparison'],
+    optional: ['feedback'],
   },
 }
 
@@ -73,31 +74,31 @@ export const LEVEL2_OVERRIDES: Record<string, CategoryModuleConfig> = {
   '__美食酒水__水果蔬菜__': {
     mandatory: ['hook', 'price', 'cta'],
     recommended: ['taste', 'trust', 'origin', 'brand', 'scene', 'aftercare', 'tips', 'faq'],
-    optional: ['ingredient', 'feedback', 'comparison'],
+    optional: ['ingredient', 'feedback'],
   },
   // 美食酒水 > 肉蛋海鲜 → B组
   '__美食酒水__肉蛋海鲜__': {
     mandatory: ['hook', 'price', 'cta'],
     recommended: ['taste', 'trust', 'origin', 'brand', 'scene', 'aftercare', 'tips', 'faq'],
-    optional: ['ingredient', 'feedback', 'comparison'],
+    optional: ['ingredient', 'feedback'],
   },
   // 美食酒水 > 滋补保健 → C组
   '__美食酒水__滋补保健__': {
     mandatory: ['hook', 'price', 'cta'],
     recommended: ['taste', 'trust', 'origin', 'brand', 'scene', 'aftercare', 'tips', 'faq'],
-    optional: ['ingredient', 'feedback', 'comparison'],
+    optional: ['ingredient', 'feedback'],
   },
   // 美食酒水 > 粮油调味 → A'组（ingredient默认不勾选）
   '__美食酒水__粮油调味__': {
     mandatory: ['hook', 'price', 'cta'],
     recommended: ['taste', 'trust', 'origin', 'brand', 'scene', 'aftercare', 'tips', 'faq'],
-    optional: ['ingredient', 'feedback', 'comparison'],
+    optional: ['ingredient', 'feedback'],
   },
   // 美妆洗护 > 保养保健 → 例外（美妆模块降为optional）
   '__美妆洗护__保养保健__': {
     mandatory: ['hook', 'price', 'cta'],
     recommended: ['trust', 'brand', 'scene', 'aftercare', 'tips', 'faq'],
-    optional: ['feedback', 'comparison'],
+    optional: ['feedback'],
     // beauty_effect/beauty_ingredient/usage 在 Phase 3 加入 optional
   },
 }
@@ -141,9 +142,10 @@ export function getModuleConfig(catLevel1: string, catLevel2: string, catLevel3:
 // ============================================================
 
 export const DEFAULT_MODULE_ORDER: Record<string, ModuleKey[]> = {
-  '美食酒水': ['hook', 'taste', 'origin', 'ingredient', 'price', 'trust', 'brand', 'scene', 'aftercare', 'tips', 'feedback', 'comparison', 'faq', 'cta'],
-  '美妆洗护': ['hook', 'beauty_effect', 'beauty_ingredient', 'usage', 'price', 'trust', 'brand', 'scene', 'aftercare', 'tips', 'feedback', 'comparison', 'faq', 'cta'],
-  '__default__': ['hook', 'price', 'trust', 'brand', 'scene', 'aftercare', 'tips', 'feedback', 'comparison', 'faq', 'cta'],
+  // price 靠前第二顺位（2026-07-20 运营会议确认）；aftercare 默认不勾选，系统自动贴笔记末尾
+  '美食酒水': ['hook', 'price', 'taste', 'origin', 'ingredient', 'trust', 'brand', 'scene', 'aftercare', 'tips', 'feedback', 'faq', 'cta'],
+  '美妆洗护': ['hook', 'beauty_effect', 'beauty_ingredient', 'usage', 'price', 'trust', 'brand', 'scene', 'aftercare', 'tips', 'feedback', 'faq', 'cta'],
+  '__default__': ['hook', 'price', 'trust', 'brand', 'scene', 'aftercare', 'tips', 'feedback', 'faq', 'cta'],
 }
 
 // 生成 catCode
@@ -157,8 +159,64 @@ export function getAvailableModules(catLevel1: string, catLevel2: string, catLev
   return [...new Set([...config.mandatory, ...config.recommended, ...config.optional])]
 }
 
-// 获取默认勾选的模块（mandatory + recommended）
+// 获取默认勾选的模块（仅 mandatory，非必选由 AI 深推决定）
 export function getDefaultModules(catLevel1: string, catLevel2: string, catLevel3: string): ModuleKey[] {
   const config = getModuleConfig(catLevel1, catLevel2, catLevel3)
-  return [...new Set([...config.mandatory, ...config.recommended])]
+  return [...config.mandatory]
+}
+
+// ============================================================
+// 类目模糊匹配（Levenshtein 距离兜底）
+// ============================================================
+
+function levenshteinDistance(a: string, b: string): number {
+  const m = a.length, n = b.length
+  const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0))
+  for (let i = 0; i <= m; i++) dp[i][0] = i
+  for (let j = 0; j <= n; j++) dp[0][j] = j
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]) + 1
+    }
+  }
+  return dp[m][n]
+}
+
+export type CategoryMatchResult = { matched: string; type: 'exact' | 'fuzzy' } | null
+
+/** 在候选类目列表中做精确+模糊匹配 */
+export function fuzzyMatchCategory(llmValue: string, candidates: string[], maxDistance = 2): CategoryMatchResult {
+  if (!llmValue || !candidates.length) return null
+  const trimmed = llmValue.trim()
+  // 1) 精确匹配
+  if (candidates.includes(trimmed)) return { matched: trimmed, type: 'exact' }
+  // 2) 模糊匹配（Levenshtein ≤ maxDistance）
+  let bestMatch: string | null = null
+  let bestDist = Infinity
+  for (const c of candidates) {
+    const dist = levenshteinDistance(trimmed, c)
+    if (dist < bestDist) { bestDist = dist; bestMatch = c }
+  }
+  if (bestMatch && bestDist <= maxDistance) return { matched: bestMatch, type: 'fuzzy' }
+  return null
+}
+
+/** 三级类目模糊匹配：分别在一级、二级、三级候选列表中匹配 */
+export function fuzzyMatchAllLevels(
+  llmCat1: string, llmCat2: string, llmCat3: string,
+  level1s: string[], getLevel2s: (l1: string) => string[], getLevel3s: (l1: string, l2: string) => string[],
+): { catLevel1: string; catLevel2: string; catLevel3: string; matchType: 'exact' | 'fuzzy' | 'none' } {
+  const l1Match = fuzzyMatchCategory(llmCat1, level1s)
+  if (!l1Match) return { catLevel1: '', catLevel2: '', catLevel3: '', matchType: 'none' }
+
+  const l2Candidates = getLevel2s(l1Match.matched)
+  const l2Match = fuzzyMatchCategory(llmCat2, l2Candidates)
+  if (!l2Match) return { catLevel1: l1Match.matched, catLevel2: '', catLevel3: '', matchType: l1Match.type }
+
+  const l3Candidates = getLevel3s(l1Match.matched, l2Match.matched)
+  const l3Match = fuzzyMatchCategory(llmCat3, l3Candidates)
+  if (!l3Match) return { catLevel1: l1Match.matched, catLevel2: l2Match.matched, catLevel3: '', matchType: l1Match.type === 'fuzzy' || l2Match.type === 'fuzzy' ? 'fuzzy' : 'exact' }
+
+  const worstType = l1Match.type === 'fuzzy' || l2Match.type === 'fuzzy' || l3Match.type === 'fuzzy' ? 'fuzzy' as const : 'exact' as const
+  return { catLevel1: l1Match.matched, catLevel2: l2Match.matched, catLevel3: l3Match.matched, matchType: worstType }
 }

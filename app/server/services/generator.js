@@ -46,7 +46,7 @@ const MODULE_LABELS = {
   trust: '基础信任', aftercare: '物流售后', tips: '储存贴士',
   cta: '行动召唤', ingredient: '成分科普', origin: '原料溯源',
   brand: '品牌背书', scene: '场景共情', feedback: '用户反馈',
-  comparison: '全网比价', faq: '常见问题'
+  faq: '常见问题'
 }
 
 function loadV2CorpusIndex() {
@@ -360,15 +360,58 @@ export function buildPrompt({ product, modules, focus, images, isDefault }) {
     return MODULE_CONTENT_REQS[key] || ''
   }).filter(Boolean)
 
-  const userPrompt = `## 商品信息
+  // 当用户通过粘贴文本提供全部信息时，原始文本为主要来源
+  const hasRawText = product.rawProductText && product.rawProductText.trim().length > 0
+  const hasFormFields = product.productName && product.productName.trim().length > 0
+
+  let userPrompt
+
+  if (hasRawText && !hasFormFields) {
+    // 纯文本模式：原始文本为主要来源，扩展信息有则附加
+    const extFields = []
+    if (product.groupBuyPrice?.trim()) extFields.push(`- **开团价：** ¥${product.groupBuyPrice}元（在价格福利模块中必须优先突出开团价）`)
+    if (product.sellingPoints?.trim()) extFields.push(`- **核心卖点：** ${product.sellingPoints}`)
+    if (product.targetAudience?.trim()) extFields.push(`- **适用人群：** ${product.targetAudience}`)
+    if (product.usageScene?.trim()) extFields.push(`- **使用场景：** ${product.usageScene}`)
+    if (product.brandBackground?.trim()) extFields.push(`- **品牌背景：** ${product.brandBackground}`)
+    if (product.additionalNotes?.trim()) extFields.push(`- **补充备注：** ${product.additionalNotes}`)
+    const extBlock = extFields.length > 0 ? '\n## 运营补充信息\n\n以下信息由运营手动填写，优先级高于原始文本中的同类信息：\n\n' + extFields.join('\n') + '\n' : ''
+
+    userPrompt = `## 商品原始信息
+
+以下是用户粘贴的完整商品资料，包含所有你需要的信息。请仔细阅读，提取商品名称、规格、价格、产地、物流、售后等所有可用信息用于写作。
+
+${product.rawProductText}
+${extBlock}
+---
+${product.catLevel3 ? `注意：该商品属于「${product.catLevel3}」类目。\n\n---\n\n` : ''}## 文案生成任务
+
+请严格基于以上商品信息，依次生成以下模块的文案。禁止编造任何输入中未提供的价格、配料、功效、认证等客观数据。
+
+**写作方式由系统指令中的风格规则决定（严格遵循风格的人设、emoji规则、段落规则、各模块写作规则），下面的模块要求只定义"必须包含哪些信息"。**
+
+${modulePrompts.join('\n\n---\n\n')}
+
+## 输出格式
+
+请严格按照以下格式输出，每个模块用 \`===模块key===\` 标记，模块之间用空行分隔：
+
+${modules.map(k => `===${k}===\n（写${k}模块的文案）`).join('\n\n')}
+
+只输出纯文本文案内容，不要输出额外解释，不要使用任何HTML或标记语言。`
+  } else {
+    // 表单模式（原有逻辑）
+    userPrompt = `## 商品信息
 
 - **商品名称：** ${product.productName || ''}
+${product.rawProductText ? `- **商品原始信息（优先参考）：** ${product.rawProductText}` : ""}
 - **二级子品类：** ${subCategoryLabel}
 - **规格净含量：** ${product.netWeight || '（未提供）'}
 - **产地：** ${product.origin || '（未提供）'}
 - **生产日期：** ${product.productionDate || '（未提供）'}
 - **保质期：** ${product.shelfLifeValue || ''}${product.shelfLifeUnit === 'month' ? '个月' : product.shelfLifeUnit === 'day' ? '天' : product.shelfLifeUnit === 'year' ? '年' : ''}
 - **建议售价：** ${product.suggestedPrice ? '¥' + product.suggestedPrice : '（未提供）'}
+- **开团价：** ${product.groupBuyPrice ? '¥' + product.groupBuyPrice + '元' : '（未提供）'}
 - **核心卖点：** ${product.sellingPoints || '（未提供）'}
 - **核心配料/原料：** ${product.coreIngredients || '（未提供）'}
 
@@ -405,6 +448,7 @@ ${modulePrompts.join('\n\n---\n\n')}
 ${modules.map(k => `===${k}===\n（写${k}模块的文案）`).join('\n\n')}
 
 只输出纯文本文案内容，不要输出额外解释，不要使用任何HTML或标记语言。`
+  }
 
   return { systemPrompt, userPrompt }
 }

@@ -103,7 +103,7 @@ const MODULE_LAYOUT: Record<string, 'text_first' | 'interleave' | 'image_last'> 
   trust: 'image_last', aftercare: 'text_first', tips: 'text_first',
   cta: 'text_first', ingredient: 'image_last', origin: 'text_first',
   brand: 'image_last', scene: 'interleave', feedback: 'text_first',
-  comparison: 'text_first', faq: 'text_first',
+  faq: 'text_first',
 }
 
 function ModuleCard({ mod, isGenerating, onAdopt, onDislikeModule, moduleImages, onAdoptWithImages }: { mod: ModuleResult; isGenerating: boolean; onAdopt: (key: string, content: string) => void; onDislikeModule: (moduleKey: string, moduleLabel: string) => void; moduleImages: ClassifiedImage[]; onAdoptWithImages: (key: string, content: string, images: ClassifiedImage[]) => void }) {
@@ -172,7 +172,7 @@ function ModuleCard({ mod, isGenerating, onAdopt, onDislikeModule, moduleImages,
   )
 }
 
-const MODULE_LABELS: Record<string, string> = { hook: '首屏钩子', price: '价格福利', taste: '口感体验', trust: '基础信任', aftercare: '物流售后', tips: '储存贴士', cta: '行动召唤', ingredient: '成分科普', origin: '原料溯源', brand: '品牌背书', scene: '场景共情', feedback: '用户反馈', comparison: '全网比价', faq: '常见问题' }
+const MODULE_LABELS: Record<string, string> = { hook: '首屏钩子', price: '价格福利', taste: '口感体验', trust: '基础信任', aftercare: '物流售后', tips: '储存贴士', cta: '行动召唤', ingredient: '成分科普', origin: '原料溯源', brand: '品牌背书', scene: '场景共情', feedback: '用户反馈', faq: '常见问题' }
 
 export function RightPanel({ status, modulesV1, modulesV2, modulesV3, versionLabelV1, versionLabelV2, versionLabelV3, onAdopt, onAdoptAll, onDislikeVersion, onDislikeModule, classifiedImages }: RightPanelProps) {
   const isIdle = status === 'idle'; const isGenerating = status === 'generating' || status === 'checking'; const isBlocked = status === 'blocked'

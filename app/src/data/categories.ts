@@ -1,6 +1,29 @@
 // 类目数据 — 从 类目.xlsx 自动生成
 // 一级类目 → 二级类目 → 三级类目
 
+/** 构建类目树字符串，供 LLM prompt 使用 */
+export function buildCategoryTreeString(): string {
+  const lines: string[] = []
+  for (const l1 of CATEGORIES.level1s) {
+    lines.push(l1)
+    const l2s = CATEGORIES.byLevel1[l1]?.level2s || []
+    for (const l2 of l2s) {
+      const l3s = CATEGORIES.byLevel1[l1]?.byLevel2[l2] || []
+      if (l3s.length <= 5) {
+        // 三级类目少的直接列出
+        lines.push(`  ${l2}: ${l3s.join(' / ')}`)
+      } else {
+        // 三级类目多的分行列出
+        lines.push(`  ${l2}:`)
+        for (const l3 of l3s) {
+          lines.push(`    - ${l3}`)
+        }
+      }
+    }
+  }
+  return lines.join('\n')
+}
+
 export const CATEGORIES = {
   "level1s": [
     "数码家电",

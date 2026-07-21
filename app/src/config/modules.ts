@@ -5,7 +5,7 @@ import { ALL_MODULES, getDefaultModules } from '@/config/moduleRegistry'
 export const MODULE_CONFIG: ModuleConfig[] = ALL_MODULES
 
 // 短版种草模板（7模块）— 保留旧的作为默认回退
-export const SHORT_TEMPLATE: ModuleKey[] = ['hook','price','taste','trust','aftercare','tips','cta']
+export const SHORT_TEMPLATE: ModuleKey[] = ['hook','price','cta']
 // 长版详情模板（14全选）
 export const LONG_TEMPLATE: ModuleKey[] = MODULE_CONFIG.map(m => m.key)
 

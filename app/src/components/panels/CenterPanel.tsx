@@ -15,7 +15,7 @@ interface CenterPanelProps {
   onClearAll?: () => void
 }
 
-const MODULE_LABELS: Record<string, string> = { hook: '首屏钩子', price: '价格福利', taste: '口感体验', trust: '基础信任', aftercare: '物流售后', tips: '储存贴士', cta: '行动召唤', ingredient: '成分科普', origin: '原料溯源', brand: '品牌背书', scene: '场景共情', feedback: '用户反馈', comparison: '全网比价', faq: '常见问题' }
+const MODULE_LABELS: Record<string, string> = { hook: '首屏钩子', price: '价格福利', taste: '口感体验', trust: '基础信任', aftercare: '物流售后', tips: '储存贴士', cta: '行动召唤', ingredient: '成分科普', origin: '原料溯源', brand: '品牌背书', scene: '场景共情', feedback: '用户反馈', faq: '常见问题' }
 function getLabel(key: string): string { return MODULE_LABELS[key] || '自定义文本' }
 
 /** 估算模块内容的行数以匹配骨架屏 */

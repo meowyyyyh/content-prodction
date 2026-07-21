@@ -4,7 +4,7 @@ export type SubCategory = 'dairy' | 'snack' | 'fresh_fruit' | 'grain_oil' | 'oth
 export type ContentStyle = 'xiaohongshu' | 'minimalist' | 'fun' | 'premium' | 'girlfriend' | 'senior'
 // Phase 1: 通用模块 + 美食酒水专属模块（其他类目专属模块后续 Phase 追加）
 export type ModuleKey = 'hook' | 'price' | 'taste' | 'trust' | 'aftercare' | 'tips' | 'cta'
-  | 'ingredient' | 'origin' | 'brand' | 'scene' | 'feedback' | 'comparison' | 'faq'
+  | 'ingredient' | 'origin' | 'brand' | 'scene' | 'feedback' | 'faq'
   // TODO Phase 3: 美妆专属模块 | 'beauty_effect' | 'beauty_ingredient' | 'usage'
   // TODO Phase 4+: 数码/服饰/母婴/生鲜专属模块
 export type ShippingTimeliness = '24h' | '48h' | '72h' | '7d' | 'custom'
@@ -29,11 +29,11 @@ export interface ProductInput {
   catCode: string          // 类目编码，格式 "level1::level2::level3"，如 "美食酒水::酒水饮料::乳制品"
   catLevel1: string; catLevel2: string; catLevel3: string; netWeight: string; origin: string
   productionDate: string; shelfLifeValue: string; shelfLifeUnit: ShelfLifeUnit
-  suggestedPrice: string; sellingPoints: string; coreIngredients: string
+  suggestedPrice: string; groupBuyPrice: string; sellingPoints: string; coreIngredients: string
   shippingOrigin: string; shippingTimeliness: ShippingTimeliness; customShippingDays: string
   courier: string; extraShippingFeeEnabled: boolean; extraShippingFeeAreas: string
   noShippingAreasEnabled: boolean; noShippingAreas: string; afterSalesRules: string
-  brandBackground: string; targetAudience: string; usageScene: string; additionalNotes: string
+  brandBackground: string; targetAudience: string; usageScene: string; additionalNotes: string; rawProductText: string
   style: ContentStyle; selectedModules: ModuleKey[]; moduleOrder: ModuleKey[]
   generateCount: GenerateCount; versionStyles: ContentStyle[]; textLength: 'short' | 'long'; enableRAG: boolean; enableCompliance: boolean
 }
