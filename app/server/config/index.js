@@ -21,14 +21,14 @@ export const CONFIG = {
   // 语料库路径
   corpusPath: '../../data/rag/corpus_index.json',
 
-  // 豆包视觉模型（doubao-seed-2.0-lite）— 图片分类 + 描述
+  // 豆包视觉模型（低延迟推理端点）— 图片分类 + 描述
+  // 临时走 HTTP：HTTPS TLS 握手被阻断（2026-07-22）
   vision: {
-    // 本地用 HTTP（TLS 握手问题），部署用 HTTPS
-    endpoint: (process.env.NODE_ENV === 'production' ? 'https' : 'http') + '://ark.cn-beijing.volces.com/api/v3/chat/completions',
-    apiKey: process.env.DOUBAO_API_KEY || 'ark-b255732d-aa98-44c7-ab79-63b40cf31db2-f22a7',
-    model: 'doubao-seed-2-0-mini-260428',
+    endpoint: 'http://ark.cn-beijing.volces.com/api/v3/chat/completions',
+    apiKey: process.env.ARK_API_KEY || process.env.DOUBAO_API_KEY || '',
+    model: 'ep-20260721203600-pz8qc',
     temperature: 0.1,
-    maxTokens: 80,
-    timeout: 20000,
+  maxTokens: 2000,
+  timeout: 60000,
   },
 }

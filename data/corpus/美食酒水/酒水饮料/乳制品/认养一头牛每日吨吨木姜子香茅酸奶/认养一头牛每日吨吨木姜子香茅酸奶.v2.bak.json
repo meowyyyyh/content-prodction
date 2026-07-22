@@ -1,8 +1,9 @@
 {
-  "version": "3.0",
-  "schema": "corpus-学习增强-v3",
+  "version": "2.1",
+  "schema": "corpus-图文绑定-v2",
   "productName": "认养一头牛 每日吨吨木姜子香茅益生菌酸奶",
   "styleTag": "xiaohongshu",
+  "sourceNote": "来源: 认养一头牛 每日吨吨木姜子香茅益生菌酸奶",
   "imageCount": 87,
   "source": "语料库手动收集",
   "convertedAt": "2026-07-18T00:00:00.000Z",
@@ -20,20 +21,10 @@
         "overallPattern": "image_footer_only",
         "imageCount": 17,
         "textSegmentCount": 1,
-        "density": "high",
-        "patternSequence": [
-          "text"
-        ],
-        "imageDistribution": [
-          17
-        ],
-        "imageGroupingPerSegment": [
-          "stack"
-        ]
+        "density": "high"
       },
       "segments": [
         {
-          "index": 0,
           "text": "🌱云贵山野入瓶！木姜子香茅酸奶，给你舌尖上的云贵之旅～\n🐄认养一头牛【每日吨吨】益生菌酸奶・木姜子香茅风味！新品首发！\n🌿木姜子+香茅入酱｜9种活性益生菌｜A2生牛乳｜清洁配方\n💥新品上市❗重磅加码❗￥79.9元🉐12瓶🎁再送3瓶原味款益生菌酸奶！\n到手整整15瓶❗💕健康不贵，美味加倍！\n单瓶低至5.3元❗即可体验正宗云贵风味❗❗❗",
           "images": [
             {
@@ -157,12 +148,7 @@
             }
           ],
           "binding": "image_before_text",
-          "textType": "hook_opening",
-          "charCount": 169,
-          "sentenceCount": 6,
-          "function": "开篇引入",
-          "bindingStrength": "strong",
-          "bindingDesc": "图片直接展示文字相关内容"
+          "textType": "hook_opening"
         }
       ],
       "imageGroups": {
@@ -187,67 +173,8 @@
             17
           ],
           "group": "stack",
-          "desc": "商品详情页的封面展示区：产品+价格+卖点标签，连续全宽排列",
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "首屏钩子配图"
+          "desc": "商品详情页的封面展示区：产品+价格+卖点标签，连续全宽排列"
         }
-      },
-      "writingProfile": {
-        "charCount": 169,
-        "sentenceCount": 8,
-        "avgSentenceLen": 21,
-        "shortRatio": 0.25,
-        "longRatio": 0,
-        "emojiCount": 11,
-        "topEmojis": [
-          "❗",
-          "🌱",
-          "🐄",
-          "🌿",
-          "💥",
-          "🉐",
-          "🎁",
-          "❗💕",
-          "❗❗❗"
-        ],
-        "emojiProfile": {
-          "density": 6.5,
-          "positionPreference": {
-            "lineStart": 0.17,
-            "inline": 0.83,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "❗",
-            "🌱",
-            "🐄",
-            "🌿",
-            "💥",
-            "🉐",
-            "🎁",
-            "❗💕",
-            "❗❗❗"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 21,
-          "shortRatio": 0.25,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 5,
-          "questionPerParagraph": 0
-        },
-        "openingType": "emoji_claim",
-        "openingFirstSentence": "🌱云贵山野入瓶",
-        "closingType": "price_cta",
-        "closingLastSentence": "单瓶低至5.3元❗即可体验正宗云贵风味❗❗❗",
-        "transitionWords": [],
-        "keyPhrases": [],
-        "numberDensity": 0,
-        "structureType": "单段式",
-        "structureDesc": "单段式"
       }
     },
     {
@@ -258,83 +185,19 @@
         "overallPattern": "text_only",
         "imageCount": 0,
         "textSegmentCount": 1,
-        "density": "none",
-        "patternSequence": [
-          "text"
-        ],
-        "imageDistribution": [
-          0
-        ],
-        "imageGroupingPerSegment": []
+        "density": "none"
       },
       "segments": [
         {
-          "index": 0,
           "text": "💥新品上市❗重磅加码❗￥79.9元🉐12瓶🎁再送3瓶原味款益生菌酸奶！\n到手整整15瓶❗单瓶低至5.3元❗",
           "images": [],
           "binding": "no_image",
-          "textType": "price_main",
-          "charCount": 55,
-          "sentenceCount": 2,
-          "function": "开篇引入"
+          "textType": "price_main"
         }
       ],
       "imageGroups": {
-        "header": {
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "价格福利配图"
-        },
-        "footer": {
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "价格福利配图"
-        }
-      },
-      "writingProfile": {
-        "charCount": 55,
-        "sentenceCount": 2,
-        "avgSentenceLen": 27,
-        "shortRatio": 0,
-        "longRatio": 0,
-        "emojiCount": 7,
-        "topEmojis": [
-          "❗",
-          "💥",
-          "🉐",
-          "🎁"
-        ],
-        "emojiProfile": {
-          "density": 12.7,
-          "positionPreference": {
-            "lineStart": 0.5,
-            "inline": 0.5,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "❗",
-            "💥",
-            "🉐",
-            "🎁"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 27,
-          "shortRatio": 0,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 1,
-          "questionPerParagraph": 0
-        },
-        "openingType": "emoji_claim",
-        "openingFirstSentence": "💥新品上市❗重磅加码❗￥79.9元🉐12瓶🎁再送3瓶原味款益生菌酸奶",
-        "closingType": "price_cta",
-        "closingLastSentence": "到手整整15瓶❗单瓶低至5.3元❗",
-        "transitionWords": [],
-        "keyPhrases": [],
-        "numberDensity": 0,
-        "structureType": "单段式",
-        "structureDesc": "单段式"
+        "header": null,
+        "footer": null
       }
     },
     {
@@ -345,28 +208,10 @@
         "overallPattern": "images_interspersed",
         "imageCount": 14,
         "textSegmentCount": 4,
-        "density": "high",
-        "patternSequence": [
-          "text",
-          "images",
-          "text"
-        ],
-        "imageDistribution": [
-          3,
-          2,
-          5,
-          6
-        ],
-        "imageGroupingPerSegment": [
-          "stack",
-          "pair",
-          "stack",
-          "stack"
-        ]
+        "density": "high"
       },
       "segments": [
         {
-          "index": 0,
           "text": "🍋三重味觉一口惊艳，酸奶也能喝出前中后调～",
           "images": [
             {
@@ -392,15 +237,9 @@
             }
           ],
           "binding": "image_before_text",
-          "textType": "taste_intro",
-          "charCount": 22,
-          "sentenceCount": 1,
-          "function": "开篇引入",
-          "bindingStrength": "strong",
-          "bindingDesc": "图片直接展示文字相关内容"
+          "textType": "taste_intro"
         },
         {
-          "index": 1,
           "text": "😎第一口是清新香茅的明亮开场，清爽草香气，瞬间打开味蕾～",
           "images": [
             {
@@ -419,15 +258,9 @@
             }
           ],
           "binding": "image_before_text",
-          "textType": "taste_first_sip",
-          "charCount": 29,
-          "sentenceCount": 1,
-          "function": "主体展开",
-          "bindingStrength": "strong",
-          "bindingDesc": "图片直接展示文字相关内容"
+          "textType": "taste_first_sip"
         },
         {
-          "index": 2,
           "text": "😍第二口是木姜子的清爽柠檬香，伴随淡淡辛香，带给舌尖上的惊喜感～",
           "images": [
             {
@@ -467,15 +300,9 @@
             }
           ],
           "binding": "image_before_text",
-          "textType": "taste_second",
-          "charCount": 33,
-          "sentenceCount": 1,
-          "function": "主体展开",
-          "bindingStrength": "strong",
-          "bindingDesc": "图片直接展示文字相关内容"
+          "textType": "taste_second"
         },
         {
-          "index": 3,
           "text": "😋最后是醇厚生牛乳的醇香，奶香细腻柔和，质地顺滑浓稠～\n🥛一瓶喝出风味曲线，猎奇但不怪，越喝越上头！",
           "images": [
             {
@@ -522,12 +349,7 @@
             }
           ],
           "binding": "image_before_text",
-          "textType": "taste_third",
-          "charCount": 51,
-          "sentenceCount": 1,
-          "function": "总结收尾",
-          "bindingStrength": "strong",
-          "bindingDesc": "图片直接展示文字相关内容"
+          "textType": "taste_third"
         }
       ],
       "imageGroups": {
@@ -538,9 +360,7 @@
             20
           ],
           "group": "stack",
-          "desc": "开篇视觉冲击：瓶身展示+使用场景，吸引继续阅读",
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "口感体验配图"
+          "desc": "开篇视觉冲击：瓶身展示+使用场景，吸引继续阅读"
         },
         "footer": {
           "imgIds": [
@@ -552,59 +372,8 @@
             31
           ],
           "group": "stack",
-          "desc": "收尾视觉：包装细节+饮用场景，配\"总结推荐语\"",
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "口感体验配图"
+          "desc": "收尾视觉：包装细节+饮用场景，配\"总结推荐语\""
         }
-      },
-      "writingProfile": {
-        "charCount": 135,
-        "sentenceCount": 5,
-        "avgSentenceLen": 27,
-        "shortRatio": 0,
-        "longRatio": 0,
-        "emojiCount": 5,
-        "topEmojis": [
-          "🍋",
-          "😎",
-          "😍",
-          "😋",
-          "🥛"
-        ],
-        "emojiProfile": {
-          "density": 3.7,
-          "positionPreference": {
-            "lineStart": 0.2,
-            "inline": 0.8,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "🍋",
-            "😎",
-            "😍",
-            "😋",
-            "🥛"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 27,
-          "shortRatio": 0,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 0.3,
-          "questionPerParagraph": 0
-        },
-        "openingType": "emoji_claim",
-        "openingFirstSentence": "🍋三重味觉一口惊艳，酸奶也能喝出前中后调～",
-        "closingType": "scene_loopback",
-        "closingLastSentence": "🥛一瓶喝出风味曲线，猎奇但不怪，越喝越上头",
-        "transitionWords": [],
-        "keyPhrases": [],
-        "numberDensity": 0,
-        "structureType": "短段落式",
-        "structureDesc": "短段落式"
       }
     },
     {
@@ -615,22 +384,10 @@
         "overallPattern": "image_before_text",
         "imageCount": 4,
         "textSegmentCount": 2,
-        "density": "medium",
-        "patternSequence": [
-          "images",
-          "text"
-        ],
-        "imageDistribution": [
-          4,
-          0
-        ],
-        "imageGroupingPerSegment": [
-          "stack"
-        ]
+        "density": "medium"
       },
       "segments": [
         {
-          "index": 0,
           "text": "",
           "images": [
             {
@@ -663,29 +420,17 @@
             }
           ],
           "binding": "image_before_text",
-          "textType": "trust_claim",
-          "charCount": 0,
-          "sentenceCount": 0,
-          "function": "开篇引入",
-          "bindingStrength": "strong",
-          "bindingDesc": "图片直接展示文字相关内容"
+          "textType": "trust_claim"
         },
         {
-          "index": 1,
           "text": "🧾干净配料表，0香精无额外添加剂，用料透明喝得安心\n👍无人工香精、无工业调味剂，风味全部依托真实木姜子香茅果酱\n✅配料一目了然，没有多余添加✅主料生牛乳含量≥88%\n✅搭配白砂糖、木姜子香茅果味酱调味✅9种复合活性益生菌✅添加干酪\n🐄好酸奶，奶源是关键！采用的是A2β-酪蛋白生牛乳，\nA2奶更亲和人体，小分子更好吸收，属实是乳糖不耐星人的\"救命稻草\"。",
           "images": [],
           "binding": "no_image",
-          "textType": "trust_ingredient",
-          "charCount": 175,
-          "sentenceCount": 2,
-          "function": "总结收尾"
+          "textType": "trust_ingredient"
         }
       ],
       "imageGroups": {
-        "header": {
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "基础信任配图"
-        },
+        "header": null,
         "footer": {
           "imgIds": [
             35,
@@ -694,57 +439,8 @@
             38
           ],
           "group": "stack",
-          "desc": "基础信任相关图片，连续排列",
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "基础信任配图"
+          "desc": "基础信任相关图片，连续排列"
         }
-      },
-      "writingProfile": {
-        "charCount": 175,
-        "sentenceCount": 7,
-        "avgSentenceLen": 25,
-        "shortRatio": 0.29,
-        "longRatio": 0,
-        "emojiCount": 8,
-        "topEmojis": [
-          "✅",
-          "🧾",
-          "👍",
-          "🐄"
-        ],
-        "emojiProfile": {
-          "density": 4.6,
-          "positionPreference": {
-            "lineStart": 0.4,
-            "inline": 0.6,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "✅",
-            "🧾",
-            "👍",
-            "🐄"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 25,
-          "shortRatio": 0.29,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 1,
-          "questionPerParagraph": 0
-        },
-        "openingType": "emoji_claim",
-        "openingFirstSentence": "🧾干净配料表，0香精无额外添加剂，用料透明喝得安心",
-        "closingType": "scene_loopback",
-        "closingLastSentence": "A2奶更亲和人体，小分子更好吸收，属实是乳糖不耐星人的\"救命稻草\"",
-        "transitionWords": [],
-        "keyPhrases": [],
-        "numberDensity": 0,
-        "structureType": "单段式",
-        "structureDesc": "单段式"
       }
     },
     {
@@ -755,23 +451,10 @@
         "overallPattern": "images_interspersed",
         "imageCount": 17,
         "textSegmentCount": 2,
-        "density": "high",
-        "patternSequence": [
-          "text",
-          "images",
-          "text"
-        ],
-        "imageDistribution": [
-          17,
-          0
-        ],
-        "imageGroupingPerSegment": [
-          "stack"
-        ]
+        "density": "high"
       },
       "segments": [
         {
-          "index": 0,
           "text": "👉一口喝下9种活性益生菌，这才是酸奶该有的样子！\n🧐它不是随便加1-2种菌装样子，而是实打实的9种！包括：\n唾液链球菌、长双歧杆菌、嗜酸乳杆菌、鼠李糖乳酪杆菌……",
           "images": [
             {
@@ -895,22 +578,13 @@
             }
           ],
           "binding": "image_before_text",
-          "textType": "ingredient_qa",
-          "charCount": 81,
-          "sentenceCount": 3,
-          "function": "开篇引入",
-          "bindingStrength": "strong",
-          "bindingDesc": "图片直接展示文字相关内容"
+          "textType": "ingredient_qa"
         },
         {
-          "index": 1,
           "text": "💪这不是\"1菌走天下\"，而是一个\"菌团协同作战\"的逻辑。\n👩💻久坐党、外卖党、肠胃敏感党必备，每天吨吨一瓶，给肠道做SPA。",
           "images": [],
           "binding": "no_image",
-          "textType": "ingredient_explain",
-          "charCount": 64,
-          "sentenceCount": 2,
-          "function": "总结收尾"
+          "textType": "ingredient_explain"
         }
       ],
       "imageGroups": {
@@ -922,57 +596,8 @@
             42
           ],
           "group": "stack",
-          "desc": "开篇科普图：益生菌菌种科普+9种益生菌标识+A2奶源科普+SGS认证",
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "成分科普配图"
+          "desc": "开篇科普图：益生菌菌种科普+9种益生菌标识+A2奶源科普+SGS认证"
         }
-      },
-      "writingProfile": {
-        "charCount": 145,
-        "sentenceCount": 6,
-        "avgSentenceLen": 24,
-        "shortRatio": 0.17,
-        "longRatio": 0,
-        "emojiCount": 4,
-        "topEmojis": [
-          "👉",
-          "🧐",
-          "💪",
-          "👩💻"
-        ],
-        "emojiProfile": {
-          "density": 2.8,
-          "positionPreference": {
-            "lineStart": 0.5,
-            "inline": 0.5,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "👉",
-            "🧐",
-            "💪",
-            "👩💻"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 24,
-          "shortRatio": 0.17,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 1,
-          "questionPerParagraph": 0
-        },
-        "openingType": "emoji_claim",
-        "openingFirstSentence": "👉一口喝下9种活性益生菌，这才是酸奶该有的样子",
-        "closingType": "scene_loopback",
-        "closingLastSentence": "👩💻久坐党、外卖党、肠胃敏感党必备，每天吨吨一瓶，给肠道做SPA",
-        "transitionWords": [],
-        "keyPhrases": [],
-        "numberDensity": 0,
-        "structureType": "短段落式",
-        "structureDesc": "短段落式"
       }
     },
     {
@@ -983,22 +608,10 @@
         "overallPattern": "image_before_text",
         "imageCount": 3,
         "textSegmentCount": 2,
-        "density": "medium",
-        "patternSequence": [
-          "images",
-          "text"
-        ],
-        "imageDistribution": [
-          3,
-          0
-        ],
-        "imageGroupingPerSegment": [
-          "stack"
-        ]
+        "density": "medium"
       },
       "segments": [
         {
-          "index": 0,
           "text": "",
           "images": [
             {
@@ -1024,29 +637,17 @@
             }
           ],
           "binding": "image_before_text",
-          "textType": "origin_story",
-          "charCount": 0,
-          "sentenceCount": 0,
-          "function": "开篇引入",
-          "bindingStrength": "strong",
-          "bindingDesc": "图片直接展示文字相关内容"
+          "textType": "origin_story"
         },
         {
-          "index": 1,
           "text": "😼云贵\"人类猫薄荷\"，吨吨吨根本停不下来！\n甄选云贵原产地特色香料【木姜子+香茅】，依托当地得天独厚的山地气候培育，\n天然孕育独特芳香～\n・木姜子——在云贵当地被称为\"人类的猫薄荷\"，\n  高浓度柠檬醛带来明亮的穿透性柠香，夹杂一丝花椒般的辛麻，清新又带劲～\n・香茅——云南大理阳光谷地培植，\n  满是清新草木气息，凛冽清爽，中和奶腻，清新翻倍～",
           "images": [],
           "binding": "no_image",
-          "textType": "origin_detail",
-          "charCount": 164,
-          "sentenceCount": 2,
-          "function": "总结收尾"
+          "textType": "origin_detail"
         }
       ],
       "imageGroups": {
-        "header": {
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "原料溯源配图"
-        },
+        "header": null,
         "footer": {
           "imgIds": [
             32,
@@ -1054,51 +655,8 @@
             34
           ],
           "group": "stack",
-          "desc": "原料溯源相关图片，连续排列",
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "原料溯源配图"
+          "desc": "原料溯源相关图片，连续排列"
         }
-      },
-      "writingProfile": {
-        "charCount": 164,
-        "sentenceCount": 7,
-        "avgSentenceLen": 23,
-        "shortRatio": 0.14,
-        "longRatio": 0,
-        "emojiCount": 1,
-        "topEmojis": [
-          "😼"
-        ],
-        "emojiProfile": {
-          "density": 0.6,
-          "positionPreference": {
-            "lineStart": 1,
-            "inline": 0,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "😼"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 23,
-          "shortRatio": 0.14,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 1,
-          "questionPerParagraph": 0
-        },
-        "openingType": "emoji_claim",
-        "openingFirstSentence": "😼云贵\"人类猫薄荷\"，吨吨吨根本停不下来",
-        "closingType": "scene_loopback",
-        "closingLastSentence": "  满是清新草木气息，凛冽清爽，中和奶腻，清新翻倍～",
-        "transitionWords": [],
-        "keyPhrases": [],
-        "numberDensity": 0,
-        "structureType": "单段式",
-        "structureDesc": "单段式"
       }
     },
     {
@@ -1109,20 +667,10 @@
         "overallPattern": "image_footer_only",
         "imageCount": 27,
         "textSegmentCount": 1,
-        "density": "high",
-        "patternSequence": [
-          "text"
-        ],
-        "imageDistribution": [
-          27
-        ],
-        "imageGroupingPerSegment": [
-          "stack"
-        ]
+        "density": "high"
       },
       "segments": [
         {
-          "index": 0,
           "text": "🥇认养一头牛作为A2奶业的领跑者，从养牛开始，\n每头小奶牛生下来就会做基因检测🔍从9万头奶牛里精选3.5万头，\n只为筛选出贵族血统A2型奶牛🐮\n🐄来自GAP一级认证自有牧场，奶牛个个有\"身份证\"\n✅原奶品质优于欧盟标准✅SGS国际权威质量检测共计24项核心项目✅央视溯源认证",
           "images": [
             {
@@ -1316,12 +864,7 @@
             }
           ],
           "binding": "image_before_text",
-          "textType": "brand_intro",
-          "charCount": 137,
-          "sentenceCount": 1,
-          "function": "开篇引入",
-          "bindingStrength": "strong",
-          "bindingDesc": "图片直接展示文字相关内容"
+          "textType": "brand_intro"
         }
       ],
       "imageGroups": {
@@ -1356,59 +899,8 @@
             87
           ],
           "group": "stack",
-          "desc": "27张品牌牧场展示图：GAP认证牧场+奶牛+工厂+检测报告+央视溯源，配在品牌文案后作为信任证据墙",
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "品牌背书配图"
+          "desc": "27张品牌牧场展示图：GAP认证牧场+奶牛+工厂+检测报告+央视溯源，配在品牌文案后作为信任证据墙"
         }
-      },
-      "writingProfile": {
-        "charCount": 137,
-        "sentenceCount": 5,
-        "avgSentenceLen": 27,
-        "shortRatio": 0,
-        "longRatio": 0,
-        "emojiCount": 7,
-        "topEmojis": [
-          "✅",
-          "🥇",
-          "🔍",
-          "🐮",
-          "🐄"
-        ],
-        "emojiProfile": {
-          "density": 5.1,
-          "positionPreference": {
-            "lineStart": 0.2,
-            "inline": 0.8,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "✅",
-            "🥇",
-            "🔍",
-            "🐮",
-            "🐄"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 27,
-          "shortRatio": 0,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 0,
-          "questionPerParagraph": 0
-        },
-        "openingType": "emoji_claim",
-        "openingFirstSentence": "🥇认养一头牛作为A2奶业的领跑者，从养牛开始，",
-        "closingType": "scene_loopback",
-        "closingLastSentence": "✅原奶品质优于欧盟标准✅SGS国际权威质量检测共计24项核心项目✅央视溯源认证",
-        "transitionWords": [],
-        "keyPhrases": [],
-        "numberDensity": 0,
-        "structureType": "单段式",
-        "structureDesc": "单段式"
       }
     },
     {
@@ -1419,22 +911,10 @@
         "overallPattern": "image_before_text",
         "imageCount": 5,
         "textSegmentCount": 2,
-        "density": "medium",
-        "patternSequence": [
-          "images",
-          "text"
-        ],
-        "imageDistribution": [
-          5,
-          0
-        ],
-        "imageGroupingPerSegment": [
-          "stack"
-        ]
+        "density": "medium"
       },
       "segments": [
         {
-          "index": 0,
           "text": "",
           "images": [
             {
@@ -1474,29 +954,17 @@
             }
           ],
           "binding": "image_before_text",
-          "textType": "scene_scenario",
-          "charCount": 0,
-          "sentenceCount": 0,
-          "function": "开篇引入",
-          "bindingStrength": "strong",
-          "bindingDesc": "图片直接展示文字相关内容"
+          "textType": "scene_scenario"
         },
         {
-          "index": 1,
           "text": "🌞我的夏日救星上线！\n🥘重油聚餐解腻好搭子，木姜子与香茅的清冽草本香气能中和口腔油脂\n🧊夏日冰爽消暑最佳饮品！露营、野餐、烧烤后随时开瓶饮用\n💻办公室下午茶解馋必备！200g小瓶便携易饮，独特风味舒缓疲惫\n🍽日常饭后舒缓肠胃！小分子A2酪蛋白更好吸收，搭配活性益生菌",
           "images": [],
           "binding": "no_image",
-          "textType": "scene_detail",
-          "charCount": 134,
-          "sentenceCount": 5,
-          "function": "总结收尾"
+          "textType": "scene_detail"
         }
       ],
       "imageGroups": {
-        "header": {
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "场景共情配图"
-        },
+        "header": null,
         "footer": {
           "imgIds": [
             56,
@@ -1506,59 +974,8 @@
             60
           ],
           "group": "stack",
-          "desc": "场景共情相关图片，连续排列",
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "场景共情配图"
+          "desc": "场景共情相关图片，连续排列"
         }
-      },
-      "writingProfile": {
-        "charCount": 134,
-        "sentenceCount": 8,
-        "avgSentenceLen": 16,
-        "shortRatio": 0.63,
-        "longRatio": 0,
-        "emojiCount": 5,
-        "topEmojis": [
-          "🌞",
-          "🥘",
-          "🧊",
-          "💻",
-          "🍽"
-        ],
-        "emojiProfile": {
-          "density": 3.7,
-          "positionPreference": {
-            "lineStart": 0.2,
-            "inline": 0.8,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "🌞",
-            "🥘",
-            "🧊",
-            "💻",
-            "🍽"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 16,
-          "shortRatio": 0.63,
-          "longRatio": 0,
-          "rhythmPattern": "短-长-短"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 4,
-          "questionPerParagraph": 0
-        },
-        "openingType": "emoji_claim",
-        "openingFirstSentence": "🌞我的夏日救星上线",
-        "closingType": "scene_loopback",
-        "closingLastSentence": "小分子A2酪蛋白更好吸收，搭配活性益生菌",
-        "transitionWords": [],
-        "keyPhrases": [],
-        "numberDensity": 0,
-        "structureType": "单段式",
-        "structureDesc": "单段式"
       }
     },
     {
@@ -1569,83 +986,19 @@
         "overallPattern": "text_only",
         "imageCount": 0,
         "textSegmentCount": 1,
-        "density": "none",
-        "patternSequence": [
-          "text"
-        ],
-        "imageDistribution": [
-          0
-        ],
-        "imageGroupingPerSegment": []
+        "density": "none"
       },
       "segments": [
         {
-          "index": 0,
           "text": "🚄顺丰/京东全国4仓发货（天津、武汉、南京、广东），新鲜送货上门\n⚠【发货时效】72小时📦【不发货地区】西藏、新疆、海南、黑龙江大兴安岭、\n宁夏、青海、内蒙古部分、四川部分、云南部分、甘肃部分\n❗️生鲜食品非质量问题不支持退换货，如遇质量问题请保留凭证及时联系客服处理。",
           "images": [],
           "binding": "no_image",
-          "textType": "aftercare_shipping",
-          "charCount": 134,
-          "sentenceCount": 1,
-          "function": "开篇引入"
+          "textType": "aftercare_shipping"
         }
       ],
       "imageGroups": {
-        "header": {
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "物流售后配图"
-        },
-        "footer": {
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "物流售后配图"
-        }
-      },
-      "writingProfile": {
-        "charCount": 134,
-        "sentenceCount": 4,
-        "avgSentenceLen": 33,
-        "shortRatio": 0,
-        "longRatio": 0,
-        "emojiCount": 4,
-        "topEmojis": [
-          "🚄",
-          "⚠",
-          "📦",
-          "❗️"
-        ],
-        "emojiProfile": {
-          "density": 3,
-          "positionPreference": {
-            "lineStart": 0.67,
-            "inline": 0.33,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "🚄",
-            "⚠",
-            "📦",
-            "❗️"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 33,
-          "shortRatio": 0,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 0,
-          "questionPerParagraph": 0
-        },
-        "openingType": "emoji_claim",
-        "openingFirstSentence": "🚄顺丰/京东全国4仓发货（天津、武汉、南京、广东），新鲜送货上门",
-        "closingType": "scene_loopback",
-        "closingLastSentence": "❗️生鲜食品非质量问题不支持退换货，如遇质量问题请保留凭证及时联系客服处理",
-        "transitionWords": [],
-        "keyPhrases": [],
-        "numberDensity": 0,
-        "structureType": "单段式",
-        "structureDesc": "单段式"
+        "header": null,
+        "footer": null
       }
     },
     {
@@ -1656,77 +1009,19 @@
         "overallPattern": "text_only",
         "imageCount": 0,
         "textSegmentCount": 1,
-        "density": "none",
-        "patternSequence": [
-          "text"
-        ],
-        "imageDistribution": [
-          0
-        ],
-        "imageGroupingPerSegment": []
+        "density": "none"
       },
       "segments": [
         {
-          "index": 0,
           "text": "📌建议3岁以上饮用，乳糖不耐、乳蛋白过敏者不适用\n📌喝前摇一摇，乳清析出是正常的📌记得2-6℃冷藏\n📌开盖后尽量4-6小时内喝完，不建议隔夜存放",
           "images": [],
           "binding": "no_image",
-          "textType": "tips_storage",
-          "charCount": 74,
-          "sentenceCount": 1,
-          "function": "开篇引入"
+          "textType": "tips_storage"
         }
       ],
       "imageGroups": {
-        "header": {
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "储存贴士配图"
-        },
-        "footer": {
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "储存贴士配图"
-        }
-      },
-      "writingProfile": {
-        "charCount": 74,
-        "sentenceCount": 3,
-        "avgSentenceLen": 25,
-        "shortRatio": 0,
-        "longRatio": 0,
-        "emojiCount": 4,
-        "topEmojis": [
-          "📌"
-        ],
-        "emojiProfile": {
-          "density": 5.4,
-          "positionPreference": {
-            "lineStart": 0.33,
-            "inline": 0.67,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "📌"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 25,
-          "shortRatio": 0,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 0,
-          "questionPerParagraph": 0
-        },
-        "openingType": "emoji_claim",
-        "openingFirstSentence": "📌建议3岁以上饮用，乳糖不耐、乳蛋白过敏者不适用",
-        "closingType": "scene_loopback",
-        "closingLastSentence": "📌开盖后尽量4-6小时内喝完，不建议隔夜存放",
-        "transitionWords": [],
-        "keyPhrases": [],
-        "numberDensity": 0,
-        "structureType": "单段式",
-        "structureDesc": "单段式"
+        "header": null,
+        "footer": null
       }
     },
     {
@@ -1737,83 +1032,19 @@
         "overallPattern": "text_only",
         "imageCount": 0,
         "textSegmentCount": 1,
-        "density": "none",
-        "patternSequence": [
-          "text"
-        ],
-        "imageDistribution": [
-          0
-        ],
-        "imageGroupingPerSegment": []
+        "density": "none"
       },
       "segments": [
         {
-          "index": 0,
           "text": "💥新品上市❗重磅加码❗￥79.9元🉐12瓶🎁再送3瓶原味款益生菌酸奶！\n到手整整15瓶❗单瓶低至5.3元❗\n健康不贵，美味加倍，即可体验正宗云贵风味❗\n\n**用户反馈**：（无内容）\n**全网比价**：（无内容）\n**常见问题**：（无内容）",
           "images": [],
           "binding": "no_image",
-          "textType": "cta_action",
-          "charCount": 118,
-          "sentenceCount": 2,
-          "function": "开篇引入"
+          "textType": "cta_action"
         }
       ],
       "imageGroups": {
-        "header": {
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "行动召唤配图"
-        },
-        "footer": {
-          "layoutHint": "vertical_scroll",
-          "narrativeFunction": "行动召唤配图"
-        }
-      },
-      "writingProfile": {
-        "charCount": 118,
-        "sentenceCount": 6,
-        "avgSentenceLen": 20,
-        "shortRatio": 0.5,
-        "longRatio": 0,
-        "emojiCount": 8,
-        "topEmojis": [
-          "❗",
-          "💥",
-          "🉐",
-          "🎁"
-        ],
-        "emojiProfile": {
-          "density": 6.8,
-          "positionPreference": {
-            "lineStart": 0.33,
-            "inline": 0.67,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "❗",
-            "💥",
-            "🉐",
-            "🎁"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 20,
-          "shortRatio": 0.5,
-          "longRatio": 0,
-          "rhythmPattern": "短-长-短"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 0.5,
-          "questionPerParagraph": 0
-        },
-        "openingType": "emoji_claim",
-        "openingFirstSentence": "💥新品上市❗重磅加码❗￥79.9元🉐12瓶🎁再送3瓶原味款益生菌酸奶",
-        "closingType": "scene_loopback",
-        "closingLastSentence": "**常见问题**：（无内容）",
-        "transitionWords": [],
-        "keyPhrases": [],
-        "numberDensity": 0,
-        "structureType": "短段落式",
-        "structureDesc": "短段落式"
+        "header": null,
+        "footer": null
       }
     }
   ],
@@ -1832,32 +1063,7 @@
       "layout_role": "detail",
       "imageContentSummary": "品牌认养一头牛，吨吨酸奶79.9元得15瓶（12瓶加赠3瓶），3种口味可选，单瓶低至5.3元，夏季解腻",
       "imageOcrText": "认养1头牛 ADOPT A COW 认养一头牛·吨吨酸奶 夏季解腻好搭子！3种口味任选！79.9得15瓶！单瓶低至5.3！每日吨吨 认养1头牛 9 净含量200g 冷藏益生菌酸奶（木姜子香茅/原味/0蔗糖任选）200g*12瓶 再赠 原味款200g*3瓶 每日吨吨 认养1头牛 9 净含量200g 每日吨吨 认养1头牛 9 净含量200g 每日吨吨 认养1头牛 9 净含量200g",
-      "suggestedModule": "price",
-      "contentAnalysis": {
-        "summary": "品牌认养一头牛，吨吨酸奶79.9元得15瓶（12瓶加赠3瓶），3种口味可选，单瓶低至5.3元，夏季解腻",
-        "ocrText": "认养1头牛 ADOPT A COW 认养一头牛·吨吨酸奶 夏季解腻好搭子！3种口味任选！79.9得15瓶！单瓶低至5.3！每日吨吨 认养1头牛 9 净含量200g 冷藏益生菌酸奶（木姜子香茅/原味/0蔗糖任选）200g*12瓶 再赠 原味款200g*3瓶 每日吨吨 认养1头牛 9 净含量200g 每日吨吨 认养1头牛 9 净含量200g 每日吨吨 认养1头牛 9 净含量200g",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 0,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "price"
     },
     {
       "id": 2,
@@ -1873,32 +1079,7 @@
       "layout_role": "",
       "imageContentSummary": "品牌认养1头牛，产品为每日吨吨木姜子香茅味酸奶，卖点含9种活性益生菌、A2β酪蛋白生牛乳发酵，云贵风味解腻，全新上市，规格200g",
       "imageOcrText": "认养1头牛 ADOPT A COW；来自云贵山野 一口解腻；「每日吨吨·木姜子香茅味 全新上市」；云贵宝藏香料 木姜子香茅入酱 | 9种活性益生菌[1] | A2β-酪蛋白生牛乳发酵；认养1头牛 ADOPT A COW 每日吨吨 木姜子香茅味 风味发酵乳 净含量:200g 9种活性益生菌 | 生产日期/保质期至:见瓶盖；每日吨吨益生菌酸奶·木姜子香茅款 全新上市；图本品含德氏乳杆菌保加利亚亚种等九种活性益生菌。；右下角小瓶文字：认养1头牛 ADOPT A COW 每日吨吨 9 净含量200g",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌认养1头牛，产品为每日吨吨木姜子香茅味酸奶，卖点含9种活性益生菌、A2β酪蛋白生牛乳发酵，云贵风味解腻，全新上市，规格200g",
-        "ocrText": "认养1头牛 ADOPT A COW；来自云贵山野 一口解腻；「每日吨吨·木姜子香茅味 全新上市」；云贵宝藏香料 木姜子香茅入酱 | 9种活性益生菌[1] | A2β-酪蛋白生牛乳发酵；认养1头牛 ADOPT A COW 每日吨吨 木姜子香茅味 风味发酵乳 净含量:200g 9种活性益生菌 | 生产日期/保质期至:见瓶盖；每日吨吨益生菌酸奶·木姜子香茅款 全新上市；图本品含德氏乳杆菌保加利亚亚种等九种活性益生菌。；右下角小瓶文字：认养1头牛 ADOPT A COW 每日吨吨 9 净含量200g",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 1,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 3,
@@ -1913,32 +1094,7 @@
       "layout_role": "detail",
       "imageContentSummary": "品牌为认养一头牛，产品是每日吨吨酸奶（木姜子香茅味），规格200g，含9种活性益生菌",
       "imageOcrText": "认养1头牛\nADOPT A COW\n每日吨吨\n9\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n每日吨吨酸奶",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌为认养一头牛，产品是每日吨吨酸奶（木姜子香茅味），规格200g，含9种活性益生菌",
-        "ocrText": "认养1头牛\nADOPT A COW\n每日吨吨\n9\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n每日吨吨酸奶",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 2,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 4,
@@ -1954,32 +1110,7 @@
       "layout_role": "detail",
       "imageContentSummary": "品牌认养1头牛，产品为每日吨吨木姜子香茅味风味发酵乳，规格200g，卖点含9种活性益生菌",
       "imageOcrText": "它采用云贵宝藏香料木姜子香茅入酱\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n9",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌认养1头牛，产品为每日吨吨木姜子香茅味风味发酵乳，规格200g，卖点含9种活性益生菌",
-        "ocrText": "它采用云贵宝藏香料木姜子香茅入酱\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n9",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 3,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 5,
@@ -1994,32 +1125,7 @@
       "layout_role": "detail",
       "imageContentSummary": "品牌为认养1头牛，产品是每日吨吨木姜子香茅味风味发酵乳，规格200g，卖点含9种活性益生菌",
       "imageOcrText": "认养1头牛\nADOPT A COW\n每日吨吨\n9\n木姜子香茅风味\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌为认养1头牛，产品是每日吨吨木姜子香茅味风味发酵乳，规格200g，卖点含9种活性益生菌",
-        "ocrText": "认养1头牛\nADOPT A COW\n每日吨吨\n9\n木姜子香茅风味\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 4,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 6,
@@ -2034,32 +1140,7 @@
       "layout_role": "detail",
       "imageContentSummary": "图中展示每日吨吨品牌产品，正倒入玻璃碗，卖点为清香酸润不齁甜，背景有同款产品",
       "imageOcrText": "每日吨吨 9 清香酸润不齁甜",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "图中展示每日吨吨品牌产品，正倒入玻璃碗，卖点为清香酸润不齁甜，背景有同款产品",
-        "ocrText": "每日吨吨 9 清香酸润不齁甜",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 5,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 7,
@@ -2074,32 +1155,7 @@
       "layout_role": "detail",
       "imageContentSummary": "商品卖点为三重味觉：前调清新香茅、中调柠香木姜子、后调醇厚牛乳，云贵小众香料搭配牛乳，风味层次丰富。",
       "imageOcrText": "三重味觉\n一口惊艳\n○前调\n清新香茅\n○中调\n柠香木姜子\n○后调\n醇厚牛乳\n云贵小众香料\n撞上牛乳\n激出层层风味",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "商品卖点为三重味觉：前调清新香茅、中调柠香木姜子、后调醇厚牛乳，云贵小众香料搭配牛乳，风味层次丰富。",
-        "ocrText": "三重味觉\n一口惊艳\n○前调\n清新香茅\n○中调\n柠香木姜子\n○后调\n醇厚牛乳\n云贵小众香料\n撞上牛乳\n激出层层风味",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 6,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 8,
@@ -2114,32 +1170,7 @@
       "layout_role": "hero",
       "imageContentSummary": "原料为贵州铜仁百年木姜子，具备穿透性柠檬香、夹一丝花椒辛麻的特点，被标注为\"人类猫薄荷\"，图中展示了盛放在碗中的木姜子实物，背景为浅米色带纹理的纸张质感。",
       "imageOcrText": "贵州铜仁\n百年木姜子产地[2]\n具备穿透性柠檬香\n夹一丝花椒辛麻\n香气鲜明霸道\n\"人类\n猫薄荷\"",
-      "suggestedModule": "origin",
-      "contentAnalysis": {
-        "summary": "原料为贵州铜仁百年木姜子，具备穿透性柠檬香、夹一丝花椒辛麻的特点，被标注为\"人类猫薄荷\"，图中展示了盛放在碗中的木姜子实物，背景为浅米色带纹理的纸张质感。",
-        "ocrText": "贵州铜仁\n百年木姜子产地[2]\n具备穿透性柠檬香\n夹一丝花椒辛麻\n香气鲜明霸道\n\"人类\n猫薄荷\"",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 7,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "origin"
     },
     {
       "id": 9,
@@ -2155,32 +1186,7 @@
       "layout_role": "",
       "imageContentSummary": "云南大理产香茅，为傣餐灵魂香料，具明亮柠檬香混青草气息，风味清爽治愈",
       "imageOcrText": "云南大理 阳光下的清新香茅 明亮柠檬香 混着青草气息 构成清爽治愈的风味 “傣餐灵魂香料”",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "云南大理产香茅，为傣餐灵魂香料，具明亮柠檬香混青草气息，风味清爽治愈",
-        "ocrText": "云南大理 阳光下的清新香茅 明亮柠檬香 混着青草气息 构成清爽治愈的风味 “傣餐灵魂香料”",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 8,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 10,
@@ -2195,32 +1201,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌认养1头牛，产品为每日吨吨木姜子香茅味风味发酵乳，净含量200g，含9种活性益生菌。",
       "imageOcrText": "一瓶配备了9种活性益生菌[1]\n德氏乳杆菌保加利亚亚种\n从经典的德氏乳杆菌保加利亚亚种\n到明星的双歧杆菌\n它们像每日的隐形伙伴\n温和守护你的身体节律\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n9\n净含量:200g\n9种活性益生菌 | 生产日期/保质期至:见瓶盖\n长双歧杆菌婴儿亚种\n鼠李糖乳酪杆菌\n长双歧杆菌长亚种\n两歧双歧杆菌\n嗜酸乳杆菌\n副干酪乳酪杆菌\n唾液链球菌嗜热亚种\n动物双歧杆菌乳亚种",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "品牌认养1头牛，产品为每日吨吨木姜子香茅味风味发酵乳，净含量200g，含9种活性益生菌。",
-        "ocrText": "一瓶配备了9种活性益生菌[1]\n德氏乳杆菌保加利亚亚种\n从经典的德氏乳杆菌保加利亚亚种\n到明星的双歧杆菌\n它们像每日的隐形伙伴\n温和守护你的身体节律\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n9\n净含量:200g\n9种活性益生菌 | 生产日期/保质期至:见瓶盖\n长双歧杆菌婴儿亚种\n鼠李糖乳酪杆菌\n长双歧杆菌长亚种\n两歧双歧杆菌\n嗜酸乳杆菌\n副干酪乳酪杆菌\n唾液链球菌嗜热亚种\n动物双歧杆菌乳亚种",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 9,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 11,
@@ -2236,32 +1217,7 @@
       "layout_role": "",
       "imageContentSummary": "该产品采用A2β-酪蛋白生牛乳发酵，消化后A2β-酪蛋白粒径比A1小23%，更小分子更好吸收，A2粒径225nm，A1为350nm",
       "imageOcrText": "亲和营养 从A2β-酪蛋白开始 严选A2β-酪蛋白生牛乳发酵 更小分子 更好吸收[3] well absorbed 体外模拟胃消化2小时后 A2β-酪蛋白粒径比A1β-酪蛋白粒径 减小比例多约23%[3] A2β-酪蛋白 A1β-酪蛋白 225nm A2β-酪蛋白粒径[4] 350nm A1β-酪蛋白粒径[4]",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "该产品采用A2β-酪蛋白生牛乳发酵，消化后A2β-酪蛋白粒径比A1小23%，更小分子更好吸收，A2粒径225nm，A1为350nm",
-        "ocrText": "亲和营养 从A2β-酪蛋白开始 严选A2β-酪蛋白生牛乳发酵 更小分子 更好吸收[3] well absorbed 体外模拟胃消化2小时后 A2β-酪蛋白粒径比A1β-酪蛋白粒径 减小比例多约23%[3] A2β-酪蛋白 A1β-酪蛋白 225nm A2β-酪蛋白粒径[4] 350nm A1β-酪蛋白粒径[4]",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 10,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 12,
@@ -2276,32 +1232,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养1头牛，产品：每日吨吨木姜子香茅味酸奶，卖点含9种活性益生菌、A2β生牛乳发酵，场景为手持产品搭配货架陈列，视觉上白瓶绿盖，主体清晰。",
       "imageOcrText": "认养1头牛、ADOPT A COW、每日吨吨、木姜子香茅味、风味发酵乳、9、9种活性益生菌、生产日期/保质期至:见瓶盖、木姜子香茅酸奶 A2β生牛乳发酵",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养1头牛，产品：每日吨吨木姜子香茅味酸奶，卖点含9种活性益生菌、A2β生牛乳发酵，场景为手持产品搭配货架陈列，视觉上白瓶绿盖，主体清晰。",
-        "ocrText": "认养1头牛、ADOPT A COW、每日吨吨、木姜子香茅味、风味发酵乳、9、9种活性益生菌、生产日期/保质期至:见瓶盖、木姜子香茅酸奶 A2β生牛乳发酵",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 11,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 13,
@@ -2316,32 +1247,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌为认养1头牛，产品是每日吨吨木姜子香茅味风味发酵乳，净含量200g，卖点含9种活性益生菌，图中为手持产品的特写，背景是木质柜子",
       "imageOcrText": "认养1头牛、ADOPT A COW、9、每日吨吨、木姜子香茅味、风味发酵乳、净含量:200g、9种活性益生菌、生产日期/保质期至:见瓶盖",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌为认养1头牛，产品是每日吨吨木姜子香茅味风味发酵乳，净含量200g，卖点含9种活性益生菌，图中为手持产品的特写，背景是木质柜子",
-        "ocrText": "认养1头牛、ADOPT A COW、9、每日吨吨、木姜子香茅味、风味发酵乳、净含量:200g、9种活性益生菌、生产日期/保质期至:见瓶盖",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 12,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 14,
@@ -2356,32 +1262,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养一头牛；产品：每日吨吨木姜子香茅味风味发酵乳；净含量：200g；核心卖点：添加9种活性益生菌；场景：手持产品，背景有同款产品、木质桌面及绿植。",
       "imageOcrText": "还添加了9种活性益生菌\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n9\n每日吨吨",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养一头牛；产品：每日吨吨木姜子香茅味风味发酵乳；净含量：200g；核心卖点：添加9种活性益生菌；场景：手持产品，背景有同款产品、木质桌面及绿植。",
-        "ocrText": "还添加了9种活性益生菌\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n9\n每日吨吨",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 13,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 15,
@@ -2397,32 +1278,7 @@
       "layout_role": "",
       "imageContentSummary": "这款风味发酵乳符合GB19302标准，含9种活性益生菌，生牛乳占比≥88%，保质期21天，需冷藏，少量乳清析出属正常现象。",
       "imageOcrText": "还添加了9种活性益生菌 型:风味发酵乳 产品标准号:GB 19302 配料:生牛乳(≥88%)、白砂糖、木姜子香茅(≥4%)、干酪、唾液链球菌嗜热亚种、德氏乳杆菌保加利亚亚种、乳脂乳球菌、乳酸乳球菌、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳酪杆菌、两歧双嗜酸乳杆菌、鼠李糖乳酪杆菌 致敏原:本品含有乳及乳制品 保质期:21天 贮存条件:冷 少量乳清析出为正常现象,开启后请立即食用 地址:浙江省杭州市余杭区余杭街道302室 服务热线:400-685-177 有限公司 地址:江苏省常州市金坛区 省常州市 食品生产许可证编号:SC1 成分表 00g NRV% 5% 委托方:杭州认养...生物科技有限公司 0号A3号楼 一鸣食品 :江苏 本品含“德氏乳杆菌保加利亚亚种”等",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "这款风味发酵乳符合GB19302标准，含9种活性益生菌，生牛乳占比≥88%，保质期21天，需冷藏，少量乳清析出属正常现象。",
-        "ocrText": "还添加了9种活性益生菌 型:风味发酵乳 产品标准号:GB 19302 配料:生牛乳(≥88%)、白砂糖、木姜子香茅(≥4%)、干酪、唾液链球菌嗜热亚种、德氏乳杆菌保加利亚亚种、乳脂乳球菌、乳酸乳球菌、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳酪杆菌、两歧双嗜酸乳杆菌、鼠李糖乳酪杆菌 致敏原:本品含有乳及乳制品 保质期:21天 贮存条件:冷 少量乳清析出为正常现象,开启后请立即食用 地址:浙江省杭州市余杭区余杭街道302室 服务热线:400-685-177 有限公司 地址:江苏省常州市金坛区 省常州市 食品生产许可证编号:SC1 成分表 00g NRV% 5% 委托方:杭州认养...生物科技有限公司 0号A3号楼 一鸣食品 :江苏 本品含“德氏乳杆菌保加利亚亚种”等",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 14,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 16,
@@ -2438,32 +1294,7 @@
       "layout_role": "",
       "imageContentSummary": "这是认养一头牛的风味发酵乳产品，主打配料干净，配料以生牛乳为主，添加了少量白砂糖、果味酱及九种活性益生菌，标注了营养成分、生产信息、益生菌含量，属于需冷藏的低温发酵乳，保质期21天。",
       "imageOcrText": "产品类型:风味发酵乳 产品标准号:GB... 配料:生牛乳(≥88%)、白砂糖、木姜子香茅果味酱(≥4%)、干酪、唾液链球菌嗜热亚种、德氏乳杆菌乳亚种、乳脂乳球菌、乳酸乳球菌乳亚种、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳杆菌、两歧双歧杆菌、嗜酸乳杆菌、鼠李糖乳杆菌。致敏原:本品含有乳及乳制品。提示:少量乳清析出为正常现象,开启后请立即食用。委托方:杭州认养一头牛生物科技有限公司,地址:浙江省杭州市余杭区余杭街道云联路2-150号A3号楼302室,服务热线:400-685-1777,受托方:江苏一鸣食品有限公司,地址:江苏省常州市金坛区荆元路88号,产地:江苏省常州市,食品生产许可证编号:SC10532048201417,*本品含\"德氏乳杆菌保加利亚亚种\"等九种活性益生菌。出厂时益生菌含量≥5.0×10^8CFU/100g。营养成分表:项目 每100g NRV%:能量404kJ 5%,蛋白质2.9g 5%,脂肪3.6g 6%,饱和脂肪2.4g 12%,碳水化合物13.0g 4%,糖12.8g 3%,钠50mg 12%,钙95mg... 儿童青少年应避免过量摄入盐油糖。中间文字:配料干干净净 条形码:6978582691494",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "这是认养一头牛的风味发酵乳产品，主打配料干净，配料以生牛乳为主，添加了少量白砂糖、果味酱及九种活性益生菌，标注了营养成分、生产信息、益生菌含量，属于需冷藏的低温发酵乳，保质期21天。",
-        "ocrText": "产品类型:风味发酵乳 产品标准号:GB... 配料:生牛乳(≥88%)、白砂糖、木姜子香茅果味酱(≥4%)、干酪、唾液链球菌嗜热亚种、德氏乳杆菌乳亚种、乳脂乳球菌、乳酸乳球菌乳亚种、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳杆菌、两歧双歧杆菌、嗜酸乳杆菌、鼠李糖乳杆菌。致敏原:本品含有乳及乳制品。提示:少量乳清析出为正常现象,开启后请立即食用。委托方:杭州认养一头牛生物科技有限公司,地址:浙江省杭州市余杭区余杭街道云联路2-150号A3号楼302室,服务热线:400-685-1777,受托方:江苏一鸣食品有限公司,地址:江苏省常州市金坛区荆元路88号,产地:江苏省常州市,食品生产许可证编号:SC10532048201417,*本品含\"德氏乳杆菌保加利亚亚种\"等九种活性益生菌。出厂时益生菌含量≥5.0×10^8CFU/100g。营养成分表:项目 每100g NRV%:能量404kJ 5%,蛋白质2.9g 5%,脂肪3.6g 6%,饱和脂肪2.4g 12%,碳水化合物13.0g 4%,糖12.8g 3%,钠50mg 12%,钙95mg... 儿童青少年应避免过量摄入盐油糖。中间文字:配料干干净净 条形码:6978582691494",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 15,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 17,
@@ -2478,32 +1309,7 @@
       "layout_role": "detail",
       "imageContentSummary": "图中展示白色乳状饮品，正从勺子倒入带黄色图案的玻璃杯，背景有同款小包装，该饮品口味是清新柠檬混合香茅气息",
       "imageOcrText": "口味是带着清新的柠檬混合着香茅气息",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "图中展示白色乳状饮品，正从勺子倒入带黄色图案的玻璃杯，背景有同款小包装，该饮品口味是清新柠檬混合香茅气息",
-        "ocrText": "口味是带着清新的柠檬混合着香茅气息",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 16,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 18,
@@ -2518,32 +1324,7 @@
       "layout_role": "detail",
       "imageContentSummary": "该商品主打三重味觉，前调清新香茅、中调柠香木姜子、后调醇厚牛乳，融合云贵小众香料与牛乳，风味层次丰富",
       "imageOcrText": "三重味觉 一口惊艳 云贵小众香料 撞上牛乳 激出层层风味 ○前调 清新香茅 ○中调 柠香木姜子 ○后调 醇厚牛乳 3重",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "该商品主打三重味觉，前调清新香茅、中调柠香木姜子、后调醇厚牛乳，融合云贵小众香料与牛乳，风味层次丰富",
-        "ocrText": "三重味觉 一口惊艳 云贵小众香料 撞上牛乳 激出层层风味 ○前调 清新香茅 ○中调 柠香木姜子 ○后调 醇厚牛乳 3重",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 17,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 19,
@@ -2559,32 +1340,7 @@
       "layout_role": "detail",
       "imageContentSummary": "每日吨吨木姜子口味饮品内测好评，称口味新奇好喝，适合木姜子爱好者，获用户高度认可。",
       "imageOcrText": "真实口味内测\n喝完就想说\n本来对木姜子是啥味道没概念，怕不能接受，一口下去入魂！好喝\n很新奇的口味，太好喝了！！美味！！\n喜欢木姜子的绝对不能错过！\n给每日吨吨木姜子口味打call啊啊啊啊啊啊，好几个小伙伴觉得yyds！",
-      "suggestedModule": "feedback",
-      "contentAnalysis": {
-        "summary": "每日吨吨木姜子口味饮品内测好评，称口味新奇好喝，适合木姜子爱好者，获用户高度认可。",
-        "ocrText": "真实口味内测\n喝完就想说\n本来对木姜子是啥味道没概念，怕不能接受，一口下去入魂！好喝\n很新奇的口味，太好喝了！！美味！！\n喜欢木姜子的绝对不能错过！\n给每日吨吨木姜子口味打call啊啊啊啊啊啊，好几个小伙伴觉得yyds！",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 18,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "feedback"
     },
     {
       "id": 20,
@@ -2598,32 +1354,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养一头牛；产品：每日吨吨木姜子香茅味风味发酵乳；卖点：9种活性益生菌，净含量200g；画面展示手持产品及倒出的酸奶质地，背景为货架陈列的同款产品。",
       "imageOcrText": "认养1头牛\nADOPT A COW\n每日吨吨\n9\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n风味优于普通酸奶",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养一头牛；产品：每日吨吨木姜子香茅味风味发酵乳；卖点：9种活性益生菌，净含量200g；画面展示手持产品及倒出的酸奶质地，背景为货架陈列的同款产品。",
-        "ocrText": "认养1头牛\nADOPT A COW\n每日吨吨\n9\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n风味优于普通酸奶",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 19,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 21,
@@ -2637,32 +1368,7 @@
       "layout_role": "hero",
       "imageContentSummary": "展示一款乳白色饮品，正被倒入透明玻璃杯中，背景是同款带绿色瓶盖、黄色皇冠和数字“9”标识的白色方瓶，配文描述其香气，场景为室内木质台面。",
       "imageOcrText": "一股清香和清冽凝香直冲鼻腔，9",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "展示一款乳白色饮品，正被倒入透明玻璃杯中，背景是同款带绿色瓶盖、黄色皇冠和数字“9”标识的白色方瓶，配文描述其香气，场景为室内木质台面。",
-        "ocrText": "一股清香和清冽凝香直冲鼻腔，9",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 20,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 22,
@@ -2676,32 +1382,7 @@
       "layout_role": "hero",
       "imageContentSummary": "展示酸奶产品的质地，前景是手持玻璃杯盛着的浓稠酸奶，勺子舀起酸奶，标注卖点“乳香饱满绵长”，背景是同款带绿色瓶盖的酸奶瓶，整体为白绿配色的产品特写。",
       "imageOcrText": "乳香饱满绵长",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "展示酸奶产品的质地，前景是手持玻璃杯盛着的浓稠酸奶，勺子舀起酸奶，标注卖点“乳香饱满绵长”，背景是同款带绿色瓶盖的酸奶瓶，整体为白绿配色的产品特写。",
-        "ocrText": "乳香饱满绵长",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 21,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 23,
@@ -2715,32 +1396,7 @@
       "layout_role": "detail",
       "imageContentSummary": "图中展示正在将牛奶倒入玻璃杯，背景有同款产品，核心卖点为“没有乱七八糟的添加”，突出产品无额外添加的特点",
       "imageOcrText": "没有乱七八糟的添加",
-      "suggestedModule": "trust",
-      "contentAnalysis": {
-        "summary": "图中展示正在将牛奶倒入玻璃杯，背景有同款产品，核心卖点为“没有乱七八糟的添加”，突出产品无额外添加的特点",
-        "ocrText": "没有乱七八糟的添加",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 22,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "trust"
     },
     {
       "id": 24,
@@ -2754,32 +1410,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养一头牛，商品：每日吨吨饮品，卖点：奶香浓郁醇厚丝滑，视觉：透明玻璃杯装乳白色饮品，背景是同款瓶装饮品的白色货架，整体明亮清新。",
       "imageOcrText": "认养一头牛 每日吨吨 9 奶香浓郁醇厚丝滑",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养一头牛，商品：每日吨吨饮品，卖点：奶香浓郁醇厚丝滑，视觉：透明玻璃杯装乳白色饮品，背景是同款瓶装饮品的白色货架，整体明亮清新。",
-        "ocrText": "认养一头牛 每日吨吨 9 奶香浓郁醇厚丝滑",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 23,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 25,
@@ -2793,32 +1424,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅味风味发酵乳；规格：200g；卖点：9种活性益生菌；宣传语：尤其冷藏后风味更足；场景：手持展示，背景有同款产品货架。",
       "imageOcrText": "认养1头牛、ADOPT A COW、每日吨吨、木姜子香茅味、风味发酵乳、净含量:200g、9种活性益生菌、生产日期/保质期见瓶盖、尤其冷藏后风味更足、9",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅味风味发酵乳；规格：200g；卖点：9种活性益生菌；宣传语：尤其冷藏后风味更足；场景：手持展示，背景有同款产品货架。",
-        "ocrText": "认养1头牛、ADOPT A COW、每日吨吨、木姜子香茅味、风味发酵乳、净含量:200g、9种活性益生菌、生产日期/保质期见瓶盖、尤其冷藏后风味更足、9",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 24,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 26,
@@ -2832,32 +1438,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅风味发酵乳；规格：200g；卖点：9种活性益生菌；场景：冷藏货架陈列",
       "imageOcrText": "认养1头牛 ADOPT A COW 每日吨吨 木姜子香茅味 9 风味发酵乳 净含量200g 9种活性益生菌 木姜子和香茅的结合在碰撞 吨吨 净含量200g",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅风味发酵乳；规格：200g；卖点：9种活性益生菌；场景：冷藏货架陈列",
-        "ocrText": "认养1头牛 ADOPT A COW 每日吨吨 木姜子香茅味 9 风味发酵乳 净含量200g 9种活性益生菌 木姜子和香茅的结合在碰撞 吨吨 净含量200g",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 25,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 27,
@@ -2871,32 +1452,7 @@
       "layout_role": "hero",
       "imageContentSummary": "主体为带笑脸的奶白色杯子，背景是货架上的同款瓶装产品，宣传语提及三重味觉冲击。",
       "imageOcrText": "入口就是三重味觉冲击，每日吨吨，9",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "主体为带笑脸的奶白色杯子，背景是货架上的同款瓶装产品，宣传语提及三重味觉冲击。",
-        "ocrText": "入口就是三重味觉冲击，每日吨吨，9",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 26,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 28,
@@ -2910,32 +1466,7 @@
       "layout_role": "hero",
       "imageContentSummary": "产品为带绿色瓶盖的白色塑料瓶，主打香茅的清爽薄荷香，瓶身有数字标识，采用手持特写拍摄，背景有同款产品",
       "imageOcrText": "香茅的清爽薄荷香 9",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "产品为带绿色瓶盖的白色塑料瓶，主打香茅的清爽薄荷香，瓶身有数字标识，采用手持特写拍摄，背景有同款产品",
-        "ocrText": "香茅的清爽薄荷香 9",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 27,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 29,
@@ -2949,32 +1480,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养一头牛；产品：每日吨吨木姜子香茅味风味发酵乳；规格：200g；卖点：9种活性益生菌；宣传语：喝着微甜不腻；场景：手持产品搭配加香茅的饮品，背景有同款产品和棋盘格桌面。",
       "imageOcrText": "认养1头牛、ADOPT A COW、每日吨吨、木姜子香茅味、风味发酵乳、200g、9种活性益生菌、生产日期、喝着微甜不腻、9",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养一头牛；产品：每日吨吨木姜子香茅味风味发酵乳；规格：200g；卖点：9种活性益生菌；宣传语：喝着微甜不腻；场景：手持产品搭配加香茅的饮品，背景有同款产品和棋盘格桌面。",
-        "ocrText": "认养1头牛、ADOPT A COW、每日吨吨、木姜子香茅味、风味发酵乳、200g、9种活性益生菌、生产日期、喝着微甜不腻、9",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 28,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 30,
@@ -2988,32 +1494,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌为认养1头牛，商品是每日吨吨，规格200g，卖点含9种活性益生菌、木姜子香茅风味，场景为冰箱内，宣传语提及夏天冰镇搭配甜品",
       "imageOcrText": "认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅风味\n9种活性益生菌\n净含量200g\n夏天一定要冰镇一下，搭配甜品就是超绝下午茶",
-      "suggestedModule": "scene",
-      "contentAnalysis": {
-        "summary": "品牌为认养1头牛，商品是每日吨吨，规格200g，卖点含9种活性益生菌、木姜子香茅风味，场景为冰箱内，宣传语提及夏天冰镇搭配甜品",
-        "ocrText": "认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅风味\n9种活性益生菌\n净含量200g\n夏天一定要冰镇一下，搭配甜品就是超绝下午茶",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 29,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "scene"
     },
     {
       "id": 31,
@@ -3027,32 +1508,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅味风味发酵乳；规格：净含量200g；卖点：9种活性益生菌；宣传语：尤其冷藏后风味更足；视觉：白色瓶身配绿色瓶盖，被手持展示，背景有同款产品，瓶身带冷凝水。",
       "imageOcrText": "尤其冷藏后风味更足\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌 | 生产日期/保质期至:见瓶盖",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅味风味发酵乳；规格：净含量200g；卖点：9种活性益生菌；宣传语：尤其冷藏后风味更足；视觉：白色瓶身配绿色瓶盖，被手持展示，背景有同款产品，瓶身带冷凝水。",
-        "ocrText": "尤其冷藏后风味更足\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌 | 生产日期/保质期至:见瓶盖",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 30,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 32,
@@ -3067,32 +1523,7 @@
       "layout_role": "hero",
       "imageContentSummary": "产地：云南大理；商品：香茅；卖点：明亮柠檬香混青草气息，是傣餐灵魂香料；视觉：浅米色背景，鲜绿香茅，深褐土壤，竹编筐，便签装饰",
       "imageOcrText": "云南大理 阳光下的清新香茅 明亮柠檬香 混着青草气息 构成清爽治愈的风味 “傣餐 灵魂香料”",
-      "suggestedModule": "origin",
-      "contentAnalysis": {
-        "summary": "产地：云南大理；商品：香茅；卖点：明亮柠檬香混青草气息，是傣餐灵魂香料；视觉：浅米色背景，鲜绿香茅，深褐土壤，竹编筐，便签装饰",
-        "ocrText": "云南大理 阳光下的清新香茅 明亮柠檬香 混着青草气息 构成清爽治愈的风味 “傣餐 灵魂香料”",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 31,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "origin"
     },
     {
       "id": 33,
@@ -3107,32 +1538,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅味风味发酵乳；卖点：9种活性益生菌，净含量200g；视觉：白色瓶身配绿色元素，前景展示酸奶实物，背景有同款产品陈列。",
       "imageOcrText": "新品木姜子香茅味每日吨吨酸奶 认养1头牛 ADOPT A COW 每日吨吨 木姜子香茅味 风味发酵乳 净含量:200g 9种活性益生菌 生产日期/保质期:见瓶盖 9",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅味风味发酵乳；卖点：9种活性益生菌，净含量200g；视觉：白色瓶身配绿色元素，前景展示酸奶实物，背景有同款产品陈列。",
-        "ocrText": "新品木姜子香茅味每日吨吨酸奶 认养1头牛 ADOPT A COW 每日吨吨 木姜子香茅味 风味发酵乳 净含量:200g 9种活性益生菌 生产日期/保质期:见瓶盖 9",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 32,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 34,
@@ -3148,32 +1554,7 @@
       "layout_role": "detail",
       "imageContentSummary": "品牌认养一头牛，产品为每日吨吨木姜子香茅味风味发酵乳，规格200g，卖点含9种活性益生菌",
       "imageOcrText": "认养1头牛、ADOPT A COW、每日吨吨、木姜子香茅味、风味发酵乳、净含量:200g、9种活性益生菌、生产日期保质期至见瓶盖、木姜子和香茅",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌认养一头牛，产品为每日吨吨木姜子香茅味风味发酵乳，规格200g，卖点含9种活性益生菌",
-        "ocrText": "认养1头牛、ADOPT A COW、每日吨吨、木姜子香茅味、风味发酵乳、净含量:200g、9种活性益生菌、生产日期保质期至见瓶盖、木姜子和香茅",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 33,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 35,
@@ -3189,32 +1570,7 @@
       "layout_role": "detail",
       "imageContentSummary": "认养一头牛每日吨吨9益生菌发酵乳，含九种活性益生菌，益生菌含量≥5.0×10^9CFU/100g，保质期21天",
       "imageOcrText": "每日吨吨 9 营养成分表 能量 每100g 404kJ 5% 蛋白质 每100g 3.6g 6% 脂肪 每100g 2.9g 5% 碳水化合物 每100g 13.0g 4% 钠 每100g 50mg 3% 钙 每100g 95mg 12% 产品类型 风味发酵乳 产品标准号 GB19302 配料：生牛乳（≥88%）、白砂糖、木姜子香茅、嗜热链球菌、保加利亚乳杆菌、乳双歧杆菌、长双歧杆菌、动物双歧杆菌、鼠李糖乳杆菌、副干酪乳杆菌、嗜酸乳杆菌、罗伊氏乳杆菌 条形码 6978582691494",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "认养一头牛每日吨吨9益生菌发酵乳，含九种活性益生菌，益生菌含量≥5.0×10^9CFU/100g，保质期21天",
-        "ocrText": "每日吨吨 9 营养成分表 能量 每100g 404kJ 5% 蛋白质 每100g 3.6g 6% 脂肪 每100g 2.9g 5% 碳水化合物 每100g 13.0g 4% 钠 每100g 50mg 3% 钙 每100g 95mg 12% 产品类型 风味发酵乳 产品标准号 GB19302 配料：生牛乳（≥88%）、白砂糖、木姜子香茅、嗜热链球菌、保加利亚乳杆菌、乳双歧杆菌、长双歧杆菌、动物双歧杆菌、鼠李糖乳杆菌、副干酪乳杆菌、嗜酸乳杆菌、罗伊氏乳杆菌 条形码 6978582691494",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 34,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 36,
@@ -3229,32 +1585,7 @@
       "layout_role": "",
       "imageContentSummary": "这款饮品选用A2β酪蛋白生牛乳发酵，瓶身标注营养成分表，条形码6978582691494，属发酵乳制品。",
       "imageOcrText": "选用A2β酪蛋白生牛乳发酵 Fermentation of raw milk with A2 β casein 产品类型:风味发酵乳,产品标准号:GB 19302 配料:生牛乳(≥88%),白砂糖,木糖,乳清蛋白粉,聚葡萄糖,干酪,嗜酸乳杆菌保加利亚亚种,德氏乳杆菌保加利亚亚种,乳双歧杆菌,乳双歧杆菌HN019,长双歧杆菌婴儿亚种,动物双歧杆菌乳亚种,副干酪乳杆菌,两歧双歧杆菌,植物乳杆菌,鼠李糖乳杆菌,嗜热链球菌 致敏原信息:本品含有乳制品 保质期:21天 贮存条件:冷藏,避免阳光直射,开启后24小时食用 制造商:杭州认养一头牛生物科技有限公司 地址:浙江省杭州市余杭区良渚街道博园路2-15号A3号楼 客服热线:400-685-1777 受托方:江苏一鸣食品股份有限公司 地址:江苏省常州市武进区遥观镇印墅88号 产地:江苏 食品生产许可证编号:SC10532048201417 \"本品含\"德氏乳杆菌保加利亚亚种\"等9种活性益生菌,出厂时益生菌含量≥5.0×10^7CFU/100g 营养成分表 项目 每100g NRV% 能量 404kJ 5% 蛋白质 2.9g 5% 脂肪 3.6g 6% -饱和脂肪酸 2.4g 12% 碳水化合物 13.0g 4% 糖 12.8g 3% 钠 50mg 3% 钙 95mg 12% (1) 青少年应注意适量摄入,避免过量。 6978582691494",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "这款饮品选用A2β酪蛋白生牛乳发酵，瓶身标注营养成分表，条形码6978582691494，属发酵乳制品。",
-        "ocrText": "选用A2β酪蛋白生牛乳发酵 Fermentation of raw milk with A2 β casein 产品类型:风味发酵乳,产品标准号:GB 19302 配料:生牛乳(≥88%),白砂糖,木糖,乳清蛋白粉,聚葡萄糖,干酪,嗜酸乳杆菌保加利亚亚种,德氏乳杆菌保加利亚亚种,乳双歧杆菌,乳双歧杆菌HN019,长双歧杆菌婴儿亚种,动物双歧杆菌乳亚种,副干酪乳杆菌,两歧双歧杆菌,植物乳杆菌,鼠李糖乳杆菌,嗜热链球菌 致敏原信息:本品含有乳制品 保质期:21天 贮存条件:冷藏,避免阳光直射,开启后24小时食用 制造商:杭州认养一头牛生物科技有限公司 地址:浙江省杭州市余杭区良渚街道博园路2-15号A3号楼 客服热线:400-685-1777 受托方:江苏一鸣食品股份有限公司 地址:江苏省常州市武进区遥观镇印墅88号 产地:江苏 食品生产许可证编号:SC10532048201417 \"本品含\"德氏乳杆菌保加利亚亚种\"等9种活性益生菌,出厂时益生菌含量≥5.0×10^7CFU/100g 营养成分表 项目 每100g NRV% 能量 404kJ 5% 蛋白质 2.9g 5% 脂肪 3.6g 6% -饱和脂肪酸 2.4g 12% 碳水化合物 13.0g 4% 糖 12.8g 3% 钠 50mg 3% 钙 95mg 12% (1) 青少年应注意适量摄入,避免过量。 6978582691494",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 35,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 37,
@@ -3269,32 +1600,7 @@
       "layout_role": "",
       "imageContentSummary": "这款风味发酵乳，生牛乳含量≥88%，含九种活性益生菌，出厂时益生菌≥5.0×10⁹CFU/100g，保质期约21天，产地江苏",
       "imageOcrText": "88%高含量生牛乳, 产品类型:风味发酵乳 产品标准号 果味酱(≥4%)、干酪、唾液链球菌嗜乳亚种、长双歧杆菌婴儿亚种、长双歧歧杆菌、嗜酸乳杆菌、鼠李糖乳酪杆菌 藏提示:少量乳清析出为正常现象,开启后 配料:生牛乳(≥88%)、白砂糖、木姜杆菌保加利亚亚种、乳脂乳球菌、乳酸双歧杆菌乳亚种、副干酪乳酪杆乳制品 保质期:21 地址:浙江省杭302室 服务热线: 有限公司 地址:江苏省常州市金坛区XX号 产地:江苏省常州市 食品生产许可证编号:SC10532048201417 *本品含\"德氏乳杆菌保加利亚亚种\"等九种活性益生菌。出厂时 益生菌含量≥5.0×10⁹CFU/100g 营养成分表 项目 每100g NRV% 能量 404kJ 5% 蛋白质 2.9g 5% 脂肪 3.6g 6% -饱和脂肪 2.4g 12% 碳水化合物 13.0g 4% -糖 12.8g 钠 50mg 3% 钙 95mg 12% 6978582691494",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "这款风味发酵乳，生牛乳含量≥88%，含九种活性益生菌，出厂时益生菌≥5.0×10⁹CFU/100g，保质期约21天，产地江苏",
-        "ocrText": "88%高含量生牛乳, 产品类型:风味发酵乳 产品标准号 果味酱(≥4%)、干酪、唾液链球菌嗜乳亚种、长双歧杆菌婴儿亚种、长双歧歧杆菌、嗜酸乳杆菌、鼠李糖乳酪杆菌 藏提示:少量乳清析出为正常现象,开启后 配料:生牛乳(≥88%)、白砂糖、木姜杆菌保加利亚亚种、乳脂乳球菌、乳酸双歧杆菌乳亚种、副干酪乳酪杆乳制品 保质期:21 地址:浙江省杭302室 服务热线: 有限公司 地址:江苏省常州市金坛区XX号 产地:江苏省常州市 食品生产许可证编号:SC10532048201417 *本品含\"德氏乳杆菌保加利亚亚种\"等九种活性益生菌。出厂时 益生菌含量≥5.0×10⁹CFU/100g 营养成分表 项目 每100g NRV% 能量 404kJ 5% 蛋白质 2.9g 5% 脂肪 3.6g 6% -饱和脂肪 2.4g 12% 碳水化合物 13.0g 4% -糖 12.8g 钠 50mg 3% 钙 95mg 12% 6978582691494",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 36,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 38,
@@ -3309,32 +1615,7 @@
       "layout_role": "",
       "imageContentSummary": "认养一头牛风味发酵乳，生牛乳≥88%，含九种活性益生菌，配料干净，保质期21天需冷藏，产地江苏",
       "imageOcrText": "产品类型:风味发酵乳 产品标准号:GB 19302 配料:生牛乳(≥88%)、白砂糖、木姜子香茅果味酱(≥4%)、干酪、唾液链球菌嗜热亚种、德氏乳杆菌保加利亚亚种、乳脂乳球菌、乳酸乳球菌乳亚种、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳酪杆菌、两歧双歧杆菌、嗜酸乳杆菌、鼠李糖乳酪杆菌 致敏原:本品含有乳及乳制品 保质期:21天 贮存条件:冷藏 提示:少量乳清析出为正常现象,开启后请立即食用 委托方:杭州认养一头牛生物科技有限公司 地址:浙江省杭州市余杭区余杭街道云联路2-150号A3号楼302室 服务热线:400-685-1777 受托方:江苏一鸣食品有限公司 地址:江苏省常州市金坛区荆元路88号 产地:江苏省常州市 食品生产许可证编号:SC10532048201417 *本品含\"德氏乳杆菌保加利亚亚种\"等九种活性益生菌。出厂益生菌含量≥5.0×10⁹CFU/100g 营养成分表 项目 每100g NRV% 能量 404kJ 5% 蛋白质 2.9g 5% 脂肪 3.6g 6% -饱和脂肪 2.4g 12% 碳水化合物 13.0g 4% -糖 12.8g 钠 50mg 3% 钙 95mg 12% 配料表还是一如既往的干净放心",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "认养一头牛风味发酵乳，生牛乳≥88%，含九种活性益生菌，配料干净，保质期21天需冷藏，产地江苏",
-        "ocrText": "产品类型:风味发酵乳 产品标准号:GB 19302 配料:生牛乳(≥88%)、白砂糖、木姜子香茅果味酱(≥4%)、干酪、唾液链球菌嗜热亚种、德氏乳杆菌保加利亚亚种、乳脂乳球菌、乳酸乳球菌乳亚种、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳酪杆菌、两歧双歧杆菌、嗜酸乳杆菌、鼠李糖乳酪杆菌 致敏原:本品含有乳及乳制品 保质期:21天 贮存条件:冷藏 提示:少量乳清析出为正常现象,开启后请立即食用 委托方:杭州认养一头牛生物科技有限公司 地址:浙江省杭州市余杭区余杭街道云联路2-150号A3号楼302室 服务热线:400-685-1777 受托方:江苏一鸣食品有限公司 地址:江苏省常州市金坛区荆元路88号 产地:江苏省常州市 食品生产许可证编号:SC10532048201417 *本品含\"德氏乳杆菌保加利亚亚种\"等九种活性益生菌。出厂益生菌含量≥5.0×10⁹CFU/100g 营养成分表 项目 每100g NRV% 能量 404kJ 5% 蛋白质 2.9g 5% 脂肪 3.6g 6% -饱和脂肪 2.4g 12% 碳水化合物 13.0g 4% -糖 12.8g 钠 50mg 3% 钙 95mg 12% 配料表还是一如既往的干净放心",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 37,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 39,
@@ -3349,32 +1630,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅味风味发酵乳；规格：净含量200g；卖点：9种活性益生菌、A2β生牛乳发酵；场景：木质桌面，前景手持展示；视觉：白瓶绿盖，清新明亮。",
       "imageOcrText": "认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n保质期至:见瓶盖\n木姜子香茅酸奶 A2β生牛乳发酵\n9",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅味风味发酵乳；规格：净含量200g；卖点：9种活性益生菌、A2β生牛乳发酵；场景：木质桌面，前景手持展示；视觉：白瓶绿盖，清新明亮。",
-        "ocrText": "认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n保质期至:见瓶盖\n木姜子香茅酸奶 A2β生牛乳发酵\n9",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 38,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 40,
@@ -3389,32 +1645,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌为认养一头牛，产品是每日吨吨木姜子香茅味风味发酵乳，单瓶含9种活性益生菌，净含量200g，场景为手持展示，背景有同款产品。",
       "imageOcrText": "认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n单瓶都含有9种活性有益菌\n9\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量\n9种活性益生菌\n生产日期/保质期",
-      "suggestedModule": "trust",
-      "contentAnalysis": {
-        "summary": "品牌为认养一头牛，产品是每日吨吨木姜子香茅味风味发酵乳，单瓶含9种活性益生菌，净含量200g，场景为手持展示，背景有同款产品。",
-        "ocrText": "认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n单瓶都含有9种活性有益菌\n9\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量\n9种活性益生菌\n生产日期/保质期",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 39,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "trust"
     },
     {
       "id": 41,
@@ -3430,32 +1661,7 @@
       "layout_role": "detail",
       "imageContentSummary": "该饮品卖点：添加9种活性益生菌，配料干净。",
       "imageOcrText": "再加9种活性益生菌，配料干干净净。",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "该饮品卖点：添加9种活性益生菌，配料干净。",
-        "ocrText": "再加9种活性益生菌，配料干干净净。",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 40,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 42,
@@ -3471,32 +1677,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅味风味发酵乳；规格：200g；卖点：9种活性益生菌；场景：手持展示，背景有白色容器。",
       "imageOcrText": "单瓶足足9种活性益生菌；认养1头牛；ADOPT A COW；每日吨吨；木姜子香茅味；风味发酵乳；9；9种活性益生菌；生产日期/保质期至:见瓶盖；净含量:200g",
-      "suggestedModule": "trust",
-      "contentAnalysis": {
-        "summary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅味风味发酵乳；规格：200g；卖点：9种活性益生菌；场景：手持展示，背景有白色容器。",
-        "ocrText": "单瓶足足9种活性益生菌；认养1头牛；ADOPT A COW；每日吨吨；木姜子香茅味；风味发酵乳；9；9种活性益生菌；生产日期/保质期至:见瓶盖；净含量:200g",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 41,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "trust"
     },
     {
       "id": 43,
@@ -3511,32 +1692,7 @@
       "layout_role": "",
       "imageContentSummary": "该产品严选A2β-酪蛋白生牛乳发酵，卖点为更小分子更好吸收，体外消化后A2β-酪蛋白粒径225nm，比A1的350nm小约23%",
       "imageOcrText": "亲和营养，从A2β-酪蛋白开始，严选A2β-酪蛋白生牛乳发酵，更小分子，更好吸收[3]，well absorbed，体外模拟胃消化2小时后，A2β-酪蛋白粒径比A1β-酪蛋白粒径，减小比例多约23%[3]，A2β-酪蛋白，A1β-酪蛋白，225nm，A2β-酪蛋白粒径[4]，350nm，A1β-酪蛋白粒径[4]",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "该产品严选A2β-酪蛋白生牛乳发酵，卖点为更小分子更好吸收，体外消化后A2β-酪蛋白粒径225nm，比A1的350nm小约23%",
-        "ocrText": "亲和营养，从A2β-酪蛋白开始，严选A2β-酪蛋白生牛乳发酵，更小分子，更好吸收[3]，well absorbed，体外模拟胃消化2小时后，A2β-酪蛋白粒径比A1β-酪蛋白粒径，减小比例多约23%[3]，A2β-酪蛋白，A1β-酪蛋白，225nm，A2β-酪蛋白粒径[4]，350nm，A1β-酪蛋白粒径[4]",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 42,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 44,
@@ -3551,32 +1707,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养1头牛，产品：每日吨吨木姜子香茅味风味发酵乳，净含量200g，卖点含9种活性益生菌、A2β酪蛋白生牛乳，白色瓶身配绿色瓶盖，被手持展示",
       "imageOcrText": "甄选优质A2β酪蛋白生牛乳\n认养1头牛\nADOPT A COW\n每日\n吨吨\n木姜子香茅味\n9\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖",
-      "suggestedModule": "trust",
-      "contentAnalysis": {
-        "summary": "品牌：认养1头牛，产品：每日吨吨木姜子香茅味风味发酵乳，净含量200g，卖点含9种活性益生菌、A2β酪蛋白生牛乳，白色瓶身配绿色瓶盖，被手持展示",
-        "ocrText": "甄选优质A2β酪蛋白生牛乳\n认养1头牛\nADOPT A COW\n每日\n吨吨\n木姜子香茅味\n9\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 43,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "trust"
     },
     {
       "id": 45,
@@ -3591,32 +1722,7 @@
       "layout_role": "",
       "imageContentSummary": "图中商品为每日鲜语A2生牛乳发酵酸奶，属风味发酵乳，主打A2生牛乳，背景是同款产品陈列",
       "imageOcrText": "桃小茗 搭配A2生牛乳发酵酸奶 产品类型:风味发酵乳 产品标准号GB19302 配料含生牛乳(≥88%) 营养成分表 条形码978582691494 背景瓶身有‘每日’‘9’字样",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "图中商品为每日鲜语A2生牛乳发酵酸奶，属风味发酵乳，主打A2生牛乳，背景是同款产品陈列",
-        "ocrText": "桃小茗 搭配A2生牛乳发酵酸奶 产品类型:风味发酵乳 产品标准号GB19302 配料含生牛乳(≥88%) 营养成分表 条形码978582691494 背景瓶身有‘每日’‘9’字样",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 44,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 46,
@@ -3631,32 +1737,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养一头牛，产品：每日吨吨酸奶，风味：木姜子香茅味，卖点：9种活性益生菌，净含量：200g，场景：冰箱内手持展示，突出酸奶质地与奶香",
       "imageOcrText": "认养一头牛 每日吨吨 木姜子香茅味 9种活性益生菌 净含量200g 最后是浓浓的奶香",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养一头牛，产品：每日吨吨酸奶，风味：木姜子香茅味，卖点：9种活性益生菌，净含量：200g，场景：冰箱内手持展示，突出酸奶质地与奶香",
-        "ocrText": "认养一头牛 每日吨吨 木姜子香茅味 9种活性益生菌 净含量200g 最后是浓浓的奶香",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 45,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 47,
@@ -3671,32 +1752,7 @@
       "layout_role": "hero",
       "imageContentSummary": "展示白色瓶装饮品，正在被倒入透明玻璃杯，背景有同款饮品瓶和木质桌面，卖点为奶香混着清润果香，属于日常使用场景的产品展示。",
       "imageOcrText": "奶香混着清润果香",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "展示白色瓶装饮品，正在被倒入透明玻璃杯，背景有同款饮品瓶和木质桌面，卖点为奶香混着清润果香，属于日常使用场景的产品展示。",
-        "ocrText": "奶香混着清润果香",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 46,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 48,
@@ -3712,32 +1768,7 @@
       "layout_role": "detail",
       "imageContentSummary": "品牌为认养一头牛，产品是每日吨吨木姜子香茅味风味发酵乳，规格200g，含9种活性益生菌，特点微甜不腻",
       "imageOcrText": "认养一头牛、ADOPT A COW、每日吨吨、木姜子香茅味、9种活性益生菌、200g、喝着微甜不腻",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌为认养一头牛，产品是每日吨吨木姜子香茅味风味发酵乳，规格200g，含9种活性益生菌，特点微甜不腻",
-        "ocrText": "认养一头牛、ADOPT A COW、每日吨吨、木姜子香茅味、9种活性益生菌、200g、喝着微甜不腻",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 47,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 49,
@@ -3753,32 +1784,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌认养1头牛，产品为每日吨吨木姜子香茅味风味发酵乳，规格200g，含9种活性益生菌，甄选A2β酪蛋白生牛乳",
       "imageOcrText": "甄选优质A2β酪蛋白生牛乳\n认养1头牛\nADOPT A COW\n每日\n吨吨\n木姜子香茅味\n9\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌认养1头牛，产品为每日吨吨木姜子香茅味风味发酵乳，规格200g，含9种活性益生菌，甄选A2β酪蛋白生牛乳",
-        "ocrText": "甄选优质A2β酪蛋白生牛乳\n认养1头牛\nADOPT A COW\n每日\n吨吨\n木姜子香茅味\n9\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 48,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 50,
@@ -3793,32 +1799,7 @@
       "layout_role": "",
       "imageContentSummary": "该商品为风味发酵乳，产品标准号GB19302，添加9种活性益生菌，生牛乳含量≥88%，保质期21天，需冷藏贮存。",
       "imageOcrText": "还添加了9种活性益生菌 型:风味发酵乳 产品标准号:GB 19302 配料:生牛乳(≥88%)、白砂糖、木姜子香茅(≥4%)、干酪、唾液链球菌嗜热亚种、德氏乳杆菌保加利亚亚种、乳脂乳球菌、乳酸乳球菌、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳酪杆菌、两歧双歧嗜酸乳杆菌、鼠李糖乳酪杆菌 致敏原:本品含有乳及乳制品 少量乳清析出为正常现象,开启后请立即食用 委托方:杭州认养...生物科技有限公司 地址:浙江省杭州市余杭区余杭街道302室 服务热线:400-685-17... 0号A3号楼 有限公司 地址:江苏省常州市金坛区 一鸣食品 省常州市 食品生产许可证编号:SC1... 江苏 成分表 00g NRV% 5% 本品含“德氏乳杆菌保加利亚亚种”等",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "该商品为风味发酵乳，产品标准号GB19302，添加9种活性益生菌，生牛乳含量≥88%，保质期21天，需冷藏贮存。",
-        "ocrText": "还添加了9种活性益生菌 型:风味发酵乳 产品标准号:GB 19302 配料:生牛乳(≥88%)、白砂糖、木姜子香茅(≥4%)、干酪、唾液链球菌嗜热亚种、德氏乳杆菌保加利亚亚种、乳脂乳球菌、乳酸乳球菌、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳酪杆菌、两歧双歧嗜酸乳杆菌、鼠李糖乳酪杆菌 致敏原:本品含有乳及乳制品 少量乳清析出为正常现象,开启后请立即食用 委托方:杭州认养...生物科技有限公司 地址:浙江省杭州市余杭区余杭街道302室 服务热线:400-685-17... 0号A3号楼 有限公司 地址:江苏省常州市金坛区 一鸣食品 省常州市 食品生产许可证编号:SC1... 江苏 成分表 00g NRV% 5% 本品含“德氏乳杆菌保加利亚亚种”等",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 49,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 51,
@@ -3833,32 +1814,7 @@
       "layout_role": "",
       "imageContentSummary": "认养一头牛风味发酵乳，生牛乳≥88%，含益生菌，保质期21天，配料干净，需冷藏贮存",
       "imageOcrText": "产品类型:风味发酵乳 产品标准号:GB 配料:生牛乳(≥88%)、白砂糖、木姜子香茅果味酱(≥4%)、干酪、唾液链球菌嗜热亚种、德氏乳杆菌乳亚种、乳脂乳球菌、乳酸乳球菌乳亚种、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳杆菌、两歧双歧杆菌、嗜酸乳杆菌、鼠李糖乳杆菌 致敏原:本品含有乳及乳制品 提示:少量乳清析出为正常现象,开启后请立即食用 保质期:21天 贮存条件:冷藏 地址:浙江省杭州市余杭区余杭街道云联路2-150号A3号楼302室 服务热线:400-685-1777 委托方:杭州认养一头牛生物科技有限公司 受托方:江苏一鸣食品有限公司 地址:江苏省常州市金坛区荆元路88号 产地:江苏常州 食品生产许可证编号:SC10532048201417 *本品含\"德氏乳杆菌保加利亚亚种\"等九种活性益生菌。出厂时益生菌含量≥5.0×10^8CFU/100g 营养成分表 项目 每100g NRV% 能量 404kJ 5% 蛋白质 2.9g 5% 脂肪 3.6g 6% -饱和脂肪 2.4g 12% 碳水化合物 13.0g 4% 糖 12.8g 3% 钠 50mg 12% 钙 95mg 儿童青少年应避免过量摄入盐油糖 配料干干净净 6978582691494",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "认养一头牛风味发酵乳，生牛乳≥88%，含益生菌，保质期21天，配料干净，需冷藏贮存",
-        "ocrText": "产品类型:风味发酵乳 产品标准号:GB 配料:生牛乳(≥88%)、白砂糖、木姜子香茅果味酱(≥4%)、干酪、唾液链球菌嗜热亚种、德氏乳杆菌乳亚种、乳脂乳球菌、乳酸乳球菌乳亚种、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳杆菌、两歧双歧杆菌、嗜酸乳杆菌、鼠李糖乳杆菌 致敏原:本品含有乳及乳制品 提示:少量乳清析出为正常现象,开启后请立即食用 保质期:21天 贮存条件:冷藏 地址:浙江省杭州市余杭区余杭街道云联路2-150号A3号楼302室 服务热线:400-685-1777 委托方:杭州认养一头牛生物科技有限公司 受托方:江苏一鸣食品有限公司 地址:江苏省常州市金坛区荆元路88号 产地:江苏常州 食品生产许可证编号:SC10532048201417 *本品含\"德氏乳杆菌保加利亚亚种\"等九种活性益生菌。出厂时益生菌含量≥5.0×10^8CFU/100g 营养成分表 项目 每100g NRV% 能量 404kJ 5% 蛋白质 2.9g 5% 脂肪 3.6g 6% -饱和脂肪 2.4g 12% 碳水化合物 13.0g 4% 糖 12.8g 3% 钠 50mg 12% 钙 95mg 儿童青少年应避免过量摄入盐油糖 配料干干净净 6978582691494",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 50,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 52,
@@ -3873,32 +1829,7 @@
       "layout_role": "",
       "imageContentSummary": "该商品为风味发酵乳，生牛乳含量≥88%，含九种活性益生菌，益生菌含量≥5.0×10^9CFU/100g，保质期约21天",
       "imageOcrText": "88%高含量生牛乳，产品类型:风味发酵乳 产品标准号 果味酱(≥4%)、干酪、唾液链球菌嗜乳亚种、长双歧杆菌婴儿亚种、长双歧歧杆菌、嗜酸乳杆菌、鼠李糖乳酪杆菌 致 藏 提示:少量乳清析出为正常现象,开启后请 地址:浙江省杭 302室 服务热线: 有限公司 地址:江苏省常州市金坛区 省常州市 食品生产许可证编号:SC10532048201417 *本品含\"德氏乳杆菌保加利亚亚种\"等九种活性益生菌。出厂时 益生菌含量≥5.0×10^9CFU/100g 营养成分表 项目 每100g NRV% 能量 404kJ 5% 蛋白质 2.9g 5% 脂肪 3.6g 6% -饱和脂肪 2.4g 12% 碳水化合物 13.0g 4% -糖 12.8g 钠 50mg 3% 钙 95mg 12% 配料:生牛乳(≥88%)、白砂糖、木姜 杆菌保加利亚亚种、乳脂乳球菌、乳酸 双歧杆菌乳亚种、副干酪乳酪杆 乳制品 保质期:21 产地:江苏 6978582691494",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "该商品为风味发酵乳，生牛乳含量≥88%，含九种活性益生菌，益生菌含量≥5.0×10^9CFU/100g，保质期约21天",
-        "ocrText": "88%高含量生牛乳，产品类型:风味发酵乳 产品标准号 果味酱(≥4%)、干酪、唾液链球菌嗜乳亚种、长双歧杆菌婴儿亚种、长双歧歧杆菌、嗜酸乳杆菌、鼠李糖乳酪杆菌 致 藏 提示:少量乳清析出为正常现象,开启后请 地址:浙江省杭 302室 服务热线: 有限公司 地址:江苏省常州市金坛区 省常州市 食品生产许可证编号:SC10532048201417 *本品含\"德氏乳杆菌保加利亚亚种\"等九种活性益生菌。出厂时 益生菌含量≥5.0×10^9CFU/100g 营养成分表 项目 每100g NRV% 能量 404kJ 5% 蛋白质 2.9g 5% 脂肪 3.6g 6% -饱和脂肪 2.4g 12% 碳水化合物 13.0g 4% -糖 12.8g 钠 50mg 3% 钙 95mg 12% 配料:生牛乳(≥88%)、白砂糖、木姜 杆菌保加利亚亚种、乳脂乳球菌、乳酸 双歧杆菌乳亚种、副干酪乳酪杆 乳制品 保质期:21 产地:江苏 6978582691494",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 51,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 53,
@@ -3913,32 +1844,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养一头牛；商品：每日吨吨木姜子香茅味风味发酵乳；核心卖点：含9种活性益生菌；规格：200g；背景：浅米色纹理纸；产品置于奶液波纹台面上，视觉清新。",
       "imageOcrText": "一瓶配备了9种活性益生菌[1]\n德氏乳杆菌保加利亚亚种\n从经典的德氏乳杆菌保加利亚亚种\n到明星的双歧杆菌\n它们像每日的隐形伙伴\n温和守护你的身体节律\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n9\n风味发酵乳\n净含量:200g\n9种活性益生菌 | 生产日期/保质期至:见瓶盖\n长双歧杆菌婴儿亚种\n鼠李糖乳酪杆菌\n长双歧杆菌长亚种\n唾液链球菌嗜热亚种\n副干酪乳酪杆菌\n嗜酸乳杆菌\n两歧双歧杆菌\n动物双歧杆菌乳亚种",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "品牌：认养一头牛；商品：每日吨吨木姜子香茅味风味发酵乳；核心卖点：含9种活性益生菌；规格：200g；背景：浅米色纹理纸；产品置于奶液波纹台面上，视觉清新。",
-        "ocrText": "一瓶配备了9种活性益生菌[1]\n德氏乳杆菌保加利亚亚种\n从经典的德氏乳杆菌保加利亚亚种\n到明星的双歧杆菌\n它们像每日的隐形伙伴\n温和守护你的身体节律\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n9\n风味发酵乳\n净含量:200g\n9种活性益生菌 | 生产日期/保质期至:见瓶盖\n长双歧杆菌婴儿亚种\n鼠李糖乳酪杆菌\n长双歧杆菌长亚种\n唾液链球菌嗜热亚种\n副干酪乳酪杆菌\n嗜酸乳杆菌\n两歧双歧杆菌\n动物双歧杆菌乳亚种",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 52,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 54,
@@ -3953,32 +1859,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养一头牛；产品：每日吨吨木姜子香茅味风味发酵乳；规格：200g；卖点：9种活性益生菌；场景：手持展示，背景有白色容器；视觉：白色瓶身配绿色瓶盖，光线明亮",
       "imageOcrText": "单瓶足足9种活性益生菌\n认养1头牛 ADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n9",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养一头牛；产品：每日吨吨木姜子香茅味风味发酵乳；规格：200g；卖点：9种活性益生菌；场景：手持展示，背景有白色容器；视觉：白色瓶身配绿色瓶盖，光线明亮",
-        "ocrText": "单瓶足足9种活性益生菌\n认养1头牛 ADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n9",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 53,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 55,
@@ -3993,32 +1874,7 @@
       "layout_role": "hero",
       "imageContentSummary": "图中展示的是添加9种活性益生菌的乳制品，一只手拿着透明玻璃杯，杯内装着浓稠的奶白色乳制品，白色勺子正将乳制品倒入杯中；背景是木质置物架，摆放着同款带绿色瓶盖的产品瓶，核心突出产品的质地与益生菌卖点。",
       "imageOcrText": "再搭配9种活性益生菌\nWith 9 active probiotics",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "图中展示的是添加9种活性益生菌的乳制品，一只手拿着透明玻璃杯，杯内装着浓稠的奶白色乳制品，白色勺子正将乳制品倒入杯中；背景是木质置物架，摆放着同款带绿色瓶盖的产品瓶，核心突出产品的质地与益生菌卖点。",
-        "ocrText": "再搭配9种活性益生菌\nWith 9 active probiotics",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 54,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 56,
@@ -4034,32 +1890,7 @@
       "layout_role": "detail",
       "imageContentSummary": "品牌为每日吨吨，主打解腻、解闷、解馋，适用于大餐解腻、休闲小憩、朋友分享等场景",
       "imageOcrText": "解腻·解闷·解馋\n一瓶纵享\n大餐解腻\n认养一头牛\n每日吨吨\n9\n净含量200g\n休闲小憩\n认养一头牛\n每日吨吨\n9\n净含量200g\n朋友分享\n认养一头牛\n每日吨吨\n9\n净含量200g",
-      "suggestedModule": "scene",
-      "contentAnalysis": {
-        "summary": "品牌为每日吨吨，主打解腻、解闷、解馋，适用于大餐解腻、休闲小憩、朋友分享等场景",
-        "ocrText": "解腻·解闷·解馋\n一瓶纵享\n大餐解腻\n认养一头牛\n每日吨吨\n9\n净含量200g\n休闲小憩\n认养一头牛\n每日吨吨\n9\n净含量200g\n朋友分享\n认养一头牛\n每日吨吨\n9\n净含量200g",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 55,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "scene"
     },
     {
       "id": 57,
@@ -4075,32 +1906,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：每日吨吨；场景：下午茶搭配甜品；物品：4瓶每日吨吨饮品、1碗白色液体、2块抹茶红豆夹心面包；宣传语：夏天冰镇搭配甜品是超绝下午茶；视觉：清新柔和的色调，明亮光线。",
       "imageOcrText": "每日吨吨\n9\n夏天一定要冰镇一下，搭配甜品就是超绝下午茶",
-      "suggestedModule": "scene",
-      "contentAnalysis": {
-        "summary": "品牌：每日吨吨；场景：下午茶搭配甜品；物品：4瓶每日吨吨饮品、1碗白色液体、2块抹茶红豆夹心面包；宣传语：夏天冰镇搭配甜品是超绝下午茶；视觉：清新柔和的色调，明亮光线。",
-        "ocrText": "每日吨吨\n9\n夏天一定要冰镇一下，搭配甜品就是超绝下午茶",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 56,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "scene"
     },
     {
       "id": 58,
@@ -4115,32 +1921,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养1头牛，商品：每日吨吨木姜子香茅味风味发酵乳，规格：200g，卖点：A2生牛乳发酵、9种活性益生菌",
       "imageOcrText": "A2生牛乳发酵再加9种益生菌\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9\n9种活性益生菌",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养1头牛，商品：每日吨吨木姜子香茅味风味发酵乳，规格：200g，卖点：A2生牛乳发酵、9种活性益生菌",
-        "ocrText": "A2生牛乳发酵再加9种益生菌\n认养1头牛\nADOPT A COW\n每日吨吨\n木姜子香茅味\n风味发酵乳\n净含量:200g\n9\n9种活性益生菌",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 57,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 59,
@@ -4155,32 +1936,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌为认养1头牛，商品是每日吨吨木姜子香茅味风味发酵乳，净含量200g，卖点含9种活性益生菌，图中展示了实物酸奶瓶及装了酸奶的玻璃杯，背景还有同款产品，整体为商品展示图。",
       "imageOcrText": "认养1头牛 每日吨吨 9 木姜子香茅味 风味发酵乳 净含量200g 9种活性益生菌 no anxiety just lemon 直接刷新我对酸奶的认知",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌为认养1头牛，商品是每日吨吨木姜子香茅味风味发酵乳，净含量200g，卖点含9种活性益生菌，图中展示了实物酸奶瓶及装了酸奶的玻璃杯，背景还有同款产品，整体为商品展示图。",
-        "ocrText": "认养1头牛 每日吨吨 9 木姜子香茅味 风味发酵乳 净含量200g 9种活性益生菌 no anxiety just lemon 直接刷新我对酸奶的认知",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 58,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 60,
@@ -4195,32 +1951,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌为认养一头牛，产品是每日吨吨木姜子香茅味风味发酵乳，共2瓶，每瓶净含量200g，卖点含9种活性益生菌，被手握着展示，背景是木质地板。",
       "imageOcrText": "认养一头牛\nADOPT A COW\n9\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n每日吨吨\n风味发酵乳\n木姜子香茅味\n净含量:200g",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌为认养一头牛，产品是每日吨吨木姜子香茅味风味发酵乳，共2瓶，每瓶净含量200g，卖点含9种活性益生菌，被手握着展示，背景是木质地板。",
-        "ocrText": "认养一头牛\nADOPT A COW\n9\n9种活性益生菌\n生产日期/保质期至:见瓶盖\n每日吨吨\n风味发酵乳\n木姜子香茅味\n净含量:200g",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 59,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 61,
@@ -4236,32 +1967,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌为认养1头牛，核心卖点是甄选纯种A2β-酪蛋白基因奶牛，纯正该基因的奶牛仅占约30%，用于宣传奶源品质；视觉采用浅蓝背景搭配黑白奶牛形象，突出奶源优势。",
       "imageOcrText": "ADOPT A COW，甄选纯种，A2 BETA-CASEIN GENOTYPE COW，(A2β-酪蛋白)，基因奶牛，只有约30%[3]，纯正A2β-酪蛋白基因奶牛，A1β-酪蛋白型，A1β-酪蛋白-A2β-酪蛋白，认养1头牛，ADOPT A COW",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "品牌为认养1头牛，核心卖点是甄选纯种A2β-酪蛋白基因奶牛，纯正该基因的奶牛仅占约30%，用于宣传奶源品质；视觉采用浅蓝背景搭配黑白奶牛形象，突出奶源优势。",
-        "ocrText": "ADOPT A COW，甄选纯种，A2 BETA-CASEIN GENOTYPE COW，(A2β-酪蛋白)，基因奶牛，只有约30%[3]，纯正A2β-酪蛋白基因奶牛，A1β-酪蛋白型，A1β-酪蛋白-A2β-酪蛋白，认养1头牛，ADOPT A COW",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 60,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 62,
@@ -4276,32 +1982,7 @@
       "layout_role": "detail",
       "imageContentSummary": "品牌认养一头牛，获弗若斯特沙利文认证2022年中国A2β-酪蛋白纯牛奶销售额第一，2023年4月颁发，来源为沙利文独立市场研究",
       "imageOcrText": "认养一头牛在中国A2 β-酪蛋白纯牛奶行业市场地位确认证书\nA2 β-酪蛋白纯牛奶\n全国销售额第一\n认养一头牛在2022年中国A2 β-酪蛋白纯牛奶行业销售额全国第一\n来源：弗若斯特沙利文基于中国A2 β-酪蛋白纯牛奶行业独立市场研究\n60\nFROST & SULLIVAN\n沙利文\n颁发日期\n2023年4月\nFS-2023-MPC-56798\n弗若斯特沙利文有限公司",
-      "suggestedModule": "brand",
-      "contentAnalysis": {
-        "summary": "品牌认养一头牛，获弗若斯特沙利文认证2022年中国A2β-酪蛋白纯牛奶销售额第一，2023年4月颁发，来源为沙利文独立市场研究",
-        "ocrText": "认养一头牛在中国A2 β-酪蛋白纯牛奶行业市场地位确认证书\nA2 β-酪蛋白纯牛奶\n全国销售额第一\n认养一头牛在2022年中国A2 β-酪蛋白纯牛奶行业销售额全国第一\n来源：弗若斯特沙利文基于中国A2 β-酪蛋白纯牛奶行业独立市场研究\n60\nFROST & SULLIVAN\n沙利文\n颁发日期\n2023年4月\nFS-2023-MPC-56798\n弗若斯特沙利文有限公司",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 61,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "brand"
     },
     {
       "id": 63,
@@ -4317,32 +1998,7 @@
       "layout_role": "hero",
       "imageContentSummary": "A2β-酪蛋白牛奶团体标准发布活动现场，背景板和展示牌标注相关标准名称，9位人物站在舞台上，上方有舞台灯光。",
       "imageOcrText": "强产业·聚品类·领标杆\n内首个公开《A2β-酪蛋白牛奶》团体标准\n国内首个公开《A2β-酪蛋白牛奶》团体标准",
-      "suggestedModule": "trust",
-      "contentAnalysis": {
-        "summary": "A2β-酪蛋白牛奶团体标准发布活动现场，背景板和展示牌标注相关标准名称，9位人物站在舞台上，上方有舞台灯光。",
-        "ocrText": "强产业·聚品类·领标杆\n内首个公开《A2β-酪蛋白牛奶》团体标准\n国内首个公开《A2β-酪蛋白牛奶》团体标准",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 62,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "trust"
     },
     {
       "id": 64,
@@ -4358,32 +2014,7 @@
       "layout_role": "detail",
       "imageContentSummary": "图为A2型奶牛延续示意图，原奶牛均为A2型，繁衍出A1等类型，普通牛奶来自A1/A1A2奶牛，A2β-酪蛋白纯牛奶来自A2奶牛",
       "imageOcrText": "A2型奶牛延续示意图\n原先所有的奶牛都是A2型奶牛\nA1\nA1A2\nA2\n数千年繁衍，出现A1型奶牛并成为主要奶牛品种\n普通牛奶\nA2 milk\nA2β-酪蛋白纯牛奶",
-      "suggestedModule": "origin",
-      "contentAnalysis": {
-        "summary": "图为A2型奶牛延续示意图，原奶牛均为A2型，繁衍出A1等类型，普通牛奶来自A1/A1A2奶牛，A2β-酪蛋白纯牛奶来自A2奶牛",
-        "ocrText": "A2型奶牛延续示意图\n原先所有的奶牛都是A2型奶牛\nA1\nA1A2\nA2\n数千年繁衍，出现A1型奶牛并成为主要奶牛品种\n普通牛奶\nA2 milk\nA2β-酪蛋白纯牛奶",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 63,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "origin"
     },
     {
       "id": 65,
@@ -4399,32 +2030,7 @@
       "layout_role": "",
       "imageContentSummary": "A2蛋白科普，A2-β酪蛋白是天然原型，不生成BCM-7，适合肠胃娇弱、转奶期宝宝，纯A2奶牛珍稀",
       "imageOcrText": "A2蛋白科普指南 什么是A2蛋白：A2蛋白是A2-β酪蛋白。牛奶中β酪蛋白约占蛋白总量的30%是氨基酸的重要来源，A2-β酪蛋白是现代奶牛β-酪蛋白的天然原型。20%乳清蛋白，80%酪蛋白，牛奶蛋白质，β酪蛋白分A1、A2；A2蛋白有什么好处：A2β-酪蛋白不会生成BCM-7，对乳糖不耐受的宝宝有一定的作用；A2蛋白VSA1蛋白：A1蛋白：比较普遍，黄金奶源地的牛奶都可以用来做奶源，适合容易造成肠胃敏感等症状；A2蛋白：西方牛群中只有30%是纯A2奶牛，非常珍稀，很适合肠胃娇弱、转奶期的宝宝；A1奶牛，A1/A2、A2奶牛，奶牛发生基因突变只有25~30%含有A2蛋白，混合饲养的牛群产普通牛奶，a2牛奶只含A2蛋白",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "A2蛋白科普，A2-β酪蛋白是天然原型，不生成BCM-7，适合肠胃娇弱、转奶期宝宝，纯A2奶牛珍稀",
-        "ocrText": "A2蛋白科普指南 什么是A2蛋白：A2蛋白是A2-β酪蛋白。牛奶中β酪蛋白约占蛋白总量的30%是氨基酸的重要来源，A2-β酪蛋白是现代奶牛β-酪蛋白的天然原型。20%乳清蛋白，80%酪蛋白，牛奶蛋白质，β酪蛋白分A1、A2；A2蛋白有什么好处：A2β-酪蛋白不会生成BCM-7，对乳糖不耐受的宝宝有一定的作用；A2蛋白VSA1蛋白：A1蛋白：比较普遍，黄金奶源地的牛奶都可以用来做奶源，适合容易造成肠胃敏感等症状；A2蛋白：西方牛群中只有30%是纯A2奶牛，非常珍稀，很适合肠胃娇弱、转奶期的宝宝；A1奶牛，A1/A2、A2奶牛，奶牛发生基因突变只有25~30%含有A2蛋白，混合饲养的牛群产普通牛奶，a2牛奶只含A2蛋白",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 64,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 66,
@@ -4440,32 +2046,7 @@
       "layout_role": "",
       "imageContentSummary": "品牌认养1头牛，产品为每日吨吨木姜子香茅味风味发酵乳，净含量200g，含9种活性益生菌",
       "imageOcrText": "认养1头牛 ADOPT A COW 每日吨吨 木姜子香茅味 9 风味发酵乳 净含量:200g 9种活性益生菌 | 生产日期/保质期至:见瓶盖",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌认养1头牛，产品为每日吨吨木姜子香茅味风味发酵乳，净含量200g，含9种活性益生菌",
-        "ocrText": "认养1头牛 ADOPT A COW 每日吨吨 木姜子香茅味 9 风味发酵乳 净含量:200g 9种活性益生菌 | 生产日期/保质期至:见瓶盖",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 65,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 67,
@@ -4481,32 +2062,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅味风味发酵乳；卖点：9种活性益生菌、A2β生牛乳发酵；场景：前景手持产品，背景为木质货架；视觉：白瓶绿盖，光线明亮，主体突出。",
       "imageOcrText": "认养1头牛 ADOPT A COW 每日吨吨 木姜子香茅味 风味发酵乳 9种活性益生菌 生产日期/保质期至:见瓶盖 木姜子香茅酸奶 A2β生牛乳发酵 每日吨吨 9",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌：认养1头牛；产品：每日吨吨木姜子香茅味风味发酵乳；卖点：9种活性益生菌、A2β生牛乳发酵；场景：前景手持产品，背景为木质货架；视觉：白瓶绿盖，光线明亮，主体突出。",
-        "ocrText": "认养1头牛 ADOPT A COW 每日吨吨 木姜子香茅味 风味发酵乳 9种活性益生菌 生产日期/保质期至:见瓶盖 木姜子香茅酸奶 A2β生牛乳发酵 每日吨吨 9",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 66,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 68,
@@ -4523,32 +2079,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌认养一头牛，产品每日吨吨，卖点为奶香十足、醇厚丝滑、口感清新",
       "imageOcrText": "认养一头牛、每日吨吨、一口下去奶香十足醇厚丝滑口感巨清新",
-      "suggestedModule": "taste",
-      "contentAnalysis": {
-        "summary": "品牌认养一头牛，产品每日吨吨，卖点为奶香十足、醇厚丝滑、口感清新",
-        "ocrText": "认养一头牛、每日吨吨、一口下去奶香十足醇厚丝滑口感巨清新",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 67,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "taste"
     },
     {
       "id": 69,
@@ -4564,32 +2095,7 @@
       "layout_role": "",
       "imageContentSummary": "打造“五好奶牛”养育模式，由两位权威养牛专家指导，涵盖出身、饮食、居住、心情、工作五大优质养育要点。",
       "imageOcrText": "打造“五好奶牛”养育模式，权威养牛专家指导；王艳明 博士；中国奶牛舒适度第一人；甄玉国 博士；中国奶牛饲养权威专家；出身好：专业繁育团队，胚胎繁育技术行业前列；吃得好：精选优质饲料喂养，营养师定制四季食谱；住得好：五星级舒适住宿区，宿舍冬暖夏凉；心情好：听着音乐挤奶，还享受“药浴”，每日专属运动社交时间；工作好：SCR项圈实时关怀奶牛健康，奶牛每天上班约50分钟",
-      "suggestedModule": "trust",
-      "contentAnalysis": {
-        "summary": "打造“五好奶牛”养育模式，由两位权威养牛专家指导，涵盖出身、饮食、居住、心情、工作五大优质养育要点。",
-        "ocrText": "打造“五好奶牛”养育模式，权威养牛专家指导；王艳明 博士；中国奶牛舒适度第一人；甄玉国 博士；中国奶牛饲养权威专家；出身好：专业繁育团队，胚胎繁育技术行业前列；吃得好：精选优质饲料喂养，营养师定制四季食谱；住得好：五星级舒适住宿区，宿舍冬暖夏凉；心情好：听着音乐挤奶，还享受“药浴”，每日专属运动社交时间；工作好：SCR项圈实时关怀奶牛健康，奶牛每天上班约50分钟",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 68,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "trust"
     },
     {
       "id": 70,
@@ -4605,32 +2111,7 @@
       "layout_role": "detail",
       "imageContentSummary": "该商品获GAP一级牧场认证，原奶品质优于欧盟标准，通过SGS24项质检，采用顺丰京东冷链直送",
       "imageOcrText": "GAP\n一级牧场认证\n牧场通过GAP一级认证\n并建立A2 β-酪蛋白奶源监测体系\n01\n原奶品质\n优于欧盟标准\n体细胞数、微生物指标\n优于欧盟标准\n02\nSGS\n权威质检\n通过SGS国际权威质量检测\n共计24项核心项目\n03\n优质物流\n冷链直送\n线上电商采用顺丰、京东等优质物流\n鲜奶冷链直达到家\n04",
-      "suggestedModule": "trust",
-      "contentAnalysis": {
-        "summary": "该商品获GAP一级牧场认证，原奶品质优于欧盟标准，通过SGS24项质检，采用顺丰京东冷链直送",
-        "ocrText": "GAP\n一级牧场认证\n牧场通过GAP一级认证\n并建立A2 β-酪蛋白奶源监测体系\n01\n原奶品质\n优于欧盟标准\n体细胞数、微生物指标\n优于欧盟标准\n02\nSGS\n权威质检\n通过SGS国际权威质量检测\n共计24项核心项目\n03\n优质物流\n冷链直送\n线上电商采用顺丰、京东等优质物流\n鲜奶冷链直达到家\n04",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 69,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "trust"
     },
     {
       "id": 71,
@@ -4646,32 +2127,7 @@
       "layout_role": "",
       "imageContentSummary": "品牌认养1头牛，央视网溯源，牛每日伙食费约80元，有牧场、工厂、产品认证，主打犟心好奶，获央视认证",
       "imageOcrText": "认养1头牛 ADOPT A COW 央视网带你溯源认养一头牛牧场工厂 每天伙食费≈80元 认养一头牛牧场-犊牛岛 认养一头牛牧场-荷斯坦牛舍 认养一头牛工厂-产品线 牧场认证 工厂认证 产品认证 犟心好奶 央视认证",
-      "suggestedModule": "trust",
-      "contentAnalysis": {
-        "summary": "品牌认养1头牛，央视网溯源，牛每日伙食费约80元，有牧场、工厂、产品认证，主打犟心好奶，获央视认证",
-        "ocrText": "认养1头牛 ADOPT A COW 央视网带你溯源认养一头牛牧场工厂 每天伙食费≈80元 认养一头牛牧场-犊牛岛 认养一头牛牧场-荷斯坦牛舍 认养一头牛工厂-产品线 牧场认证 工厂认证 产品认证 犟心好奶 央视认证",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 70,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "trust"
     },
     {
       "id": 72,
@@ -4687,32 +2143,7 @@
       "layout_role": "detail",
       "imageContentSummary": "品牌认养一头牛，央视直播其A2型奶牛限定牧场，获央视认证，主打A2型奶牛，专业筛选、单独牛舍等优质养牛卖点",
       "imageOcrText": "认养1头牛 ADOPT A COW 央视直播A2型奶牛限定牧场 认养一头牛 奶牛养得好，牛奶才会好 A1型 A1A2型 A2型 专业筛选A2型奶牛 DNA层层筛选 A2型 奶牛圈层化生活 A2型 专业A2型奶牛饲养员 我们替用户养牛 专业取奶 听着音乐产牛奶 央视网主持人黄鹤 央视主持人亲自探场直播 A2牛单独牛舍 CCTV 央视认证 新牛年",
-      "suggestedModule": "brand",
-      "contentAnalysis": {
-        "summary": "品牌认养一头牛，央视直播其A2型奶牛限定牧场，获央视认证，主打A2型奶牛，专业筛选、单独牛舍等优质养牛卖点",
-        "ocrText": "认养1头牛 ADOPT A COW 央视直播A2型奶牛限定牧场 认养一头牛 奶牛养得好，牛奶才会好 A1型 A1A2型 A2型 专业筛选A2型奶牛 DNA层层筛选 A2型 奶牛圈层化生活 A2型 专业A2型奶牛饲养员 我们替用户养牛 专业取奶 听着音乐产牛奶 央视网主持人黄鹤 央视主持人亲自探场直播 A2牛单独牛舍 CCTV 央视认证 新牛年",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 71,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "brand"
     },
     {
       "id": 73,
@@ -4727,32 +2158,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌：认养1头牛；场景：A2牛专属牧场专栏饲养区；视觉：绿色宣传牌搭配卡通奶牛，背景是整齐的现代化奶牛棚舍，氛围专业自然。",
       "imageOcrText": "认养1头牛 ADOPT A COW 专属牧场 专栏饲养A2牛",
-      "suggestedModule": "origin",
-      "contentAnalysis": {
-        "summary": "品牌：认养1头牛；场景：A2牛专属牧场专栏饲养区；视觉：绿色宣传牌搭配卡通奶牛，背景是整齐的现代化奶牛棚舍，氛围专业自然。",
-        "ocrText": "认养1头牛 ADOPT A COW 专属牧场 专栏饲养A2牛",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 72,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "origin"
     },
     {
       "id": 74,
@@ -4768,32 +2174,7 @@
       "layout_role": "detail",
       "imageContentSummary": "品牌认养1头牛，卖点：奶牛澳洲血统可查系谱，每日伙食费约80元，核心为养好牛出好奶",
       "imageOcrText": "Adopt A Cow\n奶牛养得好，牛奶才会好\n出身好01\n每头牛都是澳洲血统，均可查到系谱档案\n吃的好02\n每头牛每天伙食费约80元\n认养一头牛牧场的牛档案袋\nAdopt A Cow\nCOW\n认养1头牛\nADOPT A COW",
-      "suggestedModule": "origin",
-      "contentAnalysis": {
-        "summary": "品牌认养1头牛，卖点：奶牛澳洲血统可查系谱，每日伙食费约80元，核心为养好牛出好奶",
-        "ocrText": "Adopt A Cow\n奶牛养得好，牛奶才会好\n出身好01\n每头牛都是澳洲血统，均可查到系谱档案\n吃的好02\n每头牛每天伙食费约80元\n认养一头牛牧场的牛档案袋\nAdopt A Cow\nCOW\n认养1头牛\nADOPT A COW",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 73,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "origin"
     },
     {
       "id": 75,
@@ -4808,32 +2189,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌牧场宣传图，展示奶牛的居住（专属场所）与工作（休假、体检、智能项圈）条件，场景为户外牧场，色调清新自然。",
       "imageOcrText": "住的好 03\n每头牛均配有“保孕院”、“产房”、“幼儿园”\n工作好 04\n每头牛均享受定期休假和体检\n每头牛都匹配智能项圈，及时掌握健康状况",
-      "suggestedModule": "brand",
-      "contentAnalysis": {
-        "summary": "品牌牧场宣传图，展示奶牛的居住（专属场所）与工作（休假、体检、智能项圈）条件，场景为户外牧场，色调清新自然。",
-        "ocrText": "住的好 03\n每头牛均配有“保孕院”、“产房”、“幼儿园”\n工作好 04\n每头牛均享受定期休假和体检\n每头牛都匹配智能项圈，及时掌握健康状况",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 74,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "brand"
     },
     {
       "id": 76,
@@ -4850,32 +2206,7 @@
       "layout_role": "detail",
       "imageContentSummary": "图中呈现奶牛护理场景，标注“心情好05”，核心卖点为每头牛都听音乐、做“SPA”、享药浴，体现优质饲养护理。",
       "imageOcrText": "心情好05\n每头牛都听音乐、做“SPA”、享药浴",
-      "suggestedModule": "origin",
-      "contentAnalysis": {
-        "summary": "图中呈现奶牛护理场景，标注“心情好05”，核心卖点为每头牛都听音乐、做“SPA”、享药浴，体现优质饲养护理。",
-        "ocrText": "心情好05\n每头牛都听音乐、做“SPA”、享药浴",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 75,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "origin"
     },
     {
       "id": 77,
@@ -4892,32 +2223,7 @@
       "layout_role": "hero",
       "imageContentSummary": "商品为打包干草捆，白色包装，露出黄褐色干草，堆放在室内仓库，侧面可见手写“K草包”字样。",
       "imageOcrText": "K草包（其余文字模糊无法识别）",
-      "suggestedModule": "origin",
-      "contentAnalysis": {
-        "summary": "商品为打包干草捆，白色包装，露出黄褐色干草，堆放在室内仓库，侧面可见手写“K草包”字样。",
-        "ocrText": "K草包（其余文字模糊无法识别）",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 76,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "origin"
     },
     {
       "id": 78,
@@ -4932,32 +2238,7 @@
       "layout_role": "hero",
       "imageContentSummary": "现代化牧场挤奶车间场景，A2型奶牛专属挤奶转盘，黑白花奶牛在转盘上，工作人员在场，环境为带采光顶的牧场厂房。",
       "imageOcrText": "A型奶牛 专属挤奶转盘\nA2",
-      "suggestedModule": "origin",
-      "contentAnalysis": {
-        "summary": "现代化牧场挤奶车间场景，A2型奶牛专属挤奶转盘，黑白花奶牛在转盘上，工作人员在场，环境为带采光顶的牧场厂房。",
-        "ocrText": "A型奶牛 专属挤奶转盘\nA2",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 77,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "origin"
     },
     {
       "id": 79,
@@ -4973,32 +2254,7 @@
       "layout_role": "",
       "imageContentSummary": "数智化养牛，挤奶效率亚洲第一，国家级奶牛标准化示范场，具备高效牛群管理、牛终身档案等数字化管理卖点",
       "imageOcrText": "数智化养牛质效双优 护航一杯好奶的诞生；挤奶效率亚洲第一™；国家级奶牛标准化示范场；每天节约六十分钟|数字工具提升青贮效率 线上青贮管理系统，收储效率提升20%，饲料品控提升25%；一个人平均养50头牛|高效牛群管理 SCR智能项圈实时管理，埃弗利拉低位转盘挤奶达700头/小时；每头牛都有\"终身档案\"|九大系统数据互联互通 牧业牛群数据管理平台打破数据孤岛，与SAP财务系统深度对接",
-      "suggestedModule": "trust",
-      "contentAnalysis": {
-        "summary": "数智化养牛，挤奶效率亚洲第一，国家级奶牛标准化示范场，具备高效牛群管理、牛终身档案等数字化管理卖点",
-        "ocrText": "数智化养牛质效双优 护航一杯好奶的诞生；挤奶效率亚洲第一™；国家级奶牛标准化示范场；每天节约六十分钟|数字工具提升青贮效率 线上青贮管理系统，收储效率提升20%，饲料品控提升25%；一个人平均养50头牛|高效牛群管理 SCR智能项圈实时管理，埃弗利拉低位转盘挤奶达700头/小时；每头牛都有\"终身档案\"|九大系统数据互联互通 牧业牛群数据管理平台打破数据孤岛，与SAP财务系统深度对接",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 78,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "trust"
     },
     {
       "id": 80,
@@ -5013,32 +2269,7 @@
       "layout_role": "hero",
       "imageContentSummary": "品牌为认养一头牛，场景是其河北智慧工厂的监控指挥中心，工作人员在操作展示生产数据与监控画面的大屏，环境整洁明亮，属于品牌生产场景。",
       "imageOcrText": "认养一头牛·河北智慧工厂 安全出口",
-      "suggestedModule": "brand",
-      "contentAnalysis": {
-        "summary": "品牌为认养一头牛，场景是其河北智慧工厂的监控指挥中心，工作人员在操作展示生产数据与监控画面的大屏，环境整洁明亮，属于品牌生产场景。",
-        "ocrText": "认养一头牛·河北智慧工厂 安全出口",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "product_centered"
-      },
-      "narrativeRole": {
-        "isKeyVisual": true,
-        "importanceInDoc": "critical",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "overview"
-      },
-      "contextInDocument": {
-        "positionInModule": 79,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "hero_image",
-        "suggestedUsageDesc": "适合做大图主视觉"
-      }
+      "suggestedModule": "brand"
     },
     {
       "id": 81,
@@ -5053,32 +2284,7 @@
       "layout_role": "detail",
       "imageContentSummary": "图中为牧场工厂地图展示区域，墙面标注中英文名称，配有大屏地图及触控屏，用于展示牧场工厂分布",
       "imageOcrText": "牧场工厂地图\nCATTLE RANCH FACTORY MAP",
-      "suggestedModule": "brand",
-      "contentAnalysis": {
-        "summary": "图中为牧场工厂地图展示区域，墙面标注中英文名称，配有大屏地图及触控屏，用于展示牧场工厂分布",
-        "ocrText": "牧场工厂地图\nCATTLE RANCH FACTORY MAP",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 80,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "brand"
     },
     {
       "id": 82,
@@ -5094,32 +2300,7 @@
       "layout_role": "",
       "imageContentSummary": "该产品为风味发酵乳，规格200g，保质期21天，需2℃~6℃冷藏，含乳及乳制品",
       "imageOcrText": "产品信息 配 料：生牛乳(≥88%)、白砂糖、木姜子香茅果味酱(≥4%)、干酪、唾液链球菌嗜热亚种、德氏乳杆菌保加利亚亚种、乳脂乳球菌、乳酸乳球菌乳亚种、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳酪杆菌、两歧双歧杆菌、嗜酸乳杆菌、鼠李糖乳酪杆菌 产品类型：风味发酵乳 保质期：21天 产品规格：200g 致敏源：本品含有乳及乳制品 贮存条件：2℃~6℃冷藏保存，开启后尽快饮用完毕 温馨提示：开封后请冷藏保存并尽快饮用，建议喝前摇一摇，如有轻微乳清析出属正常现象，请摇匀后饮用",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "该产品为风味发酵乳，规格200g，保质期21天，需2℃~6℃冷藏，含乳及乳制品",
-        "ocrText": "产品信息 配 料：生牛乳(≥88%)、白砂糖、木姜子香茅果味酱(≥4%)、干酪、唾液链球菌嗜热亚种、德氏乳杆菌保加利亚亚种、乳脂乳球菌、乳酸乳球菌乳亚种、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳酪杆菌、两歧双歧杆菌、嗜酸乳杆菌、鼠李糖乳酪杆菌 产品类型：风味发酵乳 保质期：21天 产品规格：200g 致敏源：本品含有乳及乳制品 贮存条件：2℃~6℃冷藏保存，开启后尽快饮用完毕 温馨提示：开封后请冷藏保存并尽快饮用，建议喝前摇一摇，如有轻微乳清析出属正常现象，请摇匀后饮用",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 81,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 83,
@@ -5135,32 +2316,7 @@
       "layout_role": "",
       "imageContentSummary": "图为营养成分表，标注每100g能量、蛋白质等营养数据，附NRV说明，提示儿童避免过量摄入盐油糖，含相关注释",
       "imageOcrText": "营养成分表\n项目\t每100g\tNRV%\n能量\t404kJ\t5%\n蛋白质\t2.9g\t5%\n脂肪\t3.6g\t6%\n-饱和脂肪\t2.4g\t12%\n碳水化合物\t13.0g\t4%\n-糖\t12.8g\n钠\t50mg\t3%\n钙\t95mg\t12%\n儿童青少年应避免过量摄入盐油糖。\nNRV表示营养素参考值\n[1]益生菌指配料表中除\"乳脂乳球菌、乳酸乳球菌乳亚种\"之外的其他9种菌\n[2]铜仁地区木姜子自1933年起已有产量记载。资料来源：周永健近代以来贵州木姜子利用史略[J].边疆经济与文化,2026,(04):61-67.\n[3]研究表明，A2 β-酪蛋白在消化过程中不会或较少产生引起不适的β-酪啡肽-7，因此亲和营养。资料来源：邱月,鲁杏茹,沈玉,等A2β-酪蛋白的功能性及其在乳制品中应用的研究进展[J].食品工业科技,2023.\n[4]体外模拟实验同等时间，A2 β-酪蛋白比A1 β-酪蛋白的粒径减小比例更大、水解度更高。资料来源：李师行,徐洪涛,李笑,等A1/A2 β-酪蛋白基因型的鉴定及其消化性能的比较[J].食品工业科技,2025,46(05):160-167.",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "图为营养成分表，标注每100g能量、蛋白质等营养数据，附NRV说明，提示儿童避免过量摄入盐油糖，含相关注释",
-        "ocrText": "营养成分表\n项目\t每100g\tNRV%\n能量\t404kJ\t5%\n蛋白质\t2.9g\t5%\n脂肪\t3.6g\t6%\n-饱和脂肪\t2.4g\t12%\n碳水化合物\t13.0g\t4%\n-糖\t12.8g\n钠\t50mg\t3%\n钙\t95mg\t12%\n儿童青少年应避免过量摄入盐油糖。\nNRV表示营养素参考值\n[1]益生菌指配料表中除\"乳脂乳球菌、乳酸乳球菌乳亚种\"之外的其他9种菌\n[2]铜仁地区木姜子自1933年起已有产量记载。资料来源：周永健近代以来贵州木姜子利用史略[J].边疆经济与文化,2026,(04):61-67.\n[3]研究表明，A2 β-酪蛋白在消化过程中不会或较少产生引起不适的β-酪啡肽-7，因此亲和营养。资料来源：邱月,鲁杏茹,沈玉,等A2β-酪蛋白的功能性及其在乳制品中应用的研究进展[J].食品工业科技,2023.\n[4]体外模拟实验同等时间，A2 β-酪蛋白比A1 β-酪蛋白的粒径减小比例更大、水解度更高。资料来源：李师行,徐洪涛,李笑,等A1/A2 β-酪蛋白基因型的鉴定及其消化性能的比较[J].食品工业科技,2025,46(05):160-167.",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 82,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 84,
@@ -5176,32 +2332,7 @@
       "layout_role": "",
       "imageContentSummary": "品牌认养一头牛，生鲜商品不适用7天无理由退货，售后有质量问题理赔等相关规则",
       "imageOcrText": "ADOPT A COW 生鲜商品不适用7天无理由退货说明 尊敬的顾客: 根据《消费者权益保护法》第二十五条 《网络购买商品七日无理由退货暂行办法》第六条之规定: 生鲜商品不适用7天无理由退货。 因生鲜商品的特殊性给您带来不便,敬请谅解! 售后说明 1、根据上述《生鲜商品不适用7天无理由退货说明》,本产品发出后不支持以任何形式的退换货(质量问题除外)。 2、如遇货物缺失、漏发的情况,因产品时效性问题,所以不支持补发。请于签收后24小时内联系客服退差价,一旦超出时间,我们将不予受理。 3、切记低温酸奶遇热容易导致变质,请确保低温保存。 4、对于临期特卖商品,非质量问题不退不换。 5、如出现售后问题,需在签收24小时之内联系客服进行理赔,逾期不予处理。拒收、不走流程、单号丢失等情况一律不在理赔范围内。 ·理赔流程:快递包装箱的单号+问题产品一起拍照留存(快递单号要清晰无误) 6、因客户下单时提供的地址联系方式有误导致的配送延误,不支持退换货,请您在配送期间保持您的电话畅通。 7、商品发出后不支持修改地址,下单请及时确认地址是否无误。 8、本店暂不支持指定日期和延迟发货,拍下的订单会在预售时间内陆续安排发出。 认养一头牛感谢您的理解与支持!",
-      "suggestedModule": "trust",
-      "contentAnalysis": {
-        "summary": "品牌认养一头牛，生鲜商品不适用7天无理由退货，售后有质量问题理赔等相关规则",
-        "ocrText": "ADOPT A COW 生鲜商品不适用7天无理由退货说明 尊敬的顾客: 根据《消费者权益保护法》第二十五条 《网络购买商品七日无理由退货暂行办法》第六条之规定: 生鲜商品不适用7天无理由退货。 因生鲜商品的特殊性给您带来不便,敬请谅解! 售后说明 1、根据上述《生鲜商品不适用7天无理由退货说明》,本产品发出后不支持以任何形式的退换货(质量问题除外)。 2、如遇货物缺失、漏发的情况,因产品时效性问题,所以不支持补发。请于签收后24小时内联系客服退差价,一旦超出时间,我们将不予受理。 3、切记低温酸奶遇热容易导致变质,请确保低温保存。 4、对于临期特卖商品,非质量问题不退不换。 5、如出现售后问题,需在签收24小时之内联系客服进行理赔,逾期不予处理。拒收、不走流程、单号丢失等情况一律不在理赔范围内。 ·理赔流程:快递包装箱的单号+问题产品一起拍照留存(快递单号要清晰无误) 6、因客户下单时提供的地址联系方式有误导致的配送延误,不支持退换货,请您在配送期间保持您的电话畅通。 7、商品发出后不支持修改地址,下单请及时确认地址是否无误。 8、本店暂不支持指定日期和延迟发货,拍下的订单会在预售时间内陆续安排发出。 认养一头牛感谢您的理解与支持!",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 83,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "trust"
     },
     {
       "id": 85,
@@ -5217,32 +2348,7 @@
       "layout_role": "",
       "imageContentSummary": "该产品为风味发酵乳，规格200g，保质期21天，需2-6℃冷藏，含九种活性益生菌",
       "imageOcrText": "产品信息\n配料：生牛乳(≥92%)、白砂糖、干酪、唾液链球菌嗜热亚种、德氏乳杆菌保加利亚亚种、乳脂乳球菌、乳酸乳球菌乳亚种、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳酪杆菌、两歧双歧杆菌、嗜酸乳杆菌、鼠李糖乳酪杆菌\n产品类型：风味发酵乳\n保质期：21天\n产品规格：200g\n贮存条件：2℃~6℃冷藏保存，开启后尽快饮用完毕\n温馨提示：开封后请冷藏保存并尽快饮用，建议喝前摇一摇，如有轻微乳清析出属正常现象，请摇匀后饮用\n营养成分表\n项目 每100g NRV%\n能量 379kJ 5%\n蛋白质 3.0g 5%\n脂肪 3.8g 6%\n碳水化合物 11.0g 4%\n钠 50mg 3%\n钙 100mg 13%\nNRV表示营养素参考值\n[1]本品含\"德氏乳杆菌保加利亚亚种\"等九种活性益生菌。\n[2]鸡蛋按50g可食用部分，参考《中国食物成分表第6版》中鸡蛋蛋白质值、钙含量计算。\n[3]研究表明，A2β-酪蛋白在消化过程中不会或较少产生引起不适的β-酪啡肽-7，因此亲和营养。资料来源：邱月,鲁杏茹,沈玉等.A2β-酪蛋白的功能性及其在乳制品中应用的研究进展[J].食品工业科技,2023.\n[4]体外模拟实验同等时间，A2β-酪蛋白比A1β-酪蛋白的粒径减小比例更大、水解度更高。资料来源：李师行,徐洪涛,李笑等.A1/A2β-酪蛋白基因型的鉴定及其消化性能的比较[J].食品工业科技,2025,46(05):160-167.",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "该产品为风味发酵乳，规格200g，保质期21天，需2-6℃冷藏，含九种活性益生菌",
-        "ocrText": "产品信息\n配料：生牛乳(≥92%)、白砂糖、干酪、唾液链球菌嗜热亚种、德氏乳杆菌保加利亚亚种、乳脂乳球菌、乳酸乳球菌乳亚种、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳酪杆菌、两歧双歧杆菌、嗜酸乳杆菌、鼠李糖乳酪杆菌\n产品类型：风味发酵乳\n保质期：21天\n产品规格：200g\n贮存条件：2℃~6℃冷藏保存，开启后尽快饮用完毕\n温馨提示：开封后请冷藏保存并尽快饮用，建议喝前摇一摇，如有轻微乳清析出属正常现象，请摇匀后饮用\n营养成分表\n项目 每100g NRV%\n能量 379kJ 5%\n蛋白质 3.0g 5%\n脂肪 3.8g 6%\n碳水化合物 11.0g 4%\n钠 50mg 3%\n钙 100mg 13%\nNRV表示营养素参考值\n[1]本品含\"德氏乳杆菌保加利亚亚种\"等九种活性益生菌。\n[2]鸡蛋按50g可食用部分，参考《中国食物成分表第6版》中鸡蛋蛋白质值、钙含量计算。\n[3]研究表明，A2β-酪蛋白在消化过程中不会或较少产生引起不适的β-酪啡肽-7，因此亲和营养。资料来源：邱月,鲁杏茹,沈玉等.A2β-酪蛋白的功能性及其在乳制品中应用的研究进展[J].食品工业科技,2023.\n[4]体外模拟实验同等时间，A2β-酪蛋白比A1β-酪蛋白的粒径减小比例更大、水解度更高。资料来源：李师行,徐洪涛,李笑等.A1/A2β-酪蛋白基因型的鉴定及其消化性能的比较[J].食品工业科技,2025,46(05):160-167.",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "low",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 84,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 86,
@@ -5258,32 +2364,7 @@
       "layout_role": "",
       "imageContentSummary": "该产品为风味发酵乳，规格200g，保质期21天，需2-6℃冷藏，蔗糖未检出，配料含生牛乳及多种益生菌等",
       "imageOcrText": "产品信息 配料：生牛乳(≥95%)、低聚半乳糖(膳食纤维)、干酪、乳糖酶、唾液链球菌嗜热亚种、德氏乳杆菌保加利亚亚种、乳脂乳球菌、乳酸乳球菌乳亚种、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳酪杆菌、两歧双歧杆菌、嗜酸乳杆菌、鼠李糖乳酪杆菌 蔗糖含量：未检出(依据GB5009.8第一法) 产品类型：风味发酵乳 保质期：21天 产品规格：200g 贮存条件：2℃~6℃冷藏保存，开启后尽快饮用完毕 温馨提示：开封后请冷藏保存并尽快饮用，建议喝前摇一摇，如有轻微乳清析出属正常现象，请摇匀后饮用 营养成分表 项目 每100g NRV% 能量 328kJ 4% 蛋白质 3.3g 6% 脂肪 4.5g 8% 碳水化合物 5.5g 2% 膳食纤维 1.5g 6% 钠 50mg 3% 钙 110mg 14% NRV表示营养素参考值",
-      "suggestedModule": "ingredient",
-      "contentAnalysis": {
-        "summary": "该产品为风味发酵乳，规格200g，保质期21天，需2-6℃冷藏，蔗糖未检出，配料含生牛乳及多种益生菌等",
-        "ocrText": "产品信息 配料：生牛乳(≥95%)、低聚半乳糖(膳食纤维)、干酪、乳糖酶、唾液链球菌嗜热亚种、德氏乳杆菌保加利亚亚种、乳脂乳球菌、乳酸乳球菌乳亚种、长双歧杆菌婴儿亚种、长双歧杆菌长亚种、动物双歧杆菌乳亚种、副干酪乳酪杆菌、两歧双歧杆菌、嗜酸乳杆菌、鼠李糖乳酪杆菌 蔗糖含量：未检出(依据GB5009.8第一法) 产品类型：风味发酵乳 保质期：21天 产品规格：200g 贮存条件：2℃~6℃冷藏保存，开启后尽快饮用完毕 温馨提示：开封后请冷藏保存并尽快饮用，建议喝前摇一摇，如有轻微乳清析出属正常现象，请摇匀后饮用 营养成分表 项目 每100g NRV% 能量 328kJ 4% 蛋白质 3.3g 6% 脂肪 4.5g 8% 碳水化合物 5.5g 2% 膳食纤维 1.5g 6% 钠 50mg 3% 钙 110mg 14% NRV表示营养素参考值",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 85,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "ingredient"
     },
     {
       "id": 87,
@@ -5299,1479 +2380,7 @@
       "layout_role": "",
       "imageContentSummary": "品牌为认养一头牛，商品是益生菌风味发酵乳，生鲜类不适用7天无理由退货，售后需签收24小时内处理相关问题",
       "imageOcrText": "ADOPT A COW\n生鲜商品不适用7天无理由退货说明\n尊敬的顾客:\n根据《消费者权益保护法》第二十五条\n《网络购买商品七日无理由退货暂行办法》第六条之\n规定:\n生鲜商品不适用7天无理由退货。\n因生鲜商品的特殊性给您带来不便,敬请谅解!\n售后说明\n1、根据上述《生鲜商品不适用7天无理由退货说明》,认养一头牛每日吨吨益生菌风味发酵乳产品发出后不支持以任何形式的退换货(质量问题除外)。\n2、如遇货物缺失、漏发的情况,因产品时效性问题,所以不支持补发。请于签收后24小时内联系客服退差价,一旦超出时间,我们将不予受理。\n3、切记低温酸奶遇热容易导致变质,请确保低温保存。\n4、对于临期特卖商品,非质量问题不退不换。\n5、如出现售后问题,需在签收24小时之内联系客服进行理赔,逾期不予处理。拒收、不走流程、单号丢失等情况一律不在理赔范围内。\n·理赔流程:快递包装箱的单号+问题产品一起拍照留存(快递单号要清晰无误)\n6、因客户下单时提供的地址联系方式有误导致的配送延误,不支持退换货,请您在配送期间保持您的电话畅通。\n7、商品发出后不支持修改地址,下单请及时确认地址是否无误。\n8、本店暂不支持指定日期和延迟发货,拍下的订单会在预售时间内陆续安排发出。\n认养一头牛感谢您的理解与支持!",
-      "suggestedModule": "trust",
-      "contentAnalysis": {
-        "summary": "品牌为认养一头牛，商品是益生菌风味发酵乳，生鲜类不适用7天无理由退货，售后需签收24小时内处理相关问题",
-        "ocrText": "ADOPT A COW\n生鲜商品不适用7天无理由退货说明\n尊敬的顾客:\n根据《消费者权益保护法》第二十五条\n《网络购买商品七日无理由退货暂行办法》第六条之\n规定:\n生鲜商品不适用7天无理由退货。\n因生鲜商品的特殊性给您带来不便,敬请谅解!\n售后说明\n1、根据上述《生鲜商品不适用7天无理由退货说明》,认养一头牛每日吨吨益生菌风味发酵乳产品发出后不支持以任何形式的退换货(质量问题除外)。\n2、如遇货物缺失、漏发的情况,因产品时效性问题,所以不支持补发。请于签收后24小时内联系客服退差价,一旦超出时间,我们将不予受理。\n3、切记低温酸奶遇热容易导致变质,请确保低温保存。\n4、对于临期特卖商品,非质量问题不退不换。\n5、如出现售后问题,需在签收24小时之内联系客服进行理赔,逾期不予处理。拒收、不走流程、单号丢失等情况一律不在理赔范围内。\n·理赔流程:快递包装箱的单号+问题产品一起拍照留存(快递单号要清晰无误)\n6、因客户下单时提供的地址联系方式有误导致的配送延误,不支持退换货,请您在配送期间保持您的电话畅通。\n7、商品发出后不支持修改地址,下单请及时确认地址是否无误。\n8、本店暂不支持指定日期和延迟发货,拍下的订单会在预售时间内陆续安排发出。\n认养一头牛感谢您的理解与支持!",
-        "extractedEntities": {},
-        "visualElements": [],
-        "textDensity": "medium",
-        "composition": "standard"
-      },
-      "narrativeRole": {
-        "isKeyVisual": false,
-        "importanceInDoc": "supporting",
-        "storyPosition": "supporting",
-        "emotionalFunction": "information",
-        "informationLevel": "detail"
-      },
-      "contextInDocument": {
-        "positionInModule": 86,
-        "positionDesc": "",
-        "associatedTextPhrases": []
-      },
-      "imageQuality": {
-        "level": "standard",
-        "suggestedUsage": "inline",
-        "suggestedUsageDesc": "适合小尺寸嵌入"
-      }
+      "suggestedModule": "trust"
     }
-  ],
-  "styleProfile": {
-    "sampleInfo": {
-      "totalChars": 1440,
-      "totalModules": 11,
-      "totalImages": 87,
-      "totalParagraphs": 18
-    },
-    "globalPatterns": {
-      "pacing": "fast",
-      "pacingDesc": "",
-      "overallTone": {
-        "primaryTone": "亲切活泼",
-        "secondaryTone": "专业可信",
-        "personaDesc": "像一个懂产品、会聊天的朋友在推荐好东西"
-      }
-    },
-    "perModule": {
-      "hook": {
-        "charRange": {
-          "min": 169,
-          "max": 169,
-          "avg": 169
-        },
-        "emojiProfile": {
-          "density": 6.5,
-          "positionPreference": {
-            "lineStart": 0.17,
-            "inline": 0.83,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "❗",
-            "🌱",
-            "🐄",
-            "🌿",
-            "💥",
-            "🉐",
-            "🎁",
-            "❗💕",
-            "❗❗❗"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 21,
-          "shortRatio": 0.25,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 5,
-          "questionPerParagraph": 0
-        },
-        "openingPatterns": [
-          {
-            "type": "emoji_claim",
-            "frequency": 1,
-            "example": "🌱云贵山野入瓶"
-          }
-        ],
-        "closingPatterns": [
-          {
-            "type": "price_cta",
-            "frequency": 1
-          }
-        ],
-        "transitionWords": [],
-        "keyPhrasePatterns": [],
-        "numberFormatting": {}
-      },
-      "price": {
-        "charRange": {
-          "min": 55,
-          "max": 55,
-          "avg": 55
-        },
-        "emojiProfile": {
-          "density": 12.7,
-          "positionPreference": {
-            "lineStart": 0.5,
-            "inline": 0.5,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "❗",
-            "💥",
-            "🉐",
-            "🎁"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 27,
-          "shortRatio": 0,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 1,
-          "questionPerParagraph": 0
-        },
-        "openingPatterns": [
-          {
-            "type": "emoji_claim",
-            "frequency": 1,
-            "example": "💥新品上市❗重磅加码❗￥79.9元🉐12瓶🎁再送3瓶原味款益生菌酸奶"
-          }
-        ],
-        "closingPatterns": [
-          {
-            "type": "price_cta",
-            "frequency": 1
-          }
-        ],
-        "transitionWords": [],
-        "keyPhrasePatterns": [],
-        "numberFormatting": {}
-      },
-      "taste": {
-        "charRange": {
-          "min": 135,
-          "max": 135,
-          "avg": 135
-        },
-        "emojiProfile": {
-          "density": 3.7,
-          "positionPreference": {
-            "lineStart": 0.2,
-            "inline": 0.8,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "🍋",
-            "😎",
-            "😍",
-            "😋",
-            "🥛"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 27,
-          "shortRatio": 0,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 0.3,
-          "questionPerParagraph": 0
-        },
-        "openingPatterns": [
-          {
-            "type": "emoji_claim",
-            "frequency": 1,
-            "example": "🍋三重味觉一口惊艳，酸奶也能喝出前中后调～"
-          }
-        ],
-        "closingPatterns": [
-          {
-            "type": "scene_loopback",
-            "frequency": 1
-          }
-        ],
-        "transitionWords": [],
-        "keyPhrasePatterns": [],
-        "numberFormatting": {}
-      },
-      "trust": {
-        "charRange": {
-          "min": 175,
-          "max": 175,
-          "avg": 175
-        },
-        "emojiProfile": {
-          "density": 4.6,
-          "positionPreference": {
-            "lineStart": 0.4,
-            "inline": 0.6,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "✅",
-            "🧾",
-            "👍",
-            "🐄"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 25,
-          "shortRatio": 0.29,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 1,
-          "questionPerParagraph": 0
-        },
-        "openingPatterns": [
-          {
-            "type": "emoji_claim",
-            "frequency": 1,
-            "example": "🧾干净配料表，0香精无额外添加剂，用料透明喝得安心"
-          }
-        ],
-        "closingPatterns": [
-          {
-            "type": "scene_loopback",
-            "frequency": 1
-          }
-        ],
-        "transitionWords": [],
-        "keyPhrasePatterns": [],
-        "numberFormatting": {}
-      },
-      "ingredient": {
-        "charRange": {
-          "min": 145,
-          "max": 145,
-          "avg": 145
-        },
-        "emojiProfile": {
-          "density": 2.8,
-          "positionPreference": {
-            "lineStart": 0.5,
-            "inline": 0.5,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "👉",
-            "🧐",
-            "💪",
-            "👩💻"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 24,
-          "shortRatio": 0.17,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 1,
-          "questionPerParagraph": 0
-        },
-        "openingPatterns": [
-          {
-            "type": "emoji_claim",
-            "frequency": 1,
-            "example": "👉一口喝下9种活性益生菌，这才是酸奶该有的样子"
-          }
-        ],
-        "closingPatterns": [
-          {
-            "type": "scene_loopback",
-            "frequency": 1
-          }
-        ],
-        "transitionWords": [],
-        "keyPhrasePatterns": [],
-        "numberFormatting": {}
-      },
-      "origin": {
-        "charRange": {
-          "min": 164,
-          "max": 164,
-          "avg": 164
-        },
-        "emojiProfile": {
-          "density": 0.6,
-          "positionPreference": {
-            "lineStart": 1,
-            "inline": 0,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "😼"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 23,
-          "shortRatio": 0.14,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 1,
-          "questionPerParagraph": 0
-        },
-        "openingPatterns": [
-          {
-            "type": "emoji_claim",
-            "frequency": 1,
-            "example": "😼云贵\"人类猫薄荷\"，吨吨吨根本停不下来"
-          }
-        ],
-        "closingPatterns": [
-          {
-            "type": "scene_loopback",
-            "frequency": 1
-          }
-        ],
-        "transitionWords": [],
-        "keyPhrasePatterns": [],
-        "numberFormatting": {}
-      },
-      "brand": {
-        "charRange": {
-          "min": 137,
-          "max": 137,
-          "avg": 137
-        },
-        "emojiProfile": {
-          "density": 5.1,
-          "positionPreference": {
-            "lineStart": 0.2,
-            "inline": 0.8,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "✅",
-            "🥇",
-            "🔍",
-            "🐮",
-            "🐄"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 27,
-          "shortRatio": 0,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 0,
-          "questionPerParagraph": 0
-        },
-        "openingPatterns": [
-          {
-            "type": "emoji_claim",
-            "frequency": 1,
-            "example": "🥇认养一头牛作为A2奶业的领跑者，从养牛开始，"
-          }
-        ],
-        "closingPatterns": [
-          {
-            "type": "scene_loopback",
-            "frequency": 1
-          }
-        ],
-        "transitionWords": [],
-        "keyPhrasePatterns": [],
-        "numberFormatting": {}
-      },
-      "scene": {
-        "charRange": {
-          "min": 134,
-          "max": 134,
-          "avg": 134
-        },
-        "emojiProfile": {
-          "density": 3.7,
-          "positionPreference": {
-            "lineStart": 0.2,
-            "inline": 0.8,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "🌞",
-            "🥘",
-            "🧊",
-            "💻",
-            "🍽"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 16,
-          "shortRatio": 0.63,
-          "longRatio": 0,
-          "rhythmPattern": "短-长-短"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 4,
-          "questionPerParagraph": 0
-        },
-        "openingPatterns": [
-          {
-            "type": "emoji_claim",
-            "frequency": 1,
-            "example": "🌞我的夏日救星上线"
-          }
-        ],
-        "closingPatterns": [
-          {
-            "type": "scene_loopback",
-            "frequency": 1
-          }
-        ],
-        "transitionWords": [],
-        "keyPhrasePatterns": [],
-        "numberFormatting": {}
-      },
-      "aftercare": {
-        "charRange": {
-          "min": 134,
-          "max": 134,
-          "avg": 134
-        },
-        "emojiProfile": {
-          "density": 3,
-          "positionPreference": {
-            "lineStart": 0.67,
-            "inline": 0.33,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "🚄",
-            "⚠",
-            "📦",
-            "❗️"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 33,
-          "shortRatio": 0,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 0,
-          "questionPerParagraph": 0
-        },
-        "openingPatterns": [
-          {
-            "type": "emoji_claim",
-            "frequency": 1,
-            "example": "🚄顺丰/京东全国4仓发货（天津、武汉、南京、广东），新鲜送货上门"
-          }
-        ],
-        "closingPatterns": [
-          {
-            "type": "scene_loopback",
-            "frequency": 1
-          }
-        ],
-        "transitionWords": [],
-        "keyPhrasePatterns": [],
-        "numberFormatting": {}
-      },
-      "tips": {
-        "charRange": {
-          "min": 74,
-          "max": 74,
-          "avg": 74
-        },
-        "emojiProfile": {
-          "density": 5.4,
-          "positionPreference": {
-            "lineStart": 0.33,
-            "inline": 0.67,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "📌"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 25,
-          "shortRatio": 0,
-          "longRatio": 0,
-          "rhythmPattern": "均衡"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 0,
-          "questionPerParagraph": 0
-        },
-        "openingPatterns": [
-          {
-            "type": "emoji_claim",
-            "frequency": 1,
-            "example": "📌建议3岁以上饮用，乳糖不耐、乳蛋白过敏者不适用"
-          }
-        ],
-        "closingPatterns": [
-          {
-            "type": "scene_loopback",
-            "frequency": 1
-          }
-        ],
-        "transitionWords": [],
-        "keyPhrasePatterns": [],
-        "numberFormatting": {}
-      },
-      "cta": {
-        "charRange": {
-          "min": 118,
-          "max": 118,
-          "avg": 118
-        },
-        "emojiProfile": {
-          "density": 6.8,
-          "positionPreference": {
-            "lineStart": 0.33,
-            "inline": 0.67,
-            "lineEnd": 0
-          },
-          "topEmojis": [
-            "❗",
-            "💥",
-            "🉐",
-            "🎁"
-          ]
-        },
-        "sentenceProfile": {
-          "avgLength": 20,
-          "shortRatio": 0.5,
-          "longRatio": 0,
-          "rhythmPattern": "短-长-短"
-        },
-        "punctuationProfile": {
-          "exclamationPerParagraph": 0.5,
-          "questionPerParagraph": 0
-        },
-        "openingPatterns": [
-          {
-            "type": "emoji_claim",
-            "frequency": 1,
-            "example": "💥新品上市❗重磅加码❗￥79.9元🉐12瓶🎁再送3瓶原味款益生菌酸奶"
-          }
-        ],
-        "closingPatterns": [
-          {
-            "type": "scene_loopback",
-            "frequency": 1
-          }
-        ],
-        "transitionWords": [],
-        "keyPhrasePatterns": [],
-        "numberFormatting": {}
-      }
-    },
-    "crossModulePatterns": {
-      "styleVariance": {
-        "hook": {
-          "tone": "活泼有力",
-          "emojiDensity": "high"
-        },
-        "price": {
-          "tone": "活泼有力",
-          "emojiDensity": "high"
-        },
-        "taste": {
-          "tone": "活泼有力",
-          "emojiDensity": "high"
-        },
-        "trust": {
-          "tone": "活泼有力",
-          "emojiDensity": "high"
-        },
-        "ingredient": {
-          "tone": "活泼有力",
-          "emojiDensity": "high"
-        },
-        "origin": {
-          "tone": "活泼有力",
-          "emojiDensity": "high"
-        },
-        "brand": {
-          "tone": "活泼有力",
-          "emojiDensity": "high"
-        },
-        "scene": {
-          "tone": "活泼有力",
-          "emojiDensity": "high"
-        },
-        "aftercare": {
-          "tone": "活泼有力",
-          "emojiDensity": "high"
-        },
-        "tips": {
-          "tone": "活泼有力",
-          "emojiDensity": "high"
-        },
-        "cta": {
-          "tone": "活泼有力",
-          "emojiDensity": "high"
-        }
-      },
-      "moduleConnectionPatterns": []
-    },
-    "createdAt": "2026-07-18T00:00:00.000Z"
-  },
-  "layoutBlueprint": {
-    "overallStructure": {
-      "moduleCount": 11,
-      "moduleOrder": [
-        "hook",
-        "price",
-        "taste",
-        "trust",
-        "ingredient",
-        "origin",
-        "brand",
-        "scene",
-        "aftercare",
-        "tips",
-        "cta"
-      ],
-      "totalImages": 87,
-      "totalTextChars": 1440,
-      "imageToTextRatio": 6.04,
-      "imageDensityCurve": "front_heavy",
-      "curveDesc": "",
-      "documentPacing": {}
-    },
-    "moduleLayouts": {
-      "hook": {
-        "typicalPattern": "image_footer_only",
-        "patternSequence": [
-          "text"
-        ],
-        "typicalImageCount": {
-          "min": 15,
-          "max": 19,
-          "avg": 17
-        },
-        "typicalSegmentCount": {
-          "min": 1,
-          "max": 2,
-          "avg": 1
-        },
-        "imageGroupingPerSegment": []
-      },
-      "price": {
-        "typicalPattern": "text_only",
-        "patternSequence": [
-          "text"
-        ],
-        "typicalImageCount": {
-          "min": 0,
-          "max": 2,
-          "avg": 0
-        },
-        "typicalSegmentCount": {
-          "min": 1,
-          "max": 2,
-          "avg": 1
-        },
-        "imageGroupingPerSegment": []
-      },
-      "taste": {
-        "typicalPattern": "images_interspersed",
-        "patternSequence": [
-          "text",
-          "images",
-          "text"
-        ],
-        "typicalImageCount": {
-          "min": 14,
-          "max": 18,
-          "avg": 16
-        },
-        "typicalSegmentCount": {
-          "min": 3,
-          "max": 5,
-          "avg": 4
-        },
-        "imageGroupingPerSegment": []
-      },
-      "trust": {
-        "typicalPattern": "image_before_text",
-        "patternSequence": [
-          "images",
-          "text"
-        ],
-        "typicalImageCount": {
-          "min": 2,
-          "max": 6,
-          "avg": 4
-        },
-        "typicalSegmentCount": {
-          "min": 1,
-          "max": 3,
-          "avg": 2
-        },
-        "imageGroupingPerSegment": []
-      },
-      "ingredient": {
-        "typicalPattern": "images_interspersed",
-        "patternSequence": [
-          "text",
-          "images",
-          "text"
-        ],
-        "typicalImageCount": {
-          "min": 15,
-          "max": 19,
-          "avg": 17
-        },
-        "typicalSegmentCount": {
-          "min": 1,
-          "max": 3,
-          "avg": 2
-        },
-        "imageGroupingPerSegment": []
-      },
-      "origin": {
-        "typicalPattern": "image_before_text",
-        "patternSequence": [
-          "images",
-          "text"
-        ],
-        "typicalImageCount": {
-          "min": 1,
-          "max": 5,
-          "avg": 3
-        },
-        "typicalSegmentCount": {
-          "min": 1,
-          "max": 3,
-          "avg": 2
-        },
-        "imageGroupingPerSegment": []
-      },
-      "brand": {
-        "typicalPattern": "image_footer_only",
-        "patternSequence": [
-          "text"
-        ],
-        "typicalImageCount": {
-          "min": 25,
-          "max": 29,
-          "avg": 27
-        },
-        "typicalSegmentCount": {
-          "min": 1,
-          "max": 2,
-          "avg": 1
-        },
-        "imageGroupingPerSegment": []
-      },
-      "scene": {
-        "typicalPattern": "image_before_text",
-        "patternSequence": [
-          "images",
-          "text"
-        ],
-        "typicalImageCount": {
-          "min": 3,
-          "max": 7,
-          "avg": 5
-        },
-        "typicalSegmentCount": {
-          "min": 1,
-          "max": 3,
-          "avg": 2
-        },
-        "imageGroupingPerSegment": []
-      },
-      "aftercare": {
-        "typicalPattern": "text_only",
-        "patternSequence": [
-          "text"
-        ],
-        "typicalImageCount": {
-          "min": 0,
-          "max": 2,
-          "avg": 0
-        },
-        "typicalSegmentCount": {
-          "min": 1,
-          "max": 2,
-          "avg": 1
-        },
-        "imageGroupingPerSegment": []
-      },
-      "tips": {
-        "typicalPattern": "text_only",
-        "patternSequence": [
-          "text"
-        ],
-        "typicalImageCount": {
-          "min": 0,
-          "max": 2,
-          "avg": 0
-        },
-        "typicalSegmentCount": {
-          "min": 1,
-          "max": 2,
-          "avg": 1
-        },
-        "imageGroupingPerSegment": []
-      },
-      "cta": {
-        "typicalPattern": "text_only",
-        "patternSequence": [
-          "text"
-        ],
-        "typicalImageCount": {
-          "min": 0,
-          "max": 2,
-          "avg": 0
-        },
-        "typicalSegmentCount": {
-          "min": 1,
-          "max": 2,
-          "avg": 1
-        },
-        "imageGroupingPerSegment": []
-      }
-    }
-  },
-  "imageRelations": {
-    "relations": [
-      {
-        "id": "rel_001",
-        "type": "narrative_sequence",
-        "typeDesc": "叙事递进：图片按故事线排列",
-        "images": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-          16,
-          17
-        ],
-        "module": "hook",
-        "inferred": "heuristic",
-        "confidence": "low",
-        "relationMatrix": {
-          "1_to_2": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "2_to_3": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "3_to_4": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "4_to_5": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "5_to_6": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "6_to_7": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "7_to_8": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "8_to_9": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "9_to_10": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "10_to_11": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "11_to_12": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "12_to_13": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "13_to_14": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "14_to_15": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "15_to_16": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "16_to_17": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          }
-        },
-        "flowDirection": "远→近→特写",
-        "visualRhythm": "全景建立认知→中景展示特征→特写强化细节"
-      },
-      {
-        "id": "rel_002",
-        "type": "narrative_sequence",
-        "typeDesc": "叙事递进：图片按故事线排列",
-        "images": [
-          18,
-          19,
-          20,
-          21,
-          22,
-          23,
-          24,
-          25,
-          26,
-          27,
-          28,
-          29,
-          30,
-          31
-        ],
-        "module": "taste",
-        "inferred": "heuristic",
-        "confidence": "low",
-        "relationMatrix": {
-          "18_to_19": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "19_to_20": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "20_to_21": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "21_to_22": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "22_to_23": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "23_to_24": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "24_to_25": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "25_to_26": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "26_to_27": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "27_to_28": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "28_to_29": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "29_to_30": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "30_to_31": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          }
-        },
-        "flowDirection": "远→近→特写",
-        "visualRhythm": "全景建立认知→中景展示特征→特写强化细节"
-      },
-      {
-        "id": "rel_003",
-        "type": "narrative_sequence",
-        "typeDesc": "叙事递进：图片按故事线排列",
-        "images": [
-          35,
-          36,
-          37,
-          38
-        ],
-        "module": "trust",
-        "inferred": "heuristic",
-        "confidence": "medium",
-        "relationMatrix": {
-          "35_to_36": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "36_to_37": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "37_to_38": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          }
-        },
-        "flowDirection": "远→近→特写",
-        "visualRhythm": "全景建立认知→中景展示特征→特写强化细节"
-      },
-      {
-        "id": "rel_004",
-        "type": "narrative_sequence",
-        "typeDesc": "叙事递进：图片按故事线排列",
-        "images": [
-          43,
-          44,
-          45,
-          46,
-          47,
-          48,
-          49,
-          50,
-          51,
-          52,
-          53,
-          54,
-          55,
-          39,
-          40,
-          41,
-          42
-        ],
-        "module": "ingredient",
-        "inferred": "heuristic",
-        "confidence": "low",
-        "relationMatrix": {
-          "43_to_44": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "44_to_45": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "45_to_46": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "46_to_47": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "47_to_48": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "48_to_49": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "49_to_50": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "50_to_51": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "51_to_52": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "52_to_53": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "53_to_54": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "54_to_55": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "55_to_39": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "39_to_40": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "40_to_41": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "41_to_42": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          }
-        },
-        "flowDirection": "远→近→特写",
-        "visualRhythm": "全景建立认知→中景展示特征→特写强化细节"
-      },
-      {
-        "id": "rel_005",
-        "type": "narrative_sequence",
-        "typeDesc": "叙事递进：图片按故事线排列",
-        "images": [
-          32,
-          33,
-          34
-        ],
-        "module": "origin",
-        "inferred": "heuristic",
-        "confidence": "medium",
-        "relationMatrix": {
-          "32_to_33": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "33_to_34": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          }
-        },
-        "flowDirection": "远→近→特写",
-        "visualRhythm": "全景建立认知→中景展示特征→特写强化细节"
-      },
-      {
-        "id": "rel_006",
-        "type": "narrative_sequence",
-        "typeDesc": "叙事递进：图片按故事线排列",
-        "images": [
-          61,
-          62,
-          63,
-          64,
-          65,
-          66,
-          67,
-          68,
-          69,
-          70,
-          71,
-          72,
-          73,
-          74,
-          75,
-          76,
-          77,
-          78,
-          79,
-          80,
-          81,
-          82,
-          83,
-          84,
-          85,
-          86,
-          87
-        ],
-        "module": "brand",
-        "inferred": "heuristic",
-        "confidence": "low",
-        "relationMatrix": {
-          "61_to_62": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "62_to_63": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "63_to_64": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "64_to_65": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "65_to_66": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "66_to_67": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "67_to_68": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "68_to_69": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "69_to_70": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "70_to_71": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "71_to_72": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "72_to_73": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "73_to_74": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "74_to_75": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "75_to_76": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "76_to_77": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "77_to_78": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "78_to_79": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "79_to_80": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "80_to_81": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "81_to_82": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "82_to_83": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "83_to_84": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "84_to_85": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "85_to_86": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "86_to_87": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          }
-        },
-        "flowDirection": "远→近→特写",
-        "visualRhythm": "全景建立认知→中景展示特征→特写强化细节"
-      },
-      {
-        "id": "rel_007",
-        "type": "narrative_sequence",
-        "typeDesc": "叙事递进：图片按故事线排列",
-        "images": [
-          56,
-          57,
-          58,
-          59,
-          60
-        ],
-        "module": "scene",
-        "inferred": "heuristic",
-        "confidence": "low",
-        "relationMatrix": {
-          "56_to_57": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "57_to_58": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "58_to_59": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          },
-          "59_to_60": {
-            "relation": "angle_change",
-            "desc": "连续展示"
-          }
-        },
-        "flowDirection": "远→近→特写",
-        "visualRhythm": "全景建立认知→中景展示特征→特写强化细节"
-      }
-    ],
-    "relationTypeDefinitions": {
-      "narrative_sequence": "叙事递进：图片按故事线排列",
-      "comparison": "对比：两张或多张图形成对比关系",
-      "detail_zoom": "细节放大：后图是前图某部分的放大",
-      "evidence_chain": "证据链：多图组成逻辑推理链",
-      "cross_module_bridge": "跨模块桥接：不同模块的图片之间形成呼应",
-      "atmosphere_stack": "氛围堆叠：多张同风格图叠加营造氛围",
-      "before_after": "前后对比：使用前vs使用后",
-      "problem_solution": "问题→解决方案"
-    }
-  },
-  "crossModuleLinks": {
-    "links": [
-      {
-        "fromModule": "hook",
-        "toModule": "price",
-        "linkType": "escalation",
-        "desc": "",
-        "textBridging": "",
-        "inferred": "heuristic"
-      },
-      {
-        "fromModule": "price",
-        "toModule": "taste",
-        "linkType": "natural_flow",
-        "desc": "",
-        "textBridging": "",
-        "inferred": "heuristic"
-      },
-      {
-        "fromModule": "taste",
-        "toModule": "trust",
-        "linkType": "deepening",
-        "desc": "",
-        "textBridging": "",
-        "inferred": "heuristic"
-      },
-      {
-        "fromModule": "trust",
-        "toModule": "ingredient",
-        "linkType": "natural_flow",
-        "desc": "",
-        "textBridging": "",
-        "inferred": "heuristic"
-      },
-      {
-        "fromModule": "ingredient",
-        "toModule": "origin",
-        "linkType": "natural_flow",
-        "desc": "",
-        "textBridging": "",
-        "inferred": "heuristic"
-      },
-      {
-        "fromModule": "origin",
-        "toModule": "brand",
-        "linkType": "natural_flow",
-        "desc": "",
-        "textBridging": "",
-        "inferred": "heuristic"
-      },
-      {
-        "fromModule": "brand",
-        "toModule": "scene",
-        "linkType": "natural_flow",
-        "desc": "",
-        "textBridging": "",
-        "inferred": "heuristic"
-      },
-      {
-        "fromModule": "scene",
-        "toModule": "aftercare",
-        "linkType": "natural_flow",
-        "desc": "",
-        "textBridging": "",
-        "inferred": "heuristic"
-      },
-      {
-        "fromModule": "aftercare",
-        "toModule": "tips",
-        "linkType": "natural_flow",
-        "desc": "",
-        "textBridging": "",
-        "inferred": "heuristic"
-      },
-      {
-        "fromModule": "tips",
-        "toModule": "cta",
-        "linkType": "natural_flow",
-        "desc": "",
-        "textBridging": "",
-        "inferred": "heuristic"
-      }
-    ],
-    "orderRationale": {
-      "hook_first": "3秒内抓住注意力",
-      "price_after_hook": "自然阅读流",
-      "taste_after_price": "自然阅读流",
-      "trust_after_taste": "自然阅读流",
-      "ingredient_after_trust": "自然阅读流",
-      "origin_after_ingredient": "自然阅读流",
-      "brand_after_origin": "自然阅读流",
-      "scene_after_brand": "自然阅读流",
-      "aftercare_after_scene": "自然阅读流",
-      "tips_after_aftercare": "自然阅读流",
-      "cta_after_tips": "自然阅读流"
-    }
-  },
-  "audienceContext": {
-    "primaryAudience": {
-      "demographic": "未指定",
-      "tags": [],
-      "psychographic": "",
-      "painPoints": [],
-      "readingScenario": "刷小红书/朋友圈时快速浏览"
-    },
-    "platform": {
-      "name": "小红书",
-      "contentFormat": "图文笔记",
-      "typicalReadingTime": "30-60秒"
-    },
-    "campaignContext": {
-      "type": "日常种草",
-      "season": ""
-    },
-    "audienceInstruction": "用平实但有温度的语言写作，像一个懂产品、会聊天的朋友在推荐好东西。"
-  },
-  "feedbackSignals": {
-    "status": "none",
-    "note": "由 v2 迁移生成"
-  }
+  ]
 }

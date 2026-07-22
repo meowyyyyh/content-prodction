@@ -1,0 +1,123 @@
+{
+  "version": "2.2",
+  "schema": "corpus-图文绑定-v2",
+  "productName": "锋味派冰花锅贴煎饺",
+  "sourceNote": "来源: 锋味派冰花锅贴煎饺",
+  "category": {
+    "level1": "美食酒水",
+    "level2": "休闲美食",
+    "level3": "方便速食"
+  },
+  "styleTag": "xiaohongshu",
+  "imageCount": 2,
+  "source": "预审库自动收集",
+  "convertedAt": "2026-07-22T01:24:22.695Z",
+  "modules": [
+    {
+      "moduleKey": "hook",
+      "moduleName": "首屏钩子",
+      "order": 1,
+      "layout": {
+        "overallPattern": "image_before_text",
+        "imageCount": 2,
+        "textSegmentCount": 1,
+        "density": "low"
+      },
+      "segments": [
+        {
+          "text": "锋味派冰花锅贴煎饺来了！这可不是普通速冻饺子，谢霆锋团队研发的冰花煎饺，自带焦脆冰花底，洋葱牛肉和三鲜黑猪肉两种口味，每袋6个独立装，煎出来底部全是蜂窝状冰花，脆得掉渣。开团价直接打到11块钱一袋，顺丰发货到家，比外卖一份锅贴便宜一半还多，冰箱里囤几袋，想吃随时煎，不用解冻不用调面糊，平底锅倒油码进去，5分钟就出一盘金黄冰花煎饺。",
+          "textType": "hook_intro",
+          "images": [
+            {
+              "imgId": 1,
+              "group": "pair",
+              "role": "图1",
+              "position": "before_text",
+              "relationship": ""
+            },
+            {
+              "imgId": 2,
+              "group": "pair",
+              "role": "【物体】一个竖立的塑料复合零食包装袋，顶部为橙色热封口，袋身正面居中展示，印有大量黄色虾条实物图，右下角有浅紫色卡通猫抱黄色吉他的形象，朝向正前方。【文字】品牌名：SNEK KU；商品名：MI-MI、咪咪、蝦味條；认证标识：清真认证标志；其他：音乐符号图案。【场景】背景为纯白色，无其他物体，是单独的商品包装展示。【视觉】主色调为橙、绿、黄，材质是带光泽的塑料复合膜，光线均匀，构图为居中的包装正面特写。",
+              "position": "before_text",
+              "relationship": "图中是SNEK KU品牌的咪咪虾味条零食袋装，包装正面展示黄色虾条实物图，有弹吉他的卡通猫图案，带有清真认证标识，为商品包装特写。"
+            }
+          ],
+          "binding": "image_before_text"
+        }
+      ],
+      "imageGroups": {
+        "footer": {
+          "imgIds": [
+            1,
+            2
+          ],
+          "group": "stack",
+          "desc": ""
+        }
+      }
+    },
+    {
+      "moduleKey": "price",
+      "moduleName": "价格福利",
+      "order": 2,
+      "layout": {
+        "overallPattern": "text_only",
+        "imageCount": 0,
+        "textSegmentCount": 1,
+        "density": "none"
+      },
+      "segments": [
+        {
+          "text": "💰 团购价：4袋装44元，6袋装66元，算下来一袋只要11块钱，每袋6个煎饺，单颗不到2块钱。顺丰冷链包邮，生产日期都是最近三个月内的，保质期12个月，囤着慢慢吃完全没问题。同款在线下生鲜超市一袋要卖到18-20元，团购价直接省了一半，三鲜黑猪肉和洋葱牛肉两个口味可以混搭，全家人都能找到喜欢的味道。",
+          "textType": "price_intro",
+          "images": [],
+          "binding": "no_image"
+        }
+      ],
+      "imageGroups": {}
+    },
+    {
+      "moduleKey": "cta",
+      "moduleName": "行动召唤",
+      "order": 3,
+      "layout": {
+        "overallPattern": "text_only",
+        "imageCount": 0,
+        "textSegmentCount": 1,
+        "density": "none"
+      },
+      "segments": [
+        {
+          "text": "11块钱一袋就能吃到锋味派冰花锅贴煎饺，顺丰送到家，满48小时发货，保质期一年，囤个6袋装够吃好几顿。售后方面，发货后不支持7天无理由退换，也不支持拦截，介意慎拍。想吃焦脆冰花底的煎饺，不用去餐厅排队，冰箱里拿出来直接煎就行，下方直接参团👇",
+          "textType": "cta_intro",
+          "images": [],
+          "binding": "no_image"
+        }
+      ],
+      "imageGroups": {}
+    }
+  ],
+  "images": [
+    {
+      "id": 1,
+      "file": "images/image001.jpeg",
+      "module": "",
+      "desc": "",
+      "layout_role": "detail",
+      "imageContentSummary": "",
+      "imageOcrText": "",
+      "suggestedModule": ""
+    },
+    {
+      "id": 2,
+      "file": "images/image002.jpeg",
+      "module": "taste",
+      "desc": "【物体】一个竖立的塑料复合零食包装袋，顶部为橙色热封口，袋身正面居中展示，印有大量黄色虾条实物图，右下角有浅紫色卡通猫抱黄色吉他的形象，朝向正前方。【文字】品牌名：SNEK KU；商品名：MI-MI、咪咪、蝦味條；认证标识：清真认证标志；其他：音乐符号图案。【场景】背景为纯白色，无其他物体，是单独的商品包装展示。【视觉】主色调为橙、绿、黄，材质是带光泽的塑料复合膜，光线均匀，构图为居中的包装正面特写。",
+      "layout_role": "detail",
+      "imageContentSummary": "图中是SNEK KU品牌的咪咪虾味条零食袋装，包装正面展示黄色虾条实物图，有弹吉他的卡通猫图案，带有清真认证标识，为商品包装特写。",
+      "imageOcrText": "",
+      "suggestedModule": "taste"
+    }
+  ]
+}

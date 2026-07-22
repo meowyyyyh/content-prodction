@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Empty, EmptyMedia, EmptyHeader, EmptyTitle, EmptyDescription } from '@/components/ui/empty'
@@ -45,54 +45,31 @@ function VersionHeader({ version, label, modules, onAdoptAll, onDislikeVersion, 
   )
 }
 
-// 默认映射（语料库为空时的回退）
-export const DEFAULT_TYPE_MAP: Record<string, string[]> = {
-  '封面图': ['hook'], '产品图': ['taste'],
-  '配料表': ['ingredient', 'trust', 'origin'], '配料图': ['ingredient', 'trust', 'origin'],
-  '场景图': ['scene'], '品牌图': ['brand'], '包装图': ['hook'],
-}
+// 纯文字模块
+const TEXT_ONLY_MODULES = new Set(['aftercare', 'tips', 'cta', 'faq', 'feedback', 'price'])
 
-// 从语料库加载映射（首次加载后缓存）
-let corpusTypeMap: Record<string, string[]> | null = null
-let corpusMapLoading = false
-async function loadCorpusMap(): Promise<Record<string, string[]>> {
-  if (corpusTypeMap) return corpusTypeMap
-  if (corpusMapLoading) return DEFAULT_TYPE_MAP
-  corpusMapLoading = true
-  try {
-    const res = await fetch('/api/corpus/image-map')
-    const d = await res.json()
-    if (d.success && Object.keys(d.data).length > 0) {
-      corpusTypeMap = d.data
-      return corpusTypeMap
-    }
-  } catch { /* 语料库不可用，用默认 */ }
-  corpusTypeMap = DEFAULT_TYPE_MAP
-  return corpusTypeMap
-}
-
-// 图片唯一分配：语料库驱动优先级，每张图只分配给最匹配的模块
-export function assignImages(images: ClassifiedImage[], typeMap: Record<string, string[]>): Map<string, ClassifiedImage[]> {
-  const assigned = new Map<string, ClassifiedImage[]>()
-  const used = new Set<string>()
-  for (const [imgType, modules] of Object.entries(typeMap)) {
-    for (const img of images) {
-      if (used.has(img.id)) continue
-      if (img.type === imgType || img.type.includes(imgType.replace(/[图表]/g,'')) || imgType.includes(img.type.replace(/[图表]/g,''))) {
-        for (const mod of modules) {
-          if (!assigned.has(mod)) assigned.set(mod, [])
-          assigned.get(mod)!.push(img)
-          used.add(img.id)
-          break
-        }
-      }
-    }
+// 双层兜底路由（与 App.tsx / generator.js 逻辑一致）
+function resolveImageModule(img: ClassifiedImage, selectedModules: string[]): string {
+  const sug = (img as any).suggestedModule
+  if (sug && selectedModules.includes(sug)) return sug
+  const role = img.layout_role || 'detail'
+  const ROLE_MODULE_MAP: Record<string, string[]> = {
+    hero: ['hook'], detail: ['taste', 'texture', 'usage_experience', 'tutorial'],
+    scene: ['scene'], info: ['trust', 'ingredient', 'specs'], step: ['tutorial', 'usage_demo'],
   }
+  const candidates = ROLE_MODULE_MAP[role] || []
+  for (const c of candidates) { if (selectedModules.includes(c)) return c }
+  for (const m of selectedModules) { if (!TEXT_ONLY_MODULES.has(m)) return m }
+  return selectedModules[0] || 'tips'
+}
+
+// 图片唯一分配：每张图按 suggestedModule + layout_role 兜底
+export function assignImages(images: ClassifiedImage[], selectedModules: string[]): Map<string, ClassifiedImage[]> {
+  const assigned = new Map<string, ClassifiedImage[]>()
   for (const img of images) {
-    if (!used.has(img.id)) {
-      if (!assigned.has('tips')) assigned.set('tips', [])
-      assigned.get('tips')!.push(img)
-    }
+    const target = resolveImageModule(img, selectedModules)
+    if (!assigned.has(target)) assigned.set(target, [])
+    assigned.get(target)!.push(img)
   }
   return assigned
 }
@@ -176,9 +153,11 @@ const MODULE_LABELS: Record<string, string> = { hook: '首屏钩子', price: '�
 
 export function RightPanel({ status, modulesV1, modulesV2, modulesV3, versionLabelV1, versionLabelV2, versionLabelV3, onAdopt, onAdoptAll, onDislikeVersion, onDislikeModule, classifiedImages }: RightPanelProps) {
   const isIdle = status === 'idle'; const isGenerating = status === 'generating' || status === 'checking'; const isBlocked = status === 'blocked'
-  const [typeMap, setTypeMap] = useState(DEFAULT_TYPE_MAP)
-  useEffect(() => { loadCorpusMap().then(setTypeMap) }, [])
-  const imageMap = (classifiedImages && classifiedImages.length > 0) ? assignImages(classifiedImages, typeMap) : new Map()
+  const selectedModules = useMemo(() => {
+    const all = [...(modulesV1 || []), ...(modulesV2 || []), ...(modulesV3 || [])]
+    return [...new Set(all.map(m => m.moduleKey))]
+  }, [modulesV1, modulesV2, modulesV3])
+  const imageMap = (classifiedImages && classifiedImages.length > 0 && selectedModules.length > 0) ? assignImages(classifiedImages, selectedModules) : new Map()
   const onAdoptWithImages = (key: string, content: string, imgs: ClassifiedImage[]) => {
     onAdopt(key, content, imgs)
   }

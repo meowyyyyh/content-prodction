@@ -10,11 +10,11 @@ import { ImageConfirmDialog, type ModuleSuggestion } from '@/components/ui/image
 import { RightPanel } from '@/components/panels/RightPanel'
 import { MODULE_CONFIG, STYLE_CONFIG, SHORT_TEMPLATE, STYLE_LABEL_MAP } from '@/config/modules'
 import type { ProductInput, ModuleResult, GenerateStatus, ModuleKey, ContentStyle, ShippingTimeliness, GenerateCount, ClassifiedImage } from '@/types'
-import { IMAGE_MODULE_MAP } from '@/types'
+import { buildCorpusV3 } from '@/utils/corpus-v3'
 
 const DEFAULT_INPUT: ProductInput = {
   productName: '', subCategory: '' as const, catCode: '美食酒水::酒水饮料::乳制品', catLevel1: '美食酒水', catLevel2: '酒水饮料', catLevel3: '乳制品', netWeight: '',
-  origin: '', suggestedPrice: '', groupBuyPrice: '',
+  origin: '', suggestedPrice: '', groupBuyPrice: '', groupBuyQuantity: '', groupBuyUnit: '', headline: '',
   sellingPoints: '',
   coreIngredients: '',
   shippingOrigin: '', shippingTimeliness: '48h' as ShippingTimeliness, courier: '',
@@ -55,6 +55,17 @@ export default function App() {
   ])
   const [priceNotes, setPriceNotes] = useState('')
   const [classifiedImages, setClassifiedImages] = useState<ClassifiedImage[]>([])
+  // 图片的 suggestedModule 不在已选模块中 → 标红
+  const unassignedImageIds = useMemo(() => {
+    return new Set(
+      classifiedImages
+        .filter(img => {
+          const sug = (img as any).suggestedModule
+          return sug && MODULE_CONFIG.some(m => m.key === sug) && !input.selectedModules.includes(sug)
+        })
+        .map(img => img.id)
+    )
+  }, [classifiedImages, input.selectedModules])
   const [imageConfirmOpen, setImageConfirmOpen] = useState(false)
   const [pendingConfirmImages, setPendingConfirmImages] = useState<(ClassifiedImage & { status?: 'success' | 'failed' })[]>([])
   const [moduleSuggestions, setModuleSuggestions] = useState<ModuleSuggestion[]>([])
@@ -69,14 +80,14 @@ export default function App() {
   }, [])
   const handleFileRegistered = useCallback((id: string, file: File) => { fileMapRef.current.set(id, file) }, [])
 
-  const hasRequiredFields = useMemo(() => input.rawProductText.trim().length > 0 || (input.productName.trim().length > 0 && input.netWeight.trim().length > 0 && input.suggestedPrice.trim().length > 0 && input.groupBuyPrice.trim().length > 0 && input.afterSalesRules.trim().length > 0), [input.rawProductText, input.productName, input.subCategory, input.netWeight, input.suggestedPrice, input.groupBuyPrice, input.afterSalesRules])
+  const hasRequiredFields = useMemo(() => input.rawProductText.trim().length > 0, [input.rawProductText])
   const isGenerating = status === 'generating' || status === 'checking'
 
   // 图片分析完成后，触发确认弹窗
   const handleConfirmImages = useCallback((images: ClassifiedImage[]) => {
     const final = images.map(img => ({
       ...img,
-      status: (!img.type || (img.type === '其他' && (!img.desc || img.desc === '分析失败'))) ? 'failed' as const : 'success' as const
+      status: (!img.desc || img.desc === '分析失败') ? 'failed' as const : 'success' as const
     }))
     setPendingConfirmImages(final)
     updateClassifiedImages(final as ClassifiedImage[])
@@ -85,8 +96,11 @@ export default function App() {
       if (img.suggestedModule && MODULE_CONFIG.some(m => m.key === img.suggestedModule)) {
         suggestedModules.add(img.suggestedModule as ModuleKey)
       } else {
-        const keys = IMAGE_MODULE_MAP[img.type] || []
-        keys.forEach(k => suggestedModules.add(k))
+        // 双层兜底：layout_role → 有效模块
+        const fallback = resolveImageModule(img as ClassifiedImage, MODULE_CONFIG.map(m => m.key))
+        if (fallback && MODULE_CONFIG.some(m => m.key === fallback)) {
+          suggestedModules.add(fallback as ModuleKey)
+        }
       }
     }
     const unselected = [...suggestedModules].filter(k => !input.selectedModules.includes(k))
@@ -107,6 +121,38 @@ export default function App() {
     }
     // 不自动弹窗，等用户点击"点我查看解析结果"再弹
   }, [input.selectedModules])
+
+  // [v2] 单张图片分析完成回调 — 直接加入 classifiedImages + pendingConfirmImages
+  const handleImageClassified = useCallback((image: ClassifiedImage) => {
+    updateClassifiedImages([image])
+    setPendingConfirmImages(prev => [...prev, { ...image, status: 'success' as const }])
+  }, [updateClassifiedImages])
+
+  // [v2] 全部图片分析完成回调 — 触发模块自动选择
+  const handleAllImagesDone = useCallback(() => {
+    // 使用函数式更新获取最新的 classifiedImages 和 selectedModules
+    setClassifiedImages(prevImages => {
+      setInput(prevInput => {
+        const suggestedModules = new Set<ModuleKey>()
+        for (const img of prevImages) {
+          if (img.suggestedModule && MODULE_CONFIG.some(m => m.key === img.suggestedModule)) {
+            suggestedModules.add(img.suggestedModule as ModuleKey)
+          } else {
+            const fallback = resolveImageModule(img as ClassifiedImage, MODULE_CONFIG.map(m => m.key))
+            if (fallback && MODULE_CONFIG.some(m => m.key === fallback)) {
+              suggestedModules.add(fallback as ModuleKey)
+            }
+          }
+        }
+        const unselected = [...suggestedModules].filter(k => !prevInput.selectedModules.includes(k))
+        if (unselected.length > 0) {
+          return { ...prevInput, selectedModules: [...new Set([...prevInput.selectedModules, ...unselected])] }
+        }
+        return prevInput
+      })
+      return prevImages
+    })
+  }, [])
 
   const handleConfirmImageDialog = useCallback((confirmedImages: (ClassifiedImage & { status?: string })[], checkModules: ModuleKey[]) => {
     updateClassifiedImages(confirmedImages as ClassifiedImage[])
@@ -159,7 +205,7 @@ export default function App() {
         const d = await res.json()
         if (d.success && d.data?.results?.length > 0) {
           const r = d.data.results[0]
-          setPendingConfirmImages(prev => prev.map(p => p.id === id ? { ...p, type: r.type || '其他', desc: r.desc || '', layout_role: r.layout_role, imageContentSummary: r.imageContentSummary || '', imageOcrText: r.imageOcrText || '', suggestedModule: r.suggestedModule, status: 'success' as const } : p))
+          setPendingConfirmImages(prev => prev.map(p => p.id === id ? { ...p, desc: r.desc || '', layout_role: r.layout_role, imageContentSummary: r.imageContentSummary || '', imageOcrText: r.imageOcrText || '', suggestedModule: r.suggestedModule, status: 'success' as const } : p))
         }
       } catch (e: any) {
         console.error('Reanalysis failed for', id, e)
@@ -174,8 +220,10 @@ export default function App() {
   }, [])
 
   const handleOpenImageConfirm = useCallback(() => {
-    // 用 pendingConfirmImages（最新分析结果）或 classifiedImages（已确认的图片）兜底
-    const imgs = pendingConfirmImages.length > 0 ? pendingConfirmImages : classifiedImages.map(img => ({ ...img, status: 'success' as const }))
+    // 交叉过滤：pendingConfirmImages 中只保留仍在 classifiedImages 里的（防止已删除的图片出现）
+    const classifiedIds = new Set(classifiedImages.map(c => c.id))
+    const pending = pendingConfirmImages.filter(img => classifiedIds.has(img.id))
+    const imgs = pending.length > 0 ? pending : classifiedImages.map(img => ({ ...img, status: 'success' as const }))
     if (imgs.length > 0) {
       setPendingConfirmImages(imgs)
       // 递增 key 强制弹窗完全销毁重建，确保在 React 19 下不会保留上一次的 editingImages 旧状态
@@ -196,7 +244,7 @@ export default function App() {
     const forceModules = Array.isArray(forceModulesOrRawText) ? forceModulesOrRawText : undefined
     // 用传入的 rawText 覆盖 input.rawProductText（避免 React 状态更新时序问题）
     const effectiveInput = rawText ? { ...input, rawProductText: rawText } : input
-    if (!effectiveInput.rawProductText.trim() && !(input.productName.trim() && input.netWeight.trim() && input.suggestedPrice.trim() && input.afterSalesRules.trim())) return
+    if (!effectiveInput.rawProductText.trim()) return
     const orderedKeys = effectiveInput.moduleOrder.filter(k => (forceModules || effectiveInput.selectedModules).includes(k as ModuleKey))
     const makeModules = () => orderedKeys.map(key => { const config = MODULE_CONFIG.find(m => m.key === key); return { moduleKey: key, moduleLabel: config?.label || key, content: '', status: 'loading' as const, adopted: false } })
     const v1 = makeModules(); const v2 = makeModules(); const v3 = makeModules()
@@ -287,6 +335,8 @@ export default function App() {
   const handleDislikeModule = useCallback((moduleKey: string, moduleLabel: string) => { showToast(`已记录：${moduleLabel}模块 点踩反馈`, 'info') }, [showToast])
   const handleCenterEdit = useCallback((moduleKey: string, content: string) => { setCenterModules(prev => prev.map(m => m.moduleKey === moduleKey ? { ...m, content } : m)) }, [])
   const handleAddBlock = useCallback(() => { customBlockCounter.current += 1; const newKey = `__custom_${customBlockCounter.current}`; setDisplayOrder(prev => [...prev, newKey]); setCenterModules(prev => [...prev, { moduleKey: newKey as ModuleKey, moduleLabel: '自定义文本', content: '<br>', status: 'completed' as const, adopted: true }]); setTimeout(() => { const el = document.querySelector(`[data-block-key="${newKey}"]`) as HTMLDivElement; if (el) { el.focus(); document.getSelection()?.collapse(el, 0) } }, 50) }, [])
+  const videoBlockCounter = useRef(0)
+  const handleAddVideo = useCallback(() => { videoBlockCounter.current += 1; const newKey = `__video_${videoBlockCounter.current}`; setDisplayOrder(prev => [...prev, newKey]); setCenterModules(prev => [...prev, { moduleKey: newKey as ModuleKey, moduleLabel: '视频', content: JSON.stringify({ type: 'video' }), status: 'completed' as const, adopted: true }]) }, [])
   const handleDeleteBlock = useCallback((moduleKey: string) => { setDisplayOrder(prev => prev.filter(k => k !== moduleKey)); setCenterModules(prev => prev.filter(m => m.moduleKey !== moduleKey)) }, [])
   const handleClearAll = useCallback(() => { setCenterModules([]); setDisplayOrder([]) }, [])
 
@@ -343,8 +393,8 @@ export default function App() {
       {/* 三栏主体 */}
       <div className="flex flex-1 min-h-0 gap-4 px-4 pb-4">
         {toast && (<div className={`fixed top-16 left-1/2 -translate-x-1/2 z-[999] flex items-center gap-2.5 rounded-lg border px-4 py-2.5 text-sm shadow-lg ${toast.type === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : toast.type === 'error' ? 'border-red-200 bg-red-50 text-red-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0"><circle cx="7.5" cy="7.5" r="6" /><path d={toast.type === 'success' ? "M4.5 7.5l2 2 4-4" : "M7.5 4.5v3M7.5 10v.5"} /></svg><span>{toast.msg}</span></div>)}
-        <div className="w-[320px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><LeftPanel input={input} onChange={setInput} disabled={isGenerating} isGenerating={isGenerating} onGenerate={handleGenerate} hasRequiredFields={hasRequiredFields} priceDialogOpen={priceDialogOpen} setPriceDialogOpen={setPriceDialogOpen} platforms={platforms} setPlatforms={setPlatforms} priceNotes={priceNotes} setPriceNotes={setPriceNotes} classifiedImages={classifiedImages} onImagesClassified={updateClassifiedImages} onFileRegistered={handleFileRegistered} onConfirmImages={handleConfirmImages} onOpenImageConfirm={handleOpenImageConfirm} onClearClassifiedImages={handleClearClassifiedImages} onRemoveClassifiedImage={handleRemoveClassifiedImage} /></div>
-        <div className="w-[450px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><CenterPanel status={status} modules={centerModules} mandatoryKeys={displayOrder} onEdit={handleCenterEdit} onReorder={setDisplayOrder} onAddBlock={handleAddBlock} onDeleteBlock={handleDeleteBlock} showToast={showToast} triggerExpandHint={expandHintCount} onClearAll={handleClearAll} input={input} classifiedImages={classifiedImages} fileMapRef={fileMapRef} onExportCorpus={handleExportCorpus} /></div>
+        <div className="w-[320px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><LeftPanel input={input} onChange={setInput} disabled={isGenerating} isGenerating={isGenerating} onGenerate={handleGenerate} hasRequiredFields={hasRequiredFields} priceDialogOpen={priceDialogOpen} setPriceDialogOpen={setPriceDialogOpen} platforms={platforms} setPlatforms={setPlatforms} priceNotes={priceNotes} setPriceNotes={setPriceNotes} classifiedImages={classifiedImages} onImagesClassified={updateClassifiedImages} onFileRegistered={handleFileRegistered} onConfirmImages={handleConfirmImages} onOpenImageConfirm={handleOpenImageConfirm} onClearClassifiedImages={handleClearClassifiedImages} onRemoveClassifiedImage={handleRemoveClassifiedImage} unassignedImageIds={unassignedImageIds} onImageClassified={handleImageClassified} onAllClassified={handleAllImagesDone} /></div>
+        <div className="w-[450px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><CenterPanel status={status} modules={centerModules} mandatoryKeys={displayOrder} onEdit={handleCenterEdit} onReorder={setDisplayOrder} onAddBlock={handleAddBlock} onAddVideo={handleAddVideo} onDeleteBlock={handleDeleteBlock} showToast={showToast} triggerExpandHint={expandHintCount} onClearAll={handleClearAll} input={input} classifiedImages={classifiedImages} fileMapRef={fileMapRef} onExportCorpus={handleExportCorpus} /></div>
         <div className="flex-1 min-w-0 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl shadow-xl shadow-black/[0.03] dark:shadow-black/[0.3] border border-white/50 dark:border-white/[0.08] overflow-hidden"><RightPanel status={status} modulesV1={rightModulesV1} modulesV2={rightModulesV2} modulesV3={rightModulesV3} versionLabelV1={versionLabelV1} versionLabelV2={versionLabelV2} versionLabelV3={versionLabelV3} onAdopt={handleAdopt} onAdoptAll={handleAdoptAll} onDislikeVersion={handleDislikeVersion} onDislikeModule={handleDislikeModule} classifiedImages={classifiedImages} /></div>
       </div>
 
@@ -354,6 +404,7 @@ export default function App() {
         open={imageConfirmOpen}
         images={pendingConfirmImages}
         moduleSuggestions={moduleSuggestions}
+        selectedModules={input.selectedModules}
         onConfirm={handleConfirmImageDialog}
         onCancel={handleCancelImageDialog}
         onReanalyze={handleReanalyze}
@@ -409,19 +460,48 @@ export default function App() {
 }
 
 // 图片→模块映射
-const DEFAULT_TYPE_MAP: Record<string, string[]> = {
-  '产品图': ['taste'], '封面图': ['hook'], '配料表': ['trust', 'ingredient'],
-  '场景图': ['scene'], '品牌图': ['brand'], '包装图': ['hook'], '其他': [],
+// 纯文字模块（不应分配图片）
+const TEXT_ONLY_MODULES = new Set([
+  'aftercare', 'tips', 'cta', 'faq', 'feedback', 'price',
+  'rights_list', 'plan_compare', 'validity_rules', 'support_policy'
+])
+
+/**
+ * 双层兜底路由：suggestedModule → layout_role → 第一个非纯文字模块
+ * 与 generator.js 中 resolveImageModule 逻辑一致，跨类目通用
+ */
+function resolveImageModule(img: ClassifiedImage, selectedModules: string[]): string {
+  // 第1层：suggestedModule 有效且在已选模块列表中
+  const sug = (img as any).suggestedModule
+  if (sug && selectedModules.includes(sug)) return sug
+
+  // 第2层：layout_role → module 映射
+  const role = img.layout_role || 'detail'
+  const ROLE_MODULE_MAP: Record<string, string[]> = {
+    hero:   ['hook'],
+    detail: ['taste', 'texture', 'usage_experience', 'wear_experience', 'design_detail', 'tutorial'],
+    scene:  ['scene', 'home_styling', 'kitchen_styling'],
+    info:   ['trust', 'ingredient', 'ingredient_analysis', 'specs', 'tech_specs', 'qualification'],
+    step:   ['tutorial', 'usage_demo', 'install_guide', 'assembly_guide'],
+  }
+  const candidates = ROLE_MODULE_MAP[role] || []
+  for (const c of candidates) {
+    if (selectedModules.includes(c)) return c
+  }
+
+  // 终极兜底：第一个非纯文字模块
+  for (const m of selectedModules) {
+    if (!TEXT_ONLY_MODULES.has(m)) return m
+  }
+  return selectedModules[0] || 'tips'
 }
 
-function assignImages(images: ClassifiedImage[], typeMap: Record<string, string[]>): Map<string, ClassifiedImage[]> {
+function assignImages(images: ClassifiedImage[], selectedModules: string[]): Map<string, ClassifiedImage[]> {
   const map = new Map<string, ClassifiedImage[]>()
   for (const img of images) {
-    const targets = typeMap[img.type] || []
-    for (const mod of targets) {
-      if (!map.has(mod)) map.set(mod, [])
-      map.get(mod)!.push(img)
-    }
+    const target = resolveImageModule(img, selectedModules)
+    if (!map.has(target)) map.set(target, [])
+    map.get(target)!.push(img)
   }
   return map
 }
@@ -431,10 +511,24 @@ function buildCorpusJSON(
   centerModules: ModuleResult[], displayOrder: string[],
   fileMap: Map<string, File>
 ): { corpus: any; images: { id: string; base64: string; fileName: string }[] } {
-  const getExt = (f: File | undefined) => f ? (f.name.includes('.') ? f.name.split('.').pop() || 'jpg' : 'jpg') : 'jpg'
+  // v3: delegate to structured builder
+  try {
+    return buildCorpusV3({ input, classifiedImages, centerModules, displayOrder, fileMap })
+  } catch (e) {
+    console.error('[corpus-v3] buildCorpusV3 failed, falling back to v2:', e)
+    return buildCorpusV2(input, classifiedImages, centerModules, displayOrder, fileMap)
+  }
+}
 
+/** v2 fallback — kept for backward compatibility */
+function buildCorpusV2(
+  input: ProductInput, classifiedImages: ClassifiedImage[],
+  centerModules: ModuleResult[], displayOrder: string[],
+  fileMap: Map<string, File>
+): { corpus: any; images: { id: string; base64: string; fileName: string }[] } {
+  const getExt = (f: File | undefined) => f ? (f.name.includes('.') ? f.name.split('.').pop() || 'jpg' : 'jpg') : 'jpg'
   const corpus: any = {
-    version: "2.1", schema: "corpus-图文绑定-v2",
+    version: "2.2", schema: "corpus-图文绑定-v2",
     productName: input.productName,
     sourceNote: `来源: ${input.productName}`,
     category: { level1: input.catLevel1, level2: input.catLevel2, level3: input.catLevel3 },
@@ -444,8 +538,6 @@ function buildCorpusJSON(
     convertedAt: new Date().toISOString(),
     modules: [], images: []
   }
-
-  // images[]
   const imageFiles: { id: string; base64: string; fileName: string }[] = []
   let imgIdx = 1
   corpus.images = classifiedImages.map((img) => {
@@ -453,69 +545,39 @@ function buildCorpusJSON(
     const ext = getExt(f)
     const fileName = `image${String(imgIdx).padStart(3, '0')}.${ext}`
     imgIdx++
-    // Extract base64 from file
-    let base64 = ''
-    if (f) {
-      try {
-        const reader = new FileReader()
-        // We can't use FileReader sync — skip base64 for now, extract later
-      } catch {}
-    }
     imageFiles.push({ id: img.id, base64: img.preview?.replace(/^data:image\/\w+;base64,/, '') || '', fileName })
-    return {
-      id: imgIdx - 1, file: `images/${fileName}`,
-      type: [img.type], primaryType: img.type, module: '',
-      desc: img.desc || '', layout_role: img.layout_role || 'detail',
-      imageContentSummary: img.imageContentSummary || '',
-      imageOcrText: (img as any).imageOcrText || '',
-      suggestedModule: (img as any).suggestedModule || ''
-    }
+    return { id: imgIdx - 1, file: `images/${fileName}`, module: (img as any).suggestedModule || '', desc: img.desc || '', layout_role: img.layout_role || 'detail', imageContentSummary: img.imageContentSummary || '', imageOcrText: (img as any).imageOcrText || '', suggestedModule: (img as any).suggestedModule || '' }
   })
-
-  // Assign images to modules
-  const moduleImages = assignImages(classifiedImages, DEFAULT_TYPE_MAP)
-
-  // Build modules
+  const moduleImages = assignImages(classifiedImages, displayOrder)
   for (const key of displayOrder) {
     const cm = centerModules.find(m => m.moduleKey === key)
     const imgs = moduleImages.get(key) || []
     const text = cm ? cm.content.replace(/<[^>]+>/g, '').replace(/<br\s*\/?>/gi, '\n').trim() : ''
     const imgCount = imgs.length
-    const density = imgCount === 0 ? 'none' : imgCount <= 2 ? 'low' : imgCount <= 8 ? 'medium' : 'high'
-    const pattern = text && imgCount > 0 ? 'image_before_text' : text ? 'text_only' : imgCount > 0 ? 'images_only' : 'text_only'
-
-    const segImages = imgs.map((img, i) => ({
-      imgId: classifiedImages.findIndex(ci => ci.id === img.id) + 1,
-      group: 'stack', role: img.desc || `图${i + 1}`,
-      position: 'before_text' as const,
-      relationship: img.imageContentSummary || ''
-    }))
-
-    const segment = {
-      text, textType: `${key}_main`,
-      images: segImages,
-      binding: segImages.length > 0 ? 'image_before_text' as const : 'no_image' as const
-    }
-
-    const mod = {
-      moduleKey: key, moduleName: cm?.moduleLabel || key, order: 0,
-      layout: { overallPattern: pattern, imageCount: imgCount, textSegmentCount: 1, density },
-      segments: [segment],
-      imageGroups: {} as any
-    }
-
-    if (imgCount > 0 && pattern === 'image_before_text') {
-      mod.imageGroups = {
-        footer: { imgIds: segImages.map(s => s.imgId), group: 'stack', desc: '' }
+    const paragraphs = text ? text.split(/\n{2,}/).filter(p => p.trim()) : []
+    const segCount = paragraphs.length || 1
+    const segImagesList: ClassifiedImage[][] = []
+    if (imgs.length > 0 && paragraphs.length > 0) {
+      const paraLens = paragraphs.map(p => p.replace(/\s/g, '').length)
+      const totalLen = paraLens.reduce((a, b) => a + b, 0) || 1
+      let cursor = 0
+      for (let i = 0; i < paragraphs.length; i++) {
+        const count = i === paragraphs.length - 1 ? imgs.length - cursor : Math.max(0, Math.round(imgs.length * paraLens[i] / totalLen))
+        segImagesList.push(imgs.slice(cursor, cursor + count)); cursor += count
       }
-    }
-
+      if (cursor < imgs.length) segImagesList[segImagesList.length - 1].push(...imgs.slice(cursor))
+    } else if (imgs.length > 0) { segImagesList.push([...imgs]) }
+    else { for (let i = 0; i < segCount; i++) segImagesList.push([]) }
+    const segments = paragraphs.map((para, i) => {
+      const segImgs = segImagesList[i] || []
+      return { text: para, textType: i === 0 ? `${key}_intro` : i === paragraphs.length - 1 ? `${key}_summary` : `${key}_detail`, images: segImgs.map(img => ({ imgId: classifiedImages.findIndex(ci => ci.id === img.id) + 1, group: segImgs.length === 2 ? 'pair' as const : 'stack' as const, role: img.desc || `图${i + 1}`, position: 'before_text' as const, relationship: img.imageContentSummary || '' })), binding: segImgs.length > 0 ? 'image_before_text' as const : 'no_image' as const }
+    })
+    if (segments.length === 0 && imgs.length > 0) { segments.push({ text: '', textType: `${key}_main`, images: imgs.map(img => ({ imgId: classifiedImages.findIndex(ci => ci.id === img.id) + 1, group: 'stack' as const, role: img.desc || '图', position: 'before_text' as const, relationship: img.imageContentSummary || '' })), binding: 'image_before_text' as const }) }
+    const mod: any = { moduleKey: key, moduleName: cm?.moduleLabel || key, order: 0, layout: { overallPattern: text && imgCount > 0 ? (segCount > 1 ? 'images_interspersed' : 'image_before_text') : text ? 'text_only' : imgCount > 0 ? 'images_only' : 'text_only', imageCount: imgCount, textSegmentCount: segCount, density: imgCount === 0 ? 'none' : imgCount <= 2 ? 'low' : imgCount <= 8 ? 'medium' : 'high' }, segments, imageGroups: {} as any }
+    if (imgCount > 0) { mod.imageGroups = { footer: { imgIds: segments.flatMap((s: any) => s.images.map((si: any) => si.imgId)), group: 'stack', desc: '' } } }
     corpus.modules.push(mod)
   }
-
-  // Re-number modules
   corpus.modules.forEach((m: any, i: number) => { m.order = i + 1 })
-
   return { corpus, images: imageFiles }
 }
 

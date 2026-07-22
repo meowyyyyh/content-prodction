@@ -20,16 +20,23 @@ interface ImageConfirmDialogProps {
   open: boolean
   images: ImageConfirmItem[]
   moduleSuggestions: ModuleSuggestion[]
+  selectedModules: ModuleKey[]
   onConfirm: (images: ImageConfirmItem[], checkModules: ModuleKey[]) => void
   onReanalyze?: (imageIds: string[]) => void
   onCancel: () => void
 }
 
-const IMAGE_TYPE_OPTIONS = ['产品图', '封面图', '配料表', '场景图', '品牌图', '包装图', '其他']
+const SUGGESTED_MODULE_LABELS: Record<string, string> = {
+  hook: '首屏钩子', price: '价格福利', taste: '口感体验', trust: '基础信任',
+  aftercare: '物流售后', tips: '储存贴士', cta: '行动召唤',
+  ingredient: '成分科普', origin: '原料溯源', brand: '品牌背书',
+  scene: '场景共情', feedback: '用户反馈', faq: '常见问题'
+}
 
-export function ImageConfirmDialog({ open, images, moduleSuggestions, onConfirm, onCancel, onReanalyze }: ImageConfirmDialogProps) {
+export function ImageConfirmDialog({ open, images, moduleSuggestions, selectedModules, onConfirm, onCancel, onReanalyze }: ImageConfirmDialogProps) {
   const [editingImages, setEditingImages] = useState<ImageConfirmItem[]>(images)
   const [checkedModules, setCheckedModules] = useState<Set<string>>(new Set())
+  const [recentHints, setRecentHints] = useState<Set<string>>(new Set()) // 刚刚提示过未勾选模块的图片 ID
 
   // Reset state when modal opens with new images
   const [initialized, setInitialized] = useState(false)
@@ -54,8 +61,19 @@ export function ImageConfirmDialog({ open, images, moduleSuggestions, onConfirm,
     setEditingImages(prev => prev.map(i => i.id === id ? { ...i, desc: value } : i))
   }
 
-  const handleTypeChange = (id: string, newType: string) => {
-    setEditingImages(prev => prev.map(i => i.id === id ? { ...i, type: newType } : i))
+  const handleSuggestedModuleChange = (id: string, newModule: string) => {
+    setEditingImages(prev => prev.map(i => i.id === id ? { ...i, suggestedModule: newModule } : i))
+    // 如果该模块未勾选，自动加入 checkedModules 并提示
+    if (newModule && !selectedModules.includes(newModule as ModuleKey)) {
+      setCheckedModules(prev => {
+        if (prev.has(newModule)) return prev
+        const next = new Set(prev)
+        next.add(newModule)
+        return next
+      })
+      setRecentHints(prev => { const next = new Set(prev); next.add(id); return next })
+      setTimeout(() => setRecentHints(prev => { const next = new Set(prev); next.delete(id); return next }), 4000)
+    }
   }
 
   const toggleModule = (key: string) => {
@@ -113,7 +131,7 @@ export function ImageConfirmDialog({ open, images, moduleSuggestions, onConfirm,
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">无预览</div>
                 )}
                 <span className={`absolute bottom-1.5 left-1.5 text-[9px] px-1.5 py-0.5 rounded leading-tight ${img.status === 'failed' ? 'bg-red-100/90 border border-red-200 text-red-700' : 'bg-white/90 border border-emerald-200 text-emerald-700'}`}>
-                  {img.type || '未分类'}
+                  {img.suggestedModule ? (SUGGESTED_MODULE_LABELS[img.suggestedModule] || img.suggestedModule) : '未分类'}
                 </span>
               </div>
                 <button
@@ -131,19 +149,25 @@ export function ImageConfirmDialog({ open, images, moduleSuggestions, onConfirm,
               <div className="flex-1 min-w-0 flex flex-col gap-2">
                 {/* Tag row */}
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground font-medium shrink-0">标签</span>
+                  <span className="text-xs text-muted-foreground font-medium shrink-0">模块</span>
                   <div className="relative">
                     <select
                       className="rounded-md border border-border bg-card pl-2.5 pr-7 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary/30 appearance-none cursor-pointer"
-                      value={img.type || '其他'}
-                      onChange={e => handleTypeChange(img.id, e.target.value)}
+                      value={img.suggestedModule || ''}
+                      onChange={e => handleSuggestedModuleChange(img.id, e.target.value)}
                     >
-                      {IMAGE_TYPE_OPTIONS.map(t => (
-                        <option key={t} value={t}>{t}</option>
+                      <option value="">未分配</option>
+                      {Object.entries(SUGGESTED_MODULE_LABELS).map(([key, label]) => (
+                        <option key={key} value={key}>{label}</option>
                       ))}
                     </select>
                     <svg className="absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" width="10" height="10" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4.5 6.5l3 3 3-3"/></svg>
                   </div>
+                  {img.suggestedModule && !selectedModules.includes(img.suggestedModule as ModuleKey) && (
+                    <span className={`text-[10px] shrink-0 ${recentHints.has(img.id) ? 'text-amber-600 animate-pulse' : 'text-amber-500'}`}>
+                      已自动勾选 {SUGGESTED_MODULE_LABELS[img.suggestedModule] || img.suggestedModule}，请重新生成
+                    </span>
+                  )}
                   {img.layout_role && (
                     <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
                       {img.layout_role === 'hero' ? '主视觉' : img.layout_role === 'detail' ? '细节' : img.layout_role === 'scene' ? '场景' : img.layout_role === 'info' ? '信息图' : img.layout_role === 'step' ? '步骤' : img.layout_role}

@@ -1,0 +1,171 @@
+{
+  "version": "2.2",
+  "schema": "corpus-图文绑定-v2",
+  "productName": "认养一头牛 每日吨吨 益生菌酸奶 木姜子香茅风味",
+  "sourceNote": "来源: 认养一头牛 每日吨吨 益生菌酸奶 木姜子香茅风味",
+  "category": {
+    "level1": "美食酒水",
+    "level2": "酒水饮料",
+    "level3": "乳制品"
+  },
+  "styleTag": "xiaohongshu",
+  "imageCount": 2,
+  "source": "预审库自动收集",
+  "convertedAt": "2026-07-22T09:50:59.500Z",
+  "modules": [
+    {
+      "moduleKey": "hook",
+      "moduleName": "首屏钩子",
+      "order": 1,
+      "layout": {
+        "overallPattern": "text_only",
+        "imageCount": 0,
+        "textSegmentCount": 1,
+        "density": "none"
+      },
+      "segments": [
+        {
+          "text": "认养一头牛每日吨吨益生菌酸奶推出木姜子香茅风味，这款新品将云贵山野的草本香料与A2生牛乳融合，带来清爽不腻的三重口感体验。团购价79.9元直接到手12瓶，再加赠3瓶原味款，实发整整15瓶，算下来单瓶只要5.3元，轻松尝鲜不心疼。",
+          "textType": "hook_intro",
+          "images": [],
+          "binding": "no_image"
+        }
+      ],
+      "imageGroups": {}
+    },
+    {
+      "moduleKey": "price",
+      "moduleName": "价格福利",
+      "order": 2,
+      "layout": {
+        "overallPattern": "text_only",
+        "imageCount": 0,
+        "textSegmentCount": 1,
+        "density": "none"
+      },
+      "segments": [
+        {
+          "text": "💰 团购价：79.9元得12瓶木姜子香茅风味酸奶，再送3瓶原味款益生菌酸奶，到手整整15瓶。算下来单瓶只要5.3元，比一杯奶茶还便宜。赠品原味款和主品同规格同品质，相当于多送价值约16元的产品，这波加赠确实实在。",
+          "textType": "price_intro",
+          "images": [],
+          "binding": "no_image"
+        }
+      ],
+      "imageGroups": {}
+    },
+    {
+      "moduleKey": "taste",
+      "moduleName": "口感体验",
+      "order": 3,
+      "layout": {
+        "overallPattern": "image_before_text",
+        "imageCount": 1,
+        "textSegmentCount": 1,
+        "density": "low"
+      },
+      "segments": [
+        {
+          "text": "第一口是香茅带来的明亮开场，柠檬草的清新香气先钻进鼻腔，像是刚摘下的新鲜香茅在齿间碾碎，清爽得让人瞬间精神一振。第二口是木姜子的辛香展开，带着一点点姜类的微辣感，但完全不冲，反而和奶香交织出层次，像东南亚街头那杯特调饮品的风味在舌尖慢慢化开。最后是醇厚生牛乳的奶香收尾，质地顺滑浓稠却不糊嘴，奶味柔和地包裹住前面的辛香，留下干净的回甘。一瓶喝出前中后调，猎奇但不怪，越喝越上头，冰镇后口感更棒，香茅和木姜子的草本气息瞬间提神解腻。",
+          "textType": "taste_intro",
+          "images": [
+            {
+              "imgId": 2,
+              "group": "stack",
+              "role": "物体：图中有一个竖立的塑料复合袋装薯片，正面完全朝向镜头，单独放置在纯白色背景中，是华元品牌的蚵仔煎味波的多洋芋切片。文字：可见文字包括品牌名“華元”，商品名“波的多”“蚵仔煎”“洋芋切片”，英文“POTATO CHIPS”，标签文字“台灣小吃”，包装上还有卡通土豆形象和蚵仔煎食物图案，无可见价格、规格、营养成分等详细数据。场景：纯白色背景，无其他环境元素，为商品单独展示场景。视觉：包装主色调为亮绿色，材质为塑料复合袋，光线均匀柔和，构图为正面居中展示，突出包装上的文字和图案，视觉清晰。",
+              "position": "before_text",
+              "relationship": "品牌为华元，商品是蚵仔煎味波的多洋芋切片（薯片），属于台湾小吃系列，包装为亮绿色塑料袋装，正面展示产品名称与相关图案。"
+            }
+          ],
+          "binding": "image_before_text"
+        }
+      ],
+      "imageGroups": {
+        "footer": {
+          "imgIds": [
+            2
+          ],
+          "group": "stack",
+          "desc": ""
+        }
+      }
+    },
+    {
+      "moduleKey": "brand",
+      "moduleName": "品牌背书",
+      "order": 4,
+      "layout": {
+        "overallPattern": "image_before_text",
+        "imageCount": 1,
+        "textSegmentCount": 1,
+        "density": "low"
+      },
+      "segments": [
+        {
+          "text": "认养一头牛作为A2奶业的领跑者，从奶源上就开始优中选优。从9万头荷斯坦奶牛里精选3.5万头，只为筛选出血统纯正的A2型奶牛，A1和A2分开养，保证每一杯都是纯正A2奶。每天80元的伙食费是标配，从美国和加拿大进口苜蓿，从澳洲进口燕麦草，还有专门的营养师科学配比。自有牧场通过GAP一级认证，原奶品质优于欧盟标准，SGS权威质检覆盖24项核心项目。从养牛开始每一步都透明，每头奶牛都有智能耳标实时监测健康，无菌化挤奶最大程度保持原奶新鲜。所以说，好奶源早就在起跑线上赢了。",
+          "textType": "brand_intro",
+          "images": [
+            {
+              "imgId": 1,
+              "group": "stack",
+              "role": "【物体】一个立式塑料零食包装袋，顶部为橙红色热封边，袋身以绿橙斜条纹为背景，正面印有黄色条状虾味条实物图，右下角有浅粉色卡通猫抱吉他的图案，左下角有圆形认证标识。【文字】品牌名：SNEK KU；商品名：MI-MI、咪咪、蝦味條；认证标识为马来西亚清真认证；顶部有部分阿拉伯文。【场景】纯白背景的静物摄影场景，无其他物体。【视觉】塑料复合膜材质带光泽，色彩丰富，构图居中，光线均匀明亮。",
+              "position": "before_text",
+              "relationship": "图中是SNEK KU品牌的咪咪（MI-MI）虾味条零食包装，包装为橙绿配色，印有弹吉他的卡通猫图案，是一款膨化零食，背景为纯白色。"
+            }
+          ],
+          "binding": "image_before_text"
+        }
+      ],
+      "imageGroups": {
+        "footer": {
+          "imgIds": [
+            1
+          ],
+          "group": "stack",
+          "desc": ""
+        }
+      }
+    },
+    {
+      "moduleKey": "cta",
+      "moduleName": "行动召唤",
+      "order": 5,
+      "layout": {
+        "overallPattern": "text_only",
+        "imageCount": 0,
+        "textSegmentCount": 1,
+        "density": "none"
+      },
+      "segments": [
+        {
+          "text": "79.9元就能买到12瓶木姜子香茅风味酸奶，还送3瓶原味款，到手整整15瓶，单瓶低至5.3元。顺丰或京东冷链发货，全国4仓就近配送，新鲜到家。售后有保障，冷链运输如有破损包赔，放心下单。下方直接参团👇",
+          "textType": "cta_intro",
+          "images": [],
+          "binding": "no_image"
+        }
+      ],
+      "imageGroups": {}
+    }
+  ],
+  "images": [
+    {
+      "id": 1,
+      "file": "images/image001.jpeg",
+      "module": "brand",
+      "desc": "【物体】一个立式塑料零食包装袋，顶部为橙红色热封边，袋身以绿橙斜条纹为背景，正面印有黄色条状虾味条实物图，右下角有浅粉色卡通猫抱吉他的图案，左下角有圆形认证标识。【文字】品牌名：SNEK KU；商品名：MI-MI、咪咪、蝦味條；认证标识为马来西亚清真认证；顶部有部分阿拉伯文。【场景】纯白背景的静物摄影场景，无其他物体。【视觉】塑料复合膜材质带光泽，色彩丰富，构图居中，光线均匀明亮。",
+      "layout_role": "hero",
+      "imageContentSummary": "图中是SNEK KU品牌的咪咪（MI-MI）虾味条零食包装，包装为橙绿配色，印有弹吉他的卡通猫图案，是一款膨化零食，背景为纯白色。",
+      "imageOcrText": "SNEK KU、咪咪、MI-MI、蝦味條、阿拉伯文、清真认证标识文字",
+      "suggestedModule": "brand"
+    },
+    {
+      "id": 2,
+      "file": "images/image002.jpeg",
+      "module": "taste",
+      "desc": "物体：图中有一个竖立的塑料复合袋装薯片，正面完全朝向镜头，单独放置在纯白色背景中，是华元品牌的蚵仔煎味波的多洋芋切片。文字：可见文字包括品牌名“華元”，商品名“波的多”“蚵仔煎”“洋芋切片”，英文“POTATO CHIPS”，标签文字“台灣小吃”，包装上还有卡通土豆形象和蚵仔煎食物图案，无可见价格、规格、营养成分等详细数据。场景：纯白色背景，无其他环境元素，为商品单独展示场景。视觉：包装主色调为亮绿色，材质为塑料复合袋，光线均匀柔和，构图为正面居中展示，突出包装上的文字和图案，视觉清晰。",
+      "layout_role": "hero",
+      "imageContentSummary": "品牌为华元，商品是蚵仔煎味波的多洋芋切片（薯片），属于台湾小吃系列，包装为亮绿色塑料袋装，正面展示产品名称与相关图案。",
+      "imageOcrText": "華元、波的多、蚵仔煎、台灣小吃、洋芋切片、POTATO CHIPS",
+      "suggestedModule": "taste"
+    }
+  ]
+}
